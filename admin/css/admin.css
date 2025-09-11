@@ -86,6 +86,22 @@
     position: relative;
 }
 
+/* At a Glance with Quick Actions Layout */
+.rsl-at-glance-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+.rsl-stats-section {
+    flex: 1;
+}
+
+.rsl-quick-actions-section {
+    flex-shrink: 0;
+}
+
 /* At a Glance Widget Styling */
 .rsl-dashboard-wrap .main ul {
     list-style: none;
@@ -123,6 +139,20 @@
 
 .rsl-dashboard-wrap .main ul li span:last-child {
     color: #646970;
+}
+
+/* Quick Actions Inline */
+.rsl-actions-inline {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.rsl-actions-inline .button {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    white-space: nowrap;
 }
 
 /* Action Buttons */
@@ -378,6 +408,26 @@
     margin-left: 8px;
 }
 
+/* Header Links */
+.rsl-header-link {
+    color: #2271b1;
+    font-size: 13px;
+    font-weight: 400;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.rsl-header-link:hover,
+.rsl-header-link:focus {
+    color: #135e96;
+    text-decoration: underline;
+}
+
+/* Page Headers - Fix margin bottom */
+.wrap h1.wp-heading-inline {
+    margin-bottom: 20px;
+}
+
 /* Utility Classes */
 .rsl-hidden {
     display: none !important;
@@ -431,6 +481,22 @@
     
     .rsl-dashboard-wrap .main ul li:after {
         display: none;
+    }
+    
+    .rsl-at-glance-wrapper {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 15px;
+    }
+    
+    .rsl-actions-inline {
+        width: 100%;
+    }
+    
+    .rsl-actions-inline .button {
+        flex: 1;
+        justify-content: center;
+        min-width: auto;
     }
 }
 
