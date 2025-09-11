@@ -10,7 +10,7 @@ $title = $is_edit ? __('Edit RSL License', 'rsl-licensing') : __('Add RSL Licens
 
 <div class="wrap">
     <h1 class="wp-heading-inline">
-        <img src="<?php echo RSL_PLUGIN_URL . 'assets/icon-128x128.png'; ?>" 
+        <img src="<?php echo RSL_PLUGIN_URL . 'admin/images/rsl-logo.png'; ?>" 
              alt="RSL" class="rsl-admin-icon">
         <?php echo esc_html($title); ?>
     </h1>

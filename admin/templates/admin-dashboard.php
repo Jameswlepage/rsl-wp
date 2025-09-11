@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 <div class="wrap">
     <h1 class="wp-heading-inline">
-        <img src="<?php echo RSL_PLUGIN_URL . 'assets/icon-128x128.png'; ?>" 
+        <img src="<?php echo RSL_PLUGIN_URL . 'admin/images/rsl-logo.png'; ?>" 
              alt="RSL" class="rsl-admin-icon">
         <?php _e('RSL Licensing', 'rsl-licensing'); ?>
     </h1>
@@ -52,8 +52,8 @@ if (!defined('ABSPATH')) {
                 </div>
             </div>
         </div>
-        
-        <!-- Quick Actions -->
+
+        <!-- Row 1: Quick Actions & Integration Status -->
         <div class="postbox-container rsl-half-width">
             <div class="meta-box-sortables">
                 <div class="postbox">
@@ -89,7 +89,6 @@ if (!defined('ABSPATH')) {
             </div>
         </div>
         
-        <!-- Integration Status -->
         <div class="postbox-container rsl-half-width">
             <div class="meta-box-sortables">
                 <div class="postbox">
@@ -146,7 +145,7 @@ if (!defined('ABSPATH')) {
             </div>
         </div>
         
-        <!-- Recent Licenses -->
+        <!-- Row 2: Recent Licenses & About RSL -->
         <div class="postbox-container rsl-half-width">
             <div class="meta-box-sortables">
                 <div class="postbox">
@@ -189,7 +188,6 @@ if (!defined('ABSPATH')) {
             </div>
         </div>
         
-        <!-- RSL Information & System Status -->
         <div class="postbox-container rsl-half-width">
             <div class="meta-box-sortables">
                 <div class="postbox">
@@ -214,7 +212,6 @@ if (!defined('ABSPATH')) {
                     </div>
                 </div>
                 
-                <!-- System Status -->
                 <div class="postbox">
                     <div class="postbox-header">
                         <h2 class="hndle"><?php _e('System Status', 'rsl-licensing'); ?></h2>

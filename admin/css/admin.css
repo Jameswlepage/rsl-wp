@@ -16,27 +16,31 @@
     display: block;
     width: 100%;
     max-width: none;
+    overflow: hidden;
 }
 
 .rsl-dashboard-wrap .postbox-container {
     float: left;
-    margin-right: 20px;
     margin-bottom: 20px;
     min-height: 1px;
-}
-
-.rsl-dashboard-wrap .postbox-container:last-child {
-    margin-right: 0;
+    box-sizing: border-box;
 }
 
 .rsl-dashboard-wrap .postbox-container.rsl-full-width {
     width: 100%;
     float: none;
+    clear: both;
     margin-right: 0;
 }
 
 .rsl-dashboard-wrap .postbox-container.rsl-half-width {
-    width: calc(50% - 10px);
+    width: 50%;
+    padding-right: 10px;
+}
+
+.rsl-dashboard-wrap .postbox-container.rsl-half-width:nth-of-type(even) {
+    padding-right: 0;
+    padding-left: 10px;
 }
 
 /* Clearfix for dashboard wrap */
