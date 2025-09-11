@@ -1,0 +1,302 @@
+<?php
+
+if (!defined('ABSPATH')) {
+    exit;
+}
+
+class RSL_Admin {
+    
+    private $license_handler;
+    
+    public function __construct() {
+        $this->license_handler = new RSL_License();
+        
+        add_action('admin_menu', array($this, 'add_admin_menu'));
+        add_action('admin_init', array($this, 'register_settings'));
+        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_scripts'));
+        add_action('wp_ajax_rsl_save_license', array($this, 'ajax_save_license'));
+        add_action('wp_ajax_rsl_delete_license', array($this, 'ajax_delete_license'));
+        add_action('wp_ajax_rsl_generate_xml', array($this, 'ajax_generate_xml'));
+        
+        add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
+        add_action('save_post', array($this, 'save_post_meta'));
+    }
+    
+    public function add_admin_menu() {
+        // Add main menu page with RSL icon
+        add_menu_page(
+            __('RSL Licensing', 'rsl-licensing'),
+            __('RSL Licensing', 'rsl-licensing'),
+            'manage_options',
+            'rsl-licensing',
+            array($this, 'admin_page'),
+            $this->get_menu_icon(),
+            30 // Position after Settings
+        );
+        
+        // Add submenu pages under RSL Licensing
+        add_submenu_page(
+            'rsl-licensing',
+            __('All Licenses', 'rsl-licensing'),
+            __('All Licenses', 'rsl-licensing'),
+            'manage_options',
+            'rsl-licenses',
+            array($this, 'licenses_page')
+        );
+        
+        add_submenu_page(
+            'rsl-licensing',
+            __('Add New License', 'rsl-licensing'),
+            __('Add New License', 'rsl-licensing'),
+            'manage_options',
+            'rsl-add-license',
+            array($this, 'add_license_page')
+        );
+        
+        add_submenu_page(
+            'rsl-licensing',
+            __('Settings', 'rsl-licensing'),
+            __('Settings', 'rsl-licensing'),
+            'manage_options',
+            'rsl-settings',
+            array($this, 'settings_page')
+        );
+    }
+    
+    public function register_settings() {
+        register_setting('rsl_settings', 'rsl_global_license_id');
+        register_setting('rsl_settings', 'rsl_enable_html_injection');
+        register_setting('rsl_settings', 'rsl_enable_http_headers');
+        register_setting('rsl_settings', 'rsl_enable_robots_txt');
+        register_setting('rsl_settings', 'rsl_enable_rss_feed');
+        register_setting('rsl_settings', 'rsl_enable_media_metadata');
+        register_setting('rsl_settings', 'rsl_default_namespace');
+    }
+    
+    public function enqueue_admin_scripts($hook) {
+        if (strpos($hook, 'rsl') !== false) {
+            wp_enqueue_script('jquery');
+            wp_enqueue_script('rsl-admin', RSL_PLUGIN_URL . 'admin/js/admin.js', array('jquery'), RSL_PLUGIN_VERSION, true);
+            wp_enqueue_style('rsl-admin', RSL_PLUGIN_URL . 'admin/css/admin.css', array(), RSL_PLUGIN_VERSION);
+            
+            wp_localize_script('rsl-admin', 'rsl_ajax', array(
+                'url' => admin_url('admin-ajax.php'),
+                'nonce' => wp_create_nonce('rsl_nonce')
+            ));
+        }
+    }
+    
+    public function admin_page() {
+        // This is now the main RSL dashboard page
+        $licenses = $this->license_handler->get_licenses();
+        $global_license_id = get_option('rsl_global_license_id', 0);
+        $total_licenses = count($licenses);
+        $active_licenses = count(array_filter($licenses, function($license) {
+            return $license['active'] == 1;
+        }));
+        
+        include RSL_PLUGIN_PATH . 'admin/templates/admin-dashboard.php';
+    }
+    
+    public function settings_page() {
+        $licenses = $this->license_handler->get_licenses();
+        $global_license_id = get_option('rsl_global_license_id', 0);
+        
+        include RSL_PLUGIN_PATH . 'admin/templates/admin-settings.php';
+    }
+    
+    public function licenses_page() {
+        $licenses = $this->license_handler->get_licenses();
+        
+        include RSL_PLUGIN_PATH . 'admin/templates/admin-licenses.php';
+    }
+    
+    public function add_license_page() {
+        $license_data = array();
+        $license_id = 0;
+        
+        if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
+            $license_id = intval($_GET['edit']);
+            $license_data = $this->license_handler->get_license($license_id);
+        }
+        
+        include RSL_PLUGIN_PATH . 'admin/templates/admin-add-license.php';
+    }
+    
+    public function ajax_save_license() {
+        check_ajax_referer('rsl_nonce', 'nonce');
+        
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Permission denied', 'rsl-licensing'));
+        }
+        
+        $license_data = array(
+            'name' => sanitize_text_field($_POST['name']),
+            'description' => sanitize_textarea_field($_POST['description']),
+            'content_url' => esc_url_raw($_POST['content_url']),
+            'server_url' => esc_url_raw($_POST['server_url']),
+            'encrypted' => isset($_POST['encrypted']) ? 1 : 0,
+            'permits_usage' => sanitize_text_field($_POST['permits_usage']),
+            'permits_user' => sanitize_text_field($_POST['permits_user']),
+            'permits_geo' => sanitize_text_field($_POST['permits_geo']),
+            'prohibits_usage' => sanitize_text_field($_POST['prohibits_usage']),
+            'prohibits_user' => sanitize_text_field($_POST['prohibits_user']),
+            'prohibits_geo' => sanitize_text_field($_POST['prohibits_geo']),
+            'payment_type' => sanitize_text_field($_POST['payment_type']),
+            'standard_url' => esc_url_raw($_POST['standard_url']),
+            'custom_url' => esc_url_raw($_POST['custom_url']),
+            'amount' => floatval($_POST['amount']),
+            'currency' => sanitize_text_field($_POST['currency']),
+            'warranty' => sanitize_text_field($_POST['warranty']),
+            'disclaimer' => sanitize_text_field($_POST['disclaimer']),
+            'schema_url' => esc_url_raw($_POST['schema_url']),
+            'copyright_holder' => sanitize_text_field($_POST['copyright_holder']),
+            'copyright_type' => sanitize_text_field($_POST['copyright_type']),
+            'contact_email' => sanitize_email($_POST['contact_email']),
+            'contact_url' => esc_url_raw($_POST['contact_url']),
+            'terms_url' => esc_url_raw($_POST['terms_url']),
+            'active' => isset($_POST['active']) ? 1 : 0
+        );
+        
+        if (isset($_POST['license_id']) && is_numeric($_POST['license_id']) && $_POST['license_id'] > 0) {
+            $result = $this->license_handler->update_license($_POST['license_id'], $license_data);
+            $license_id = $_POST['license_id'];
+        } else {
+            $license_id = $this->license_handler->create_license($license_data);
+            $result = $license_id !== false;
+        }
+        
+        if ($result) {
+            wp_send_json_success(array(
+                'message' => __('License saved successfully', 'rsl-licensing'),
+                'license_id' => $license_id
+            ));
+        } else {
+            wp_send_json_error(array(
+                'message' => __('Failed to save license', 'rsl-licensing')
+            ));
+        }
+    }
+    
+    public function ajax_delete_license() {
+        check_ajax_referer('rsl_nonce', 'nonce');
+        
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Permission denied', 'rsl-licensing'));
+        }
+        
+        $license_id = intval($_POST['license_id']);
+        
+        if ($this->license_handler->delete_license($license_id)) {
+            wp_send_json_success(array(
+                'message' => __('License deleted successfully', 'rsl-licensing')
+            ));
+        } else {
+            wp_send_json_error(array(
+                'message' => __('Failed to delete license', 'rsl-licensing')
+            ));
+        }
+    }
+    
+    public function ajax_generate_xml() {
+        check_ajax_referer('rsl_nonce', 'nonce');
+        
+        if (!current_user_can('manage_options')) {
+            wp_die(__('Permission denied', 'rsl-licensing'));
+        }
+        
+        $license_id = intval($_POST['license_id']);
+        $license_data = $this->license_handler->get_license($license_id);
+        
+        if ($license_data) {
+            $xml = $this->license_handler->generate_rsl_xml($license_data);
+            wp_send_json_success(array(
+                'xml' => $xml
+            ));
+        } else {
+            wp_send_json_error(array(
+                'message' => __('License not found', 'rsl-licensing')
+            ));
+        }
+    }
+    
+    public function add_meta_boxes() {
+        $post_types = array('post', 'page');
+        $post_types = apply_filters('rsl_supported_post_types', $post_types);
+        
+        foreach ($post_types as $post_type) {
+            add_meta_box(
+                'rsl_license_meta',
+                __('RSL License', 'rsl-licensing'),
+                array($this, 'meta_box_callback'),
+                $post_type,
+                'side',
+                'default'
+            );
+        }
+    }
+    
+    public function meta_box_callback($post) {
+        wp_nonce_field('rsl_meta_box', 'rsl_meta_nonce');
+        
+        $licenses = $this->license_handler->get_licenses();
+        $selected_license = get_post_meta($post->ID, '_rsl_license_id', true);
+        $override_content_url = get_post_meta($post->ID, '_rsl_override_content_url', true);
+        
+        echo '<p><label for="rsl_license_select">' . __('Select License:', 'rsl-licensing') . '</label></p>';
+        echo '<select id="rsl_license_select" name="rsl_license_id" style="width: 100%;">';
+        echo '<option value="">' . __('Use Global License', 'rsl-licensing') . '</option>';
+        
+        foreach ($licenses as $license) {
+            $selected = selected($selected_license, $license['id'], false);
+            echo '<option value="' . esc_attr($license['id']) . '" ' . $selected . '>';
+            echo esc_html($license['name']);
+            echo '</option>';
+        }
+        
+        echo '</select>';
+        
+        echo '<p style="margin-top: 15px;"><label for="rsl_override_url">';
+        echo __('Override Content URL:', 'rsl-licensing');
+        echo '</label></p>';
+        echo '<input type="text" id="rsl_override_url" name="rsl_override_content_url" ';
+        echo 'value="' . esc_attr($override_content_url) . '" style="width: 100%;" ';
+        echo 'placeholder="' . __('Leave empty to use post URL', 'rsl-licensing') . '">';
+        
+        echo '<p><small>' . __('Override the content URL for this specific post/page.', 'rsl-licensing') . '</small></p>';
+    }
+    
+    public function save_post_meta($post_id) {
+        if (!isset($_POST['rsl_meta_nonce']) || !wp_verify_nonce($_POST['rsl_meta_nonce'], 'rsl_meta_box')) {
+            return;
+        }
+        
+        if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
+            return;
+        }
+        
+        if (!current_user_can('edit_post', $post_id)) {
+            return;
+        }
+        
+        $license_id = isset($_POST['rsl_license_id']) ? intval($_POST['rsl_license_id']) : 0;
+        $override_url = isset($_POST['rsl_override_content_url']) ? esc_url_raw($_POST['rsl_override_content_url']) : '';
+        
+        if ($license_id > 0) {
+            update_post_meta($post_id, '_rsl_license_id', $license_id);
+        } else {
+            delete_post_meta($post_id, '_rsl_license_id');
+        }
+        
+        if (!empty($override_url)) {
+            update_post_meta($post_id, '_rsl_override_content_url', $override_url);
+        } else {
+            delete_post_meta($post_id, '_rsl_override_content_url');
+        }
+    }
+    
+    private function get_menu_icon() {
+        // Return path to PNG icon for WordPress admin menu
+        return RSL_PLUGIN_URL . 'assets/icon-128x128.png';
+    }
+}

@@ -1,0 +1,304 @@
+jQuery(document).ready(function($) {
+    
+    // Global variables
+    var rslAdmin = {
+        init: function() {
+            this.bindEvents();
+            this.initializeFields();
+        },
+        
+        bindEvents: function() {
+            // Payment type change
+            $(document).on('change', '#payment_type', this.togglePaymentFields);
+            
+            // Form submission
+            $(document).on('submit', '#rsl-license-form', this.handleFormSubmission);
+            
+            // Generate XML button
+            $(document).on('click', '.rsl-generate-xml', this.generateXML);
+            
+            // Delete license button
+            $(document).on('click', '.rsl-delete-license', this.deleteLicense);
+            
+            // Modal events
+            $(document).on('click', '.rsl-modal-close', this.closeModal);
+            $(document).on('click', '.rsl-modal', this.handleModalBackdropClick);
+            
+            // Copy XML button
+            $(document).on('click', '#rsl-copy-xml', this.copyXMLToClipboard);
+            
+            // Download XML button
+            $(document).on('click', '#rsl-download-xml', this.downloadXML);
+            
+            // Multiselect handling
+            $(document).on('change', '.rsl-multiselect', this.updateMultiselectValues);
+        },
+        
+        initializeFields: function() {
+            this.togglePaymentFields();
+            this.styleMultiselects();
+        },
+        
+        togglePaymentFields: function() {
+            var paymentType = $('#payment_type').val();
+            var paidTypes = ['purchase', 'subscription', 'training', 'crawl', 'inference'];
+            
+            if (paidTypes.indexOf(paymentType) !== -1) {
+                $('#payment_amount_row').show();
+            } else {
+                $('#payment_amount_row').hide();
+            }
+        },
+        
+        styleMultiselects: function() {
+            $('.rsl-multiselect').css({
+                'width': '400px',
+                'height': '100px'
+            });
+        },
+        
+        updateMultiselectValues: function() {
+            $('.rsl-multiselect').each(function() {
+                var values = $(this).val();
+                if (values && values.length > 0) {
+                    // Store comma-separated values in a hidden field
+                    var hiddenField = $('input[name="' + $(this).attr('name') + '_hidden"]');
+                    if (hiddenField.length === 0) {
+                        hiddenField = $('<input type="hidden" name="' + $(this).attr('name') + '_hidden">');
+                        $(this).after(hiddenField);
+                    }
+                    hiddenField.val(values.join(','));
+                }
+            });
+        },
+        
+        handleFormSubmission: function(e) {
+            e.preventDefault();
+            
+            var $form = $(this);
+            var $submitButton = $form.find('input[type="submit"]');
+            var originalText = $submitButton.val();
+            
+            // Update submit button
+            $submitButton.val('Saving...').prop('disabled', true);
+            
+            // Prepare form data
+            var formData = $form.serialize();
+            
+            // Handle multiselect fields
+            $('.rsl-multiselect').each(function() {
+                var fieldName = $(this).attr('name');
+                var values = $(this).val();
+                
+                if (values && values.length > 0) {
+                    formData += '&' + fieldName + '=' + encodeURIComponent(values.join(','));
+                } else {
+                    formData += '&' + fieldName + '=';
+                }
+            });
+            
+            // Add action and nonce
+            formData += '&action=rsl_save_license&nonce=' + rsl_ajax.nonce;
+            
+            $.ajax({
+                url: rsl_ajax.url,
+                type: 'POST',
+                data: formData,
+                success: function(response) {
+                    if (response.success) {
+                        rslAdmin.showMessage(response.data.message, 'success');
+                        
+                        // Redirect after short delay
+                        setTimeout(function() {
+                            window.location.href = window.location.href.replace(/[?&]edit=\d+/, '').replace('rsl-add-license', 'rsl-licenses');
+                        }, 1500);
+                    } else {
+                        rslAdmin.showMessage(response.data.message, 'error');
+                        $submitButton.val(originalText).prop('disabled', false);
+                    }
+                },
+                error: function() {
+                    rslAdmin.showMessage('An error occurred while saving the license.', 'error');
+                    $submitButton.val(originalText).prop('disabled', false);
+                }
+            });
+        },
+        
+        generateXML: function() {
+            var licenseId = $(this).data('license-id');
+            
+            $.ajax({
+                url: rsl_ajax.url,
+                type: 'POST',
+                data: {
+                    action: 'rsl_generate_xml',
+                    license_id: licenseId,
+                    nonce: rsl_ajax.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        $('#rsl-xml-content').val(response.data.xml);
+                        $('#rsl-xml-modal').show();
+                    } else {
+                        alert(response.data.message);
+                    }
+                },
+                error: function() {
+                    alert('Error generating XML');
+                }
+            });
+        },
+        
+        deleteLicense: function() {
+            var licenseId = $(this).data('license-id');
+            var licenseName = $(this).data('license-name');
+            
+            if (!confirm('Are you sure you want to delete the license "' + licenseName + '"? This action cannot be undone.')) {
+                return;
+            }
+            
+            $.ajax({
+                url: rsl_ajax.url,
+                type: 'POST',
+                data: {
+                    action: 'rsl_delete_license',
+                    license_id: licenseId,
+                    nonce: rsl_ajax.nonce
+                },
+                success: function(response) {
+                    if (response.success) {
+                        location.reload();
+                    } else {
+                        alert(response.data.message);
+                    }
+                },
+                error: function() {
+                    alert('Error deleting license');
+                }
+            });
+        },
+        
+        closeModal: function() {
+            $('.rsl-modal').hide();
+        },
+        
+        handleModalBackdropClick: function(e) {
+            if ($(e.target).hasClass('rsl-modal')) {
+                $('.rsl-modal').hide();
+            }
+        },
+        
+        copyXMLToClipboard: function() {
+            var textarea = document.getElementById('rsl-xml-content');
+            if (textarea) {
+                textarea.select();
+                textarea.setSelectionRange(0, 99999); // For mobile devices
+                
+                try {
+                    document.execCommand('copy');
+                    rslAdmin.showTempMessage('XML copied to clipboard!');
+                } catch (err) {
+                    console.error('Failed to copy: ', err);
+                    alert('Failed to copy to clipboard. Please select and copy manually.');
+                }
+            }
+        },
+        
+        downloadXML: function() {
+            var content = $('#rsl-xml-content').val();
+            var blob = new Blob([content], { type: 'application/xml' });
+            var url = window.URL.createObjectURL(blob);
+            
+            var a = document.createElement('a');
+            a.href = url;
+            a.download = 'rsl-license.xml';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            window.URL.revokeObjectURL(url);
+        },
+        
+        showMessage: function(message, type) {
+            var className = 'notice-' + (type === 'success' ? 'success' : 'error');
+            var $message = $('#rsl-message');
+            
+            $message
+                .removeClass('notice-success notice-error')
+                .addClass(className)
+                .html('<p>' + message + '</p>')
+                .show();
+            
+            $('html, body').animate({scrollTop: 0}, 500);
+        },
+        
+        showTempMessage: function(message) {
+            var $temp = $('<div class="notice notice-success" style="position: fixed; top: 32px; right: 20px; z-index: 999999; padding: 10px 15px;"><p>' + message + '</p></div>');
+            $('body').append($temp);
+            
+            setTimeout(function() {
+                $temp.fadeOut(500, function() {
+                    $(this).remove();
+                });
+            }, 2000);
+        }
+    };
+    
+    // Initialize admin functionality
+    rslAdmin.init();
+    
+    // Handle escape key for modals
+    $(document).keyup(function(e) {
+        if (e.keyCode === 27) { // Escape key
+            $('.rsl-modal').hide();
+        }
+    });
+    
+    // Validation helpers
+    window.rslValidation = {
+        validateURL: function(url) {
+            var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
+                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
+                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
+                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
+                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
+                '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
+            return !!pattern.test(url);
+        },
+        
+        validateEmail: function(email) {
+            var pattern = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+            return pattern.test(email);
+        }
+    };
+    
+    // Add real-time validation
+    $('#content_url, #server_url, #standard_url, #custom_url, #schema_url, #contact_url, #terms_url').on('blur', function() {
+        var $field = $(this);
+        var value = $field.val();
+        
+        if (value && !rslValidation.validateURL(value)) {
+            $field.css('border-color', '#dc3545');
+            if ($field.next('.validation-error').length === 0) {
+                $field.after('<span class="validation-error" style="color: #dc3545; font-size: 12px;">Please enter a valid URL</span>');
+            }
+        } else {
+            $field.css('border-color', '');
+            $field.next('.validation-error').remove();
+        }
+    });
+    
+    $('#contact_email').on('blur', function() {
+        var $field = $(this);
+        var value = $field.val();
+        
+        if (value && !rslValidation.validateEmail(value)) {
+            $field.css('border-color', '#dc3545');
+            if ($field.next('.validation-error').length === 0) {
+                $field.after('<span class="validation-error" style="color: #dc3545; font-size: 12px;">Please enter a valid email address</span>');
+            }
+        } else {
+            $field.css('border-color', '');
+            $field.next('.validation-error').remove();
+        }
+    });
+});
