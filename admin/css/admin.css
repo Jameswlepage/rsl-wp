@@ -16,35 +16,40 @@
     display: block;
     width: 100%;
     max-width: none;
+    margin-top: 20px;
+}
+
+.rsl-dashboard-wrap .postbox-container.rsl-full-width {
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+/* Dashboard Rows */
+.rsl-dashboard-row {
+    display: block;
+    width: 100%;
+    margin-bottom: 20px;
     overflow: hidden;
 }
 
-.rsl-dashboard-wrap .postbox-container {
+.rsl-dashboard-row .postbox-container {
     float: left;
     margin-bottom: 20px;
     min-height: 1px;
     box-sizing: border-box;
 }
 
-.rsl-dashboard-wrap .postbox-container.rsl-full-width {
-    width: 100%;
-    float: none;
-    clear: both;
+.rsl-dashboard-row .postbox-container.rsl-half-width {
+    width: calc(50% - 10px);
+    margin-right: 20px;
+}
+
+.rsl-dashboard-row .postbox-container.rsl-half-width:last-child {
     margin-right: 0;
 }
 
-.rsl-dashboard-wrap .postbox-container.rsl-half-width {
-    width: 50%;
-    padding-right: 10px;
-}
-
-.rsl-dashboard-wrap .postbox-container.rsl-half-width:nth-of-type(even) {
-    padding-right: 0;
-    padding-left: 10px;
-}
-
-/* Clearfix for dashboard wrap */
-.rsl-dashboard-wrap::after {
+/* Clearfix for dashboard rows */
+.rsl-dashboard-row::after {
     content: "";
     display: table;
     clear: both;
@@ -351,7 +356,9 @@
     height: 32px;
     margin-right: 10px;
     vertical-align: middle;
-    width: 32px;
+    width: auto;
+    max-width: 120px;
+    object-fit: contain;
 }
 
 /* License Content URL */
@@ -378,14 +385,15 @@
 
 /* Responsive Design */
 @media screen and (max-width: 782px) {
-    .rsl-dashboard-wrap .postbox-container {
+    .rsl-dashboard-row .postbox-container {
         float: none;
         margin-right: 0;
         width: 100% !important;
     }
     
-    .rsl-dashboard-wrap .postbox-container.rsl-half-width {
+    .rsl-dashboard-row .postbox-container.rsl-half-width {
         width: 100% !important;
+        margin-right: 0;
     }
     
     .rsl-modal-content {
