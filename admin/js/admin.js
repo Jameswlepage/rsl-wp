@@ -179,8 +179,13 @@ jQuery(document).ready(function($) {
                         rslAdmin.showMessage(response.data.message, 'error');
                         $submitButton.val(originalText).prop('disabled', false);
                         
-                        // Form fields should retain their values after validation error
-                        // (AJAX errors shouldn't reset form fields)
+                        // Debug: Log current form values to help identify field clearing issue
+                        if (typeof console !== 'undefined' && console.log) {
+                            console.log('Validation error occurred. Current form values:');
+                            console.log('Amount:', $('#amount').val());
+                            console.log('Payment Type:', $('#payment_type').val());
+                            console.log('Error message:', response.data.message);
+                        }
                     }
                 },
                 error: function() {
