@@ -23,6 +23,11 @@ class RSL_Admin {
         add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
         add_action('save_post', array($this, 'save_post_meta'));
         
+        // Add help tabs to admin pages
+        add_action('load-settings_page_rsl-licensing', array($this, 'add_help_tabs_dashboard'));
+        add_action('load-rsl-licensing_page_rsl-licenses', array($this, 'add_help_tabs_licenses'));
+        add_action('load-rsl-licensing_page_rsl-add-license', array($this, 'add_help_tabs_add_license'));
+        
         // Gutenberg support
         add_action('enqueue_block_editor_assets', array($this, 'enqueue_block_editor_assets'));
         add_action('init', array($this, 'register_meta_fields'));
@@ -602,5 +607,123 @@ class RSL_Admin {
             'globalLicenseId' => $global_license_id,
             'nonce' => wp_create_nonce('rsl_nonce')
         ));
+    }
+    
+    // === Help Tab Methods ===
+    
+    public function add_help_tabs_dashboard() {
+        $screen = get_current_screen();
+        
+        $screen->add_help_tab(array(
+            'id' => 'rsl-overview',
+            'title' => __('RSL Overview', 'rsl-licensing'),
+            'content' => '<h3>' . __('Really Simple Licensing (RSL)', 'rsl-licensing') . '</h3>
+                <p>' . __('RSL enables you to define machine-readable licensing terms for your content. This helps AI companies, search engines, and other automated systems understand how they can use your content.', 'rsl-licensing') . '</p>
+                <h4>' . __('Integration Methods', 'rsl-licensing') . '</h4>
+                <ul>
+                    <li><strong>' . __('HTML Head Injection', 'rsl-licensing') . '</strong>: ' . __('Embed licenses in page headers', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('HTTP Headers', 'rsl-licensing') . '</strong>: ' . __('Add Link headers to responses', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('robots.txt Integration', 'rsl-licensing') . '</strong>: ' . __('Extend robots.txt with RSL directives', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('RSS Enhancement', 'rsl-licensing') . '</strong>: ' . __('Add licensing to feed items', 'rsl-licensing') . '</li>
+                </ul>'
+        ));
+        
+        $screen->add_help_tab(array(
+            'id' => 'rsl-quick-start',
+            'title' => __('Quick Start', 'rsl-licensing'),
+            'content' => '<h3>' . __('Getting Started', 'rsl-licensing') . '</h3>
+                <ol>
+                    <li>' . __('Create your first license using "Add New License"', 'rsl-licensing') . '</li>
+                    <li>' . __('Configure license terms and permissions', 'rsl-licensing') . '</li>
+                    <li>' . __('Set it as your global license', 'rsl-licensing') . '</li>
+                    <li>' . __('Enable integration methods (HTML, robots.txt, etc.)', 'rsl-licensing') . '</li>
+                    <li>' . __('Save settings', 'rsl-licensing') . '</li>
+                </ol>
+                <p>' . __('Your site will now broadcast machine-readable licensing terms!', 'rsl-licensing') . '</p>'
+        ));
+        
+        $screen->set_help_sidebar(
+            '<p><strong>' . __('RSL Resources', 'rsl-licensing') . '</strong></p>
+            <p><a href="https://rslstandard.org" target="_blank">' . __('RSL Standard Documentation', 'rsl-licensing') . '</a></p>
+            <p><a href="https://github.com/jameswlepage/rsl-wp" target="_blank">' . __('Plugin Documentation', 'rsl-licensing') . '</a></p>'
+        );
+    }
+    
+    public function add_help_tabs_licenses() {
+        $screen = get_current_screen();
+        
+        $screen->add_help_tab(array(
+            'id' => 'rsl-license-management',
+            'title' => __('License Management', 'rsl-licensing'),
+            'content' => '<h3>' . __('Managing Your Licenses', 'rsl-licensing') . '</h3>
+                <p>' . __('This page shows all your RSL licenses. You can create multiple licenses for different content areas or use cases.', 'rsl-licensing') . '</p>
+                <h4>' . __('License Actions', 'rsl-licensing') . '</h4>
+                <ul>
+                    <li><strong>' . __('Edit', 'rsl-licensing') . '</strong>: ' . __('Modify license terms and settings', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('Generate XML', 'rsl-licensing') . '</strong>: ' . __('Download the RSL XML for this license', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('Delete', 'rsl-licensing') . '</strong>: ' . __('Remove the license permanently', 'rsl-licensing') . '</li>
+                </ul>'
+        ));
+        
+        $screen->add_help_tab(array(
+            'id' => 'rsl-payment-types',
+            'title' => __('Payment Types', 'rsl-licensing'),
+            'content' => '<h3>' . __('Understanding Payment Types', 'rsl-licensing') . '</h3>
+                <ul>
+                    <li><strong>' . __('Free', 'rsl-licensing') . '</strong>: ' . __('No payment required', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('Purchase', 'rsl-licensing') . '</strong>: ' . __('One-time payment', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('Subscription', 'rsl-licensing') . '</strong>: ' . __('Recurring payments (requires WooCommerce Subscriptions)', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('Attribution', 'rsl-licensing') . '</strong>: ' . __('Credit/attribution required (can be free or paid)', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('Training', 'rsl-licensing') . '</strong>: ' . __('AI training-specific licensing', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('Crawl', 'rsl-licensing') . '</strong>: ' . __('Web crawling permissions', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('Inference', 'rsl-licensing') . '</strong>: ' . __('AI inference usage rights', 'rsl-licensing') . '</li>
+                </ul>
+                <p><em>' . __('Note: Set amount to $0 for free licenses of any type. Amounts > $0 require WooCommerce for payment processing.', 'rsl-licensing') . '</em></p>'
+        ));
+    }
+    
+    public function add_help_tabs_add_license() {
+        $screen = get_current_screen();
+        
+        $screen->add_help_tab(array(
+            'id' => 'rsl-license-creation',
+            'title' => __('Creating Licenses', 'rsl-licensing'),
+            'content' => '<h3>' . __('License Creation Guide', 'rsl-licensing') . '</h3>
+                <h4>' . __('Required Fields', 'rsl-licensing') . '</h4>
+                <ul>
+                    <li><strong>' . __('Name', 'rsl-licensing') . '</strong>: ' . __('Descriptive name for this license', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('Content URL', 'rsl-licensing') . '</strong>: ' . __('URL pattern this license covers (e.g., "/", "/blog/*", "*.pdf")', 'rsl-licensing') . '</li>
+                </ul>
+                <h4>' . __('URL Patterns', 'rsl-licensing') . '</h4>
+                <ul>
+                    <li><code>/</code> - ' . __('Entire site', 'rsl-licensing') . '</li>
+                    <li><code>/blog/*</code> - ' . __('Blog directory and subdirectories', 'rsl-licensing') . '</li>
+                    <li><code>*.pdf</code> - ' . __('All PDF files', 'rsl-licensing') . '</li>
+                    <li><code>/api/*$</code> - ' . __('API endpoints (end anchor)', 'rsl-licensing') . '</li>
+                </ul>'
+        ));
+        
+        $screen->add_help_tab(array(
+            'id' => 'rsl-woocommerce-setup',
+            'title' => __('WooCommerce Setup', 'rsl-licensing'),
+            'content' => '<h3>' . __('Setting Up Paid Licensing', 'rsl-licensing') . '</h3>
+                <p>' . __('For paid licensing (amount > $0), you need WooCommerce installed and configured.', 'rsl-licensing') . '</p>
+                <h4>' . __('Setup Steps', 'rsl-licensing') . '</h4>
+                <ol>
+                    <li>' . __('Install and activate WooCommerce plugin', 'rsl-licensing') . '</li>
+                    <li>' . __('Complete WooCommerce setup wizard', 'rsl-licensing') . '</li>
+                    <li>' . __('Configure payment gateways (Stripe, PayPal, etc.)', 'rsl-licensing') . '</li>
+                    <li>' . __('Create paid license with amount > $0', 'rsl-licensing') . '</li>
+                    <li>' . __('Set Server URL to built-in server option', 'rsl-licensing') . '</li>
+                </ol>
+                <p>' . __('The plugin will automatically create hidden WooCommerce products for your licenses and handle the complete payment-to-token flow.', 'rsl-licensing') . '</p>'
+        ));
+        
+        $screen->set_help_sidebar(
+            '<p><strong>' . __('Need Help?', 'rsl-licensing') . '</strong></p>
+            <p><a href="https://rslstandard.org" target="_blank">' . __('RSL Standard Docs', 'rsl-licensing') . '</a></p>
+            <p><a href="https://github.com/jameswlepage/rsl-wp/blob/main/docs/PAYMENTS.md" target="_blank">' . __('Payment Setup Guide', 'rsl-licensing') . '</a></p>
+            <p><a href="https://github.com/jameswlepage/rsl-wp/blob/main/docs/DEVELOPER.md" target="_blank">' . __('Developer Guide', 'rsl-licensing') . '</a></p>'
+        );
     }
 }
