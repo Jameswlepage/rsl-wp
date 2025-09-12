@@ -225,6 +225,18 @@ $title = $is_edit ? __('Edit RSL License', 'rsl-licensing') : __('Add RSL Licens
         
         <h2><?php _e('Payment & Compensation', 'rsl-licensing'); ?></h2>
         
+        <?php if (!$woocommerce_active) : ?>
+        <div class="notice notice-warning">
+            <p>
+                <strong><?php _e('WooCommerce Required for Paid Licensing', 'rsl-licensing'); ?></strong><br>
+                <?php _e('To use paid license types (purchase, subscription, training, etc.), please install and activate WooCommerce. Free and attribution licenses work without WooCommerce.', 'rsl-licensing'); ?>
+                <a href="<?php echo admin_url('plugin-install.php?s=woocommerce&tab=search&type=term'); ?>" class="button button-secondary" style="margin-left: 10px;">
+                    <?php _e('Install WooCommerce', 'rsl-licensing'); ?>
+                </a>
+            </p>
+        </div>
+        <?php endif; ?>
+        
         <table class="form-table">
             <tbody>
                 <tr>
@@ -233,13 +245,29 @@ $title = $is_edit ? __('Edit RSL License', 'rsl-licensing') : __('Add RSL Licens
                     </th>
                     <td>
                         <select id="payment_type" name="payment_type" class="regular-text">
-                            <?php foreach ($license_handler->get_payment_options() as $value => $label) : ?>
+                            <?php 
+                            $paid_types = array('purchase', 'subscription', 'training', 'crawl', 'inference', 'royalty');
+                            foreach ($license_handler->get_payment_options() as $value => $label) : 
+                                $is_paid = in_array($value, $paid_types);
+                                $disabled = ($is_paid && !$woocommerce_active) ? 'disabled' : '';
+                                $label_suffix = ($is_paid && !$woocommerce_active) ? ' (Requires WooCommerce)' : '';
+                            ?>
                                 <option value="<?php echo esc_attr($value); ?>" 
-                                        <?php selected($license_data['payment_type'] ?? 'free', $value); ?>>
-                                    <?php echo esc_html($label); ?>
+                                        <?php selected($license_data['payment_type'] ?? 'free', $value); ?>
+                                        <?php echo $disabled; ?>>
+                                    <?php echo esc_html($label . $label_suffix); ?>
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <?php if (!$woocommerce_active) : ?>
+                        <p class="description" style="color: #d63638;">
+                            <?php _e('Paid license types require WooCommerce for payment processing.', 'rsl-licensing'); ?>
+                        </p>
+                        <?php elseif (!$woocommerce_subscriptions_active) : ?>
+                        <p class="description" style="color: #856404;">
+                            <?php _e('Note: Subscription licensing requires WooCommerce Subscriptions extension.', 'rsl-licensing'); ?>
+                        </p>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 
