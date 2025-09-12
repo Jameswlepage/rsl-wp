@@ -11,6 +11,9 @@ jQuery(document).ready(function($) {
             // Payment type change
             $(document).on('change', '#payment_type', this.togglePaymentFields);
             
+            // Server option change
+            $(document).on('change', 'input[name="server_option"]', this.toggleServerFields);
+            
             // Form submission
             $(document).on('submit', '#rsl-license-form', this.handleFormSubmission);
             
@@ -36,18 +39,64 @@ jQuery(document).ready(function($) {
         
         initializeFields: function() {
             this.togglePaymentFields();
+            this.toggleServerFields();
             this.styleMultiselects();
         },
         
         togglePaymentFields: function() {
             var paymentType = $('#payment_type').val();
-            var paidTypes = ['purchase', 'subscription', 'training', 'crawl', 'inference', 'royalty'];
+            var typesWithAmounts = ['purchase', 'subscription', 'training', 'crawl', 'inference', 'royalty'];
             
-            if (paidTypes.indexOf(paymentType) !== -1) {
+            if (typesWithAmounts.indexOf(paymentType) !== -1) {
                 $('#payment_amount_row').show();
             } else {
                 $('#payment_amount_row').hide();
             }
+        },
+        
+        toggleServerFields: function() {
+            var serverOption = $('input[name="server_option"]:checked').val();
+            
+            if (serverOption === 'external') {
+                $('#external_server_url_field').show();
+            } else {
+                $('#external_server_url_field').hide();
+                $('#server_url').val(''); // Clear external URL when using built-in
+            }
+        },
+        
+        validateWooCommerceRequirement: function() {
+            var amount = parseFloat($('#amount').val()) || 0;
+            var paymentType = $('#payment_type').val();
+            var hasWooCommerce = typeof rsl_ajax.woocommerce_active !== 'undefined' ? rsl_ajax.woocommerce_active : false;
+            var hasPaymentCapability = typeof rsl_ajax.has_payment_capability !== 'undefined' ? rsl_ajax.has_payment_capability : false;
+            
+            // Allow any payment type with $0 amount (including attribution)
+            if (amount === 0) {
+                return { valid: true };
+            }
+            
+            // Block any amount > 0 without payment capability
+            if (amount > 0 && !hasPaymentCapability) {
+                var message = 'Payment processing is required for paid licensing (amount > $0). ';
+                
+                if (!hasWooCommerce) {
+                    if (paymentType === 'attribution') {
+                        message += 'For paid attribution licenses, please install and activate WooCommerce, then set up your preferred payment gateway (Stripe, PayPal, etc.).';
+                    } else {
+                        message += 'Please install and activate WooCommerce to enable payment processing.';
+                    }
+                } else {
+                    message += 'WooCommerce is installed but may not support this payment type.';
+                }
+                
+                return {
+                    valid: false,
+                    message: message
+                };
+            }
+            
+            return { valid: true };
         },
         
         styleMultiselects: function() {
@@ -79,17 +128,38 @@ jQuery(document).ready(function($) {
             var $submitButton = $form.find('input[type="submit"]');
             var originalText = $submitButton.val();
             
+            // Validate WooCommerce requirement before submission
+            var wooValidation = rslAdmin.validateWooCommerceRequirement();
+            if (!wooValidation.valid) {
+                rslAdmin.showMessage(wooValidation.message, 'error');
+                return;
+            }
+            
             // Update submit button
             $submitButton.val(rsl_ajax.strings.saving).prop('disabled', true);
             
             // Prepare form data
             var formData = $form.serialize();
             
-            // Handle multiselect fields
+            // Handle server option - set server_url based on radio selection
+            var serverOption = $('input[name="server_option"]:checked').val();
+            if (serverOption === 'builtin') {
+                // Remove any existing server_url parameter to prevent duplicates
+                formData = formData.replace(/&?server_url=[^&]*/g, '');
+                formData += '&server_url=' + encodeURIComponent(rsl_ajax.rest_url);
+            }
+            // External option uses the URL field value (already in formData)
+            
+            // Handle multiselect fields (convert to comma-separated values)
             $('.rsl-multiselect').each(function() {
                 var fieldName = $(this).attr('name');
                 var values = $(this).val();
                 
+                // Remove existing field from formData to prevent duplicates
+                var regex = new RegExp('&?' + encodeURIComponent(fieldName) + '=[^&]*', 'g');
+                formData = formData.replace(regex, '');
+                
+                // Add the multiselect field with proper comma-separated values
                 if (values && values.length > 0) {
                     formData += '&' + fieldName + '=' + encodeURIComponent(values.join(','));
                 } else {
@@ -99,6 +169,7 @@ jQuery(document).ready(function($) {
             
             // Add action and nonce
             formData += '&action=rsl_save_license&nonce=' + rsl_ajax.nonce;
+            
             
             $.ajax({
                 url: rsl_ajax.url,
@@ -223,10 +294,10 @@ jQuery(document).ready(function($) {
             var $message = $('#rsl-message');
             
             $message
-                .removeClass('notice-success notice-error')
-                .addClass(className)
+                .removeClass('notice-success notice-error rsl-hidden')
+                .addClass('notice ' + className)
                 .html('<p>' + message + '</p>')
-                .show();
+                .css('display', 'block');
             
             $('html, body').animate({scrollTop: 0}, 500);
         },
@@ -274,7 +345,35 @@ jQuery(document).ready(function($) {
         }
     };
     
-    // Add real-time validation
+    // Add real-time validation for payment fields
+    $('#amount, #payment_type').on('change blur', function() {
+        var validation = rslAdmin.validateWooCommerceRequirement();
+        var $amountField = $('#amount');
+        var $paymentField = $('#payment_type');
+        
+        if (!validation.valid) {
+            // Highlight both amount and payment type fields
+            $amountField.css('border-color', '#dc3545');
+            $paymentField.css('border-color', '#dc3545');
+            
+            // Show error message under amount field
+            $amountField.next('.validation-error').remove();
+            $amountField.after('<div class="validation-error" style="color: #dc3545; font-size: 12px; margin-top: 5px; padding: 8px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px;">' + validation.message + '</div>');
+            
+            // Disable submit button
+            $('input[type="submit"]').prop('disabled', true).css('opacity', '0.6');
+        } else {
+            // Clear validation errors
+            $amountField.css('border-color', '');
+            $paymentField.css('border-color', '');
+            $amountField.next('.validation-error').remove();
+            
+            // Re-enable submit button
+            $('input[type="submit"]').prop('disabled', false).css('opacity', '1');
+        }
+    });
+    
+    // Add real-time validation for URLs
     $('#content_url, #server_url, #standard_url, #custom_url, #schema_url, #contact_url, #terms_url').on('blur', function() {
         var $field = $(this);
         var value = $field.val();

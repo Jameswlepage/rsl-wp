@@ -12,6 +12,14 @@ if (!defined('ABSPATH')) {
     </h1>
     <hr class="wp-header-end">
     
+    <?php
+    // Display admin notices
+    if (function_exists('settings_errors')) {
+        settings_errors();
+    }
+    do_action('admin_notices');
+    ?>
+    
     <?php if (isset($_GET['settings-updated'])) : ?>
         <div class="notice notice-success is-dismissible">
             <p><?php _e('Settings saved successfully.', 'rsl-licensing'); ?></p>

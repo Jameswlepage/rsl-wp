@@ -15,6 +15,14 @@ if (!defined('ABSPATH')) {
     </a>
     <hr class="wp-header-end">
     
+    <?php
+    // Display admin notices
+    if (function_exists('settings_errors')) {
+        settings_errors();
+    }
+    do_action('admin_notices');
+    ?>
+    
     <div id="rsl-message" class="notice rsl-hidden"></div>
     
     <?php if (empty($licenses)) : ?>
@@ -62,7 +70,10 @@ if (!defined('ABSPATH')) {
                                 <?php echo esc_html(ucfirst(str_replace('-', ' ', $license['payment_type']))); ?>
                             </span>
                             <?php if (!empty($license['amount']) && $license['amount'] > 0) : ?>
-                                <br><small><?php echo esc_html($license['amount'] . ' ' . $license['currency']); ?></small>
+                                <br><small><?php 
+                                    $currency_symbol = !empty($license['currency']) && $license['currency'] !== 'USD' ? $license['currency'] . ' ' : '$';
+                                    echo esc_html($currency_symbol . number_format($license['amount'], 2)); 
+                                ?></small>
                             <?php endif; ?>
                         </td>
                         <td>

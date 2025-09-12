@@ -3,7 +3,7 @@
  * Plugin Name: RSL Licensing for WordPress
  * Plugin URI: https://github.com/jameswlepage/rsl-wp
  * Description: Complete Really Simple Licensing (RSL) support for WordPress sites. Define machine-readable licensing terms for your content, enabling AI companies and crawlers to properly license your digital assets.
- * Version: 0.0.1
+ * Version: 0.0.2
  * Author: James W. LePage
  * Author URI: https://j.cv
  * License: GPL v2 or later
@@ -20,7 +20,19 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
-define("RSL_PLUGIN_VERSION", "1.0.0");
+/**
+ * Debug logging helper function
+ * Only logs when WP_DEBUG and RSL_DEBUG are enabled
+ */
+if (!function_exists('rsl_log')) {
+    function rsl_log($message, $level = 'info') {
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('RSL_DEBUG') && RSL_DEBUG) {
+            error_log(sprintf('[RSL %s] %s', strtoupper($level), $message));
+        }
+    }
+}
+
+define("RSL_PLUGIN_VERSION", "0.0.2");
 define("RSL_PLUGIN_URL", plugin_dir_url(__FILE__));
 define("RSL_PLUGIN_PATH", plugin_dir_path(__FILE__));
 define("RSL_PLUGIN_BASENAME", plugin_basename(__FILE__));
@@ -42,6 +54,9 @@ class RSL_Licensing
         add_action("init", [$this, "init"]);
         register_activation_hook(__FILE__, [$this, "activate"]);
         register_deactivation_hook(__FILE__, [$this, "deactivate"]);
+        
+        // Add plugin action links
+        add_filter('plugin_action_links_' . RSL_PLUGIN_BASENAME, [$this, 'add_plugin_action_links']);
     }
 
     public function init()
@@ -62,13 +77,33 @@ class RSL_Licensing
 
     private function includes()
     {
+        // Optional composer autoload (JWT library)
+        $autoload = RSL_PLUGIN_PATH . 'vendor/autoload.php';
+        if (file_exists($autoload)) {
+            require_once $autoload;
+        }
+        
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-license.php";
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-admin.php";
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-frontend.php";
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-robots.php";
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-rss.php";
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-media.php";
+        
+        // Load OAuth client management and rate limiting
+        require_once RSL_PLUGIN_PATH . "includes/class-rsl-oauth-client.php";
+        require_once RSL_PLUGIN_PATH . "includes/class-rsl-rate-limiter.php";
+        
+        // Load modular payment system
+        require_once RSL_PLUGIN_PATH . "includes/interfaces/interface-rsl-payment-processor.php";
+        require_once RSL_PLUGIN_PATH . "includes/class-rsl-payment-registry.php";
+        require_once RSL_PLUGIN_PATH . "includes/class-rsl-session-manager.php";
+        
+        // Load server (depends on payment system)
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-server.php";
+        
+        // Load WordPress Abilities API integration
+        require_once RSL_PLUGIN_PATH . "includes/class-rsl-abilities.php";
     }
 
     private function init_hooks()
@@ -82,6 +117,11 @@ class RSL_Licensing
         new RSL_RSS();
         new RSL_Media();
         new RSL_Server();
+        
+        // Initialize WordPress Abilities API integration
+        if (function_exists('wp_register_ability')) {
+            new RSL_Abilities();
+        }
     }
 
     public function activate()
@@ -92,15 +132,15 @@ class RSL_Licensing
         }
         
         if (!$this->create_default_options()) {
-            error_log('RSL: Warning - Failed to create default options during activation');
+            rsl_log('Failed to create default options during activation', 'warning');
         }
         
         if (!$this->seed_global_license()) {
-            error_log('RSL: Warning - Failed to create default license during activation');
+            rsl_log('Failed to create default license during activation', 'warning');
         }
         
         if (!$this->create_database_indexes()) {
-            error_log('RSL: Warning - Failed to create database indexes during activation');
+            rsl_log('Failed to create database indexes during activation', 'warning');
         }
         
         flush_rewrite_rules();
@@ -109,6 +149,16 @@ class RSL_Licensing
     public function deactivate()
     {
         flush_rewrite_rules();
+    }
+    
+    public function add_plugin_action_links($links)
+    {
+        $action_links = array(
+            'dashboard' => '<a href="' . admin_url('admin.php?page=rsl-licensing') . '">' . __('Dashboard', 'rsl-licensing') . '</a>',
+            'settings' => '<a href="' . admin_url('admin.php?page=rsl-settings') . '">' . __('Settings', 'rsl-licensing') . '</a>',
+        );
+        
+        return array_merge($action_links, $links);
     }
 
     private function create_tables()
@@ -163,8 +213,71 @@ class RSL_Licensing
         if (!$table_exists) {
             error_log('RSL: Failed to create database table: ' . $table_name);
             if ($wpdb->last_error) {
-                error_log('RSL: Database error: ' . $wpdb->last_error);
+                rsl_log('Database error: ' . $wpdb->last_error, 'error');
             }
+            return false;
+        }
+        
+        // Create OAuth clients table
+        $oauth_table = $wpdb->prefix . "rsl_oauth_clients";
+        $oauth_sql = "CREATE TABLE $oauth_table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            client_id varchar(100) NOT NULL UNIQUE,
+            client_secret_hash varchar(255) NOT NULL,
+            client_name varchar(255) NOT NULL,
+            redirect_uris text,
+            grant_types varchar(255) DEFAULT 'client_credentials',
+            active tinyint(1) DEFAULT 1,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY idx_client_id (client_id)
+        ) $charset_collate;";
+        
+        $oauth_result = dbDelta($oauth_sql);
+        
+        // Verify OAuth table was created
+        $oauth_table_exists = $wpdb->get_var($wpdb->prepare(
+            "SHOW TABLES LIKE %s",
+            $oauth_table
+        ));
+        
+        if (!$oauth_table_exists) {
+            error_log('RSL: Failed to create OAuth clients table: ' . $oauth_table);
+            if ($wpdb->last_error) {
+                rsl_log('Database error: ' . $wpdb->last_error, 'error');
+            }
+            return false;
+        }
+        
+        // Create tokens revocation table for jti tracking
+        $tokens_table = $wpdb->prefix . "rsl_tokens";
+        $tokens_sql = "CREATE TABLE $tokens_table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            jti varchar(100) NOT NULL UNIQUE,
+            client_id varchar(100) NOT NULL,
+            license_id mediumint(9) NOT NULL,
+            order_id mediumint(9) NULL,
+            subscription_id mediumint(9) NULL,
+            expires_at datetime NOT NULL,
+            revoked tinyint(1) DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY idx_jti (jti),
+            KEY idx_client_license (client_id, license_id),
+            KEY idx_expires (expires_at)
+        ) $charset_collate;";
+        
+        $tokens_result = dbDelta($tokens_sql);
+        
+        // Verify tokens table was created
+        $tokens_table_exists = $wpdb->get_var($wpdb->prepare(
+            "SHOW TABLES LIKE %s",
+            $tokens_table
+        ));
+        
+        if (!$tokens_table_exists) {
+            error_log('RSL: Failed to create tokens table: ' . $tokens_table);
             return false;
         }
         
