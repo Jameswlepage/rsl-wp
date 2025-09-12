@@ -56,7 +56,7 @@ $title = $is_edit ? __('Edit RSL License', 'rsl-licensing') : __('Add RSL Licens
                         <label for="content_url"><?php _e('Content URL', 'rsl-licensing'); ?> *</label>
                     </th>
                     <td>
-                        <input type="url" id="content_url" name="content_url" class="regular-text" required
+                        <input type="text" id="content_url" name="content_url" class="regular-text" required
                                value="<?php echo esc_attr($license_data['content_url'] ?? ''); ?>"
                                placeholder="https://example.com/content/ or / for site root">
                         <p class="description">

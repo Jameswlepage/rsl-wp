@@ -151,14 +151,33 @@ class RSL_Admin {
             return;
         }
         
-        // Validate URLs
-        $content_url = esc_url_raw($_POST['content_url']);
-        if (!empty($content_url) && !filter_var($content_url, FILTER_VALIDATE_URL)) {
-            wp_send_json_error(array(
-                'message' => __('Invalid Content URL format.', 'rsl-licensing')
-            ));
+        // --- BEGIN: RSL-safe URL/path validation ---
+        $content_url_input = isset($_POST['content_url']) ? trim((string) $_POST['content_url']) : '';
+
+        // Allow either:
+        // 1) Absolute URL (http/https), OR
+        // 2) Server-relative path per RFC 9309 patterns, including * and $ (e.g., "/", "/images/*", "*.pdf", "/api/*$").
+        $looks_absolute = preg_match('#^https?://#i', $content_url_input) === 1;
+        $looks_server_relative = (strlen($content_url_input) > 0 && $content_url_input[0] === '/');
+
+        if ($looks_absolute) {
+            $content_url = esc_url_raw($content_url_input);
+            if (empty($content_url)) {
+                wp_send_json_error(['message' => __('Invalid Content URL format.', 'rsl-licensing')]);
+                return;
+            }
+        } elseif ($looks_server_relative) {
+            // Basic character allowlist per robots-style patterns; allow RFC3986 pchar + '*' and '$'
+            if (!preg_match('#^/[A-Za-z0-9._~!\'()*+,;=:@/\-%]*\*?\$?$#', $content_url_input)) {
+                wp_send_json_error(['message' => __('Invalid server-relative path/pattern.', 'rsl-licensing')]);
+                return;
+            }
+            $content_url = $content_url_input; // store as provided (e.g., "/images/*")
+        } else {
+            wp_send_json_error(['message' => __('Content URL must be an absolute URL (http/https) or a server-relative path (starting with "/").', 'rsl-licensing')]);
             return;
         }
+        // --- END: RSL-safe URL/path validation ---
         
         $server_url = esc_url_raw($_POST['server_url']);
         if (!empty($server_url) && !filter_var($server_url, FILTER_VALIDATE_URL)) {
@@ -196,7 +215,7 @@ class RSL_Admin {
         }
         
         // Validate payment type
-        $allowed_payment_types = array('free', 'purchase', 'subscription', 'training', 'crawl', 'inference', 'attribution');
+        $allowed_payment_types = array('free', 'purchase', 'subscription', 'training', 'crawl', 'inference', 'attribution', 'royalty');
         $payment_type = sanitize_text_field($_POST['payment_type']);
         if (!in_array($payment_type, $allowed_payment_types)) {
             $payment_type = 'free';

@@ -257,56 +257,71 @@ class RSL_Server {
     }
     
     private function url_matches_pattern($url, $pattern) {
-        // Implement URL pattern matching similar to robots.txt rules
-        
-        // Exact match
-        if ($url === $pattern) {
-            return true;
+        // If pattern starts with '/', match against the URL path+query; otherwise match against the full URL.
+        $haystack = $url;
+        if (strlen($pattern) > 0 && $pattern[0] === '/') {
+            $u = wp_parse_url($url);
+            $path = isset($u['path']) ? $u['path'] : '/';
+            $query = isset($u['query']) ? '?' . $u['query'] : '';
+            $haystack = $path . $query;
         }
-        
-        // Pattern matching with wildcards
-        $pattern = str_replace('*', '.*', $pattern);
-        $pattern = str_replace('$', '\$', $pattern);
-        $pattern = '/^' . str_replace('/', '\/', $pattern) . '/';
-        
-        return preg_match($pattern, $url);
+
+        // Build regex: escape everything, then re-enable '*' -> '.*' and '$' -> '$'
+        $quoted = preg_quote($pattern, '#');
+        $quoted = str_replace('\*', '.*', $quoted);
+        $quoted = str_replace('\$', '$', $quoted);
+        $regex = '#^' . $quoted . '#';
+
+        return (bool) preg_match($regex, $haystack);
     }
     
+    private function is_crawler_request() {
+        $ua = isset($_SERVER['HTTP_USER_AGENT']) ? strtolower($_SERVER['HTTP_USER_AGENT']) : '';
+        if ($ua === '') {
+            return false;
+        }
+        // Lightweight heuristic; editable via filter
+        $needles = apply_filters('rsl_crawler_ua_needles', array(
+            'bot','crawler','spider','fetch','httpclient','wget','curl',
+            'libwww','python-requests','java','apache-httpclient',
+            'gpt','ai','anthropic','scrape','indexer','bingpreview'
+        ));
+        foreach ($needles as $n) {
+            if (strpos($ua, $n) !== false) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     private function requires_license_auth() {
-        // Never require license auth for admin pages or logged-in admin users
+        // Never for admins
         if (is_admin() || current_user_can('manage_options')) {
             return false;
         }
-        
-        // Skip authentication for WordPress core URLs and API endpoints
+
+        // Skip core/asset paths
         $request_uri = $_SERVER['REQUEST_URI'];
-        $wp_core_paths = array(
-            '/wp-admin/', 
-            '/wp-login.php', 
-            '/wp-cron.php', 
-            '/xmlrpc.php',
-            '/wp-json/',
-            '/wp-content/',
-            '/wp-includes/'
-        );
+        $wp_core_paths = array('/wp-admin/','/wp-login.php','/wp-cron.php','/xmlrpc.php','/wp-json/','/wp-content/','/wp-includes/');
         foreach ($wp_core_paths as $core_path) {
             if (strpos($request_uri, $core_path) !== false) {
                 return false;
             }
         }
-        
-        // Check if current request matches a license that requires server authentication
+
+        // Only challenge probable crawlers
+        if (!$this->is_crawler_request()) {
+            return false;
+        }
+
+        // Require auth if a license with server_url matches the current request
         $current_url = home_url($request_uri);
-        
         $licenses = $this->license_handler->get_licenses(array('active' => 1));
-        
         foreach ($licenses as $license) {
-            if (!empty($license['server_url']) && 
-                $this->url_matches_pattern($current_url, $license['content_url'])) {
+            if (!empty($license['server_url']) && $this->url_matches_pattern($current_url, $license['content_url'])) {
                 return true;
             }
         }
-        
         return false;
     }
     
