@@ -132,46 +132,4 @@ if (!defined('ABSPATH')) {
         
         <?php submit_button(); ?>
     </form>
-    
-    <hr>
-    
-    <h2><?php _e('Quick Actions', 'rsl-licensing'); ?></h2>
-    
-    <p>
-        <a href="<?php echo admin_url('admin.php?page=rsl-licenses'); ?>" class="button">
-            <?php _e('View All Licenses', 'rsl-licensing'); ?>
-        </a>
-        
-        <a href="<?php echo admin_url('admin.php?page=rsl-add-license'); ?>" class="button button-primary">
-            <?php _e('Create New License', 'rsl-licensing'); ?>
-        </a>
-        
-        <a href="<?php echo admin_url('admin.php?page=rsl-licensing'); ?>" class="button">
-            <?php _e('Back to Dashboard', 'rsl-licensing'); ?>
-        </a>
-    </p>
-    
-    <h2><?php _e('RSL Information', 'rsl-licensing'); ?></h2>
-    
-    <p>
-        <?php _e('Really Simple Licensing (RSL) is a machine-readable format for defining licensing terms for digital content. It enables content owners to specify how their content can be used by AI systems, search engines, and other automated tools.', 'rsl-licensing'); ?>
-    </p>
-    
-    <p>
-        <strong><?php _e('Key Features:', 'rsl-licensing'); ?></strong>
-    </p>
-    
-    <ul>
-        <li><?php _e('Define permitted and prohibited uses', 'rsl-licensing'); ?></li>
-        <li><?php _e('Set payment and compensation terms', 'rsl-licensing'); ?></li>
-        <li><?php _e('Specify user type restrictions', 'rsl-licensing'); ?></li>
-        <li><?php _e('Geographical usage limitations', 'rsl-licensing'); ?></li>
-        <li><?php _e('Integration with license servers', 'rsl-licensing'); ?></li>
-    </ul>
-    
-    <p>
-        <a href="https://rslstandard.org" target="_blank" class="button">
-            <?php _e('Learn More About RSL', 'rsl-licensing'); ?>
-        </a>
-    </p>
 </div>

@@ -27,7 +27,7 @@ class RSL_Admin {
     }
     
     public function add_admin_menu() {
-        // Add main menu page with RSL icon
+        // Add main menu page with RSL icon - this will be the dashboard
         add_menu_page(
             __('RSL Licensing', 'rsl-licensing'),
             __('RSL Licensing', 'rsl-licensing'),
@@ -38,7 +38,16 @@ class RSL_Admin {
             30 // Position after Settings
         );
         
-        // Add submenu pages under RSL Licensing
+        // Add submenu pages under RSL Licensing (first submenu will be the same as parent)
+        add_submenu_page(
+            'rsl-licensing',
+            __('Dashboard', 'rsl-licensing'),
+            __('Dashboard', 'rsl-licensing'),
+            'manage_options',
+            'rsl-licensing', // Same as parent to avoid duplication
+            array($this, 'admin_page')
+        );
+        
         add_submenu_page(
             'rsl-licensing',
             __('All Licenses', 'rsl-licensing'),
