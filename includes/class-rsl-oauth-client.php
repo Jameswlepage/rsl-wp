@@ -299,7 +299,7 @@ class RSL_OAuth_Client {
         ));
         
         if ($deleted > 0) {
-            error_log(sprintf('RSL OAuth: Cleaned up %d expired tokens', $deleted));
+            rsl_log(sprintf('RSL OAuth: Cleaned up %d expired tokens', $deleted));
         }
     }
     
