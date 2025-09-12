@@ -1,10 +1,10 @@
 # RSL Licensing for WordPress
 
-**Version:** 0.01 Alpha (Early Development)
+**Version:** 0.0.2 Alpha (Early Development)
 
 Complete Really Simple Licensing (RSL) support for WordPress sites. Define machine-readable licensing terms for your content, enabling AI companies, crawlers, and other automated systems to properly license your digital assets.
 
-> **Alpha Notice:** This is an early alpha release (v0.01) of the RSL Licensing plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
+> **Alpha Notice:** This is an early alpha release (v0.0.2) of the RSL Licensing plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
 
 ## Features
 
