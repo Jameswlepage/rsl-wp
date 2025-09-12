@@ -24,9 +24,10 @@ class RSL_Admin {
         add_action('save_post', array($this, 'save_post_meta'));
         
         // Add help tabs to admin pages
-        add_action('load-settings_page_rsl-licensing', array($this, 'add_help_tabs_dashboard'));
+        add_action('load-toplevel_page_rsl-licensing', array($this, 'add_help_tabs_dashboard'));
         add_action('load-rsl-licensing_page_rsl-licenses', array($this, 'add_help_tabs_licenses'));
         add_action('load-rsl-licensing_page_rsl-add-license', array($this, 'add_help_tabs_add_license'));
+        add_action('load-rsl-licensing_page_rsl-settings', array($this, 'add_help_tabs_dashboard')); // Settings uses same help as dashboard
         
         // Gutenberg support
         add_action('enqueue_block_editor_assets', array($this, 'enqueue_block_editor_assets'));
