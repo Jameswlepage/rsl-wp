@@ -589,7 +589,7 @@ define('WP_DEBUG_LOG', true);
 ```php
 // Add to functions.php for debugging
 function rsl_debug_license_matching($url = null) {
-    if (!$url) $url = $_SERVER['REQUEST_URI'];
+    if (!$url) $url = esc_url_raw($_SERVER['REQUEST_URI']);
     
     $licenses = RSL_License::get_all();
     foreach ($licenses as $license) {

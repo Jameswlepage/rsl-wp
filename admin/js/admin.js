@@ -124,7 +124,7 @@ jQuery(document).ready(function($) {
             // Handle server option - set server_url based on radio selection
             var serverOption = $('input[name="server_option"]:checked').val();
             if (serverOption === 'builtin') {
-                formData += '&server_url=' + encodeURIComponent('/wp-json/rsl-olp/v1');
+                formData += '&server_url=' + encodeURIComponent(rsl_ajax.rest_url);
             }
             // External option uses the URL field value (already in formData)
             
