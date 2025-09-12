@@ -70,7 +70,14 @@ if (!defined('ABSPATH')) {
                                 <?php echo esc_html(ucfirst(str_replace('-', ' ', $license['payment_type']))); ?>
                             </span>
                             <?php if (!empty($license['amount']) && $license['amount'] > 0) : ?>
-                                <br><small>$<?php echo esc_html(number_format($license['amount'], 2) . ' ' . $license['currency']); ?></small>
+                                <?php 
+                                $currency = $license['currency'];
+                                // Fix corrupted currency data (fallback to USD)
+                                if (empty($currency) || !preg_match('/^[A-Z]{3}$/', $currency)) {
+                                    $currency = 'USD';
+                                }
+                                ?>
+                                <br><small>$<?php echo esc_html(number_format($license['amount'], 2) . ' ' . $currency); ?></small>
                             <?php endif; ?>
                         </td>
                         <td>
