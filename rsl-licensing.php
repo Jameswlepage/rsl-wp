@@ -3,7 +3,7 @@
  * Plugin Name: RSL Licensing for WordPress
  * Plugin URI: https://github.com/jameswlepage/rsl-wp
  * Description: Complete Really Simple Licensing (RSL) support for WordPress sites. Define machine-readable licensing terms for your content, enabling AI companies and crawlers to properly license your digital assets.
- * Version: 1.0.0
+ * Version: 0.0.2
  * Author: James W. LePage
  * Author URI: https://j.cv
  * License: GPL v2 or later
@@ -32,7 +32,7 @@ if (!function_exists('rsl_log')) {
     }
 }
 
-define("RSL_PLUGIN_VERSION", "1.0.0");
+define("RSL_PLUGIN_VERSION", "0.0.2");
 define("RSL_PLUGIN_URL", plugin_dir_url(__FILE__));
 define("RSL_PLUGIN_PATH", plugin_dir_path(__FILE__));
 define("RSL_PLUGIN_BASENAME", plugin_basename(__FILE__));
@@ -213,7 +213,7 @@ class RSL_Licensing
         if (!$table_exists) {
             error_log('RSL: Failed to create database table: ' . $table_name);
             if ($wpdb->last_error) {
-                error_log('RSL: Database error: ' . $wpdb->last_error);
+                rsl_log('Database error: ' . $wpdb->last_error, 'error');
             }
             return false;
         }
@@ -245,7 +245,7 @@ class RSL_Licensing
         if (!$oauth_table_exists) {
             error_log('RSL: Failed to create OAuth clients table: ' . $oauth_table);
             if ($wpdb->last_error) {
-                error_log('RSL: Database error: ' . $wpdb->last_error);
+                rsl_log('Database error: ' . $wpdb->last_error, 'error');
             }
             return false;
         }
