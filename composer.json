@@ -5,6 +5,12 @@
   "require": {
     "firebase/php-jwt": "^6.9"
   },
+  "require-dev": {
+    "phpunit/phpunit": "^9.6",
+    "yoast/phpunit-polyfills": "^1.0",
+    "brain/monkey": "^2.6",
+    "mockery/mockery": "^1.5"
+  },
   "config": {
     "optimize-autoloader": true,
     "platform": { 
@@ -15,5 +21,16 @@
     "psr-4": {
       "RSL\\": "includes/"
     }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "RSL\\Tests\\": "tests/"
+    }
+  },
+  "scripts": {
+    "test": "phpunit",
+    "test:coverage": "phpunit --coverage-html coverage",
+    "test:unit": "phpunit --testsuite=unit",
+    "test:integration": "phpunit --testsuite=integration"
   }
 }

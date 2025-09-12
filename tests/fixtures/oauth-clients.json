@@ -1,0 +1,26 @@
+{
+  "test_client": {
+    "client_name": "Test Client",
+    "client_id": "rsl_test123456789",
+    "active": true,
+    "grant_types": "client_credentials"
+  },
+  "ai_company_client": {
+    "client_name": "AI Company Bot",
+    "client_id": "rsl_aicompany456",
+    "active": true,
+    "grant_types": "client_credentials"
+  },
+  "inactive_client": {
+    "client_name": "Inactive Client",
+    "client_id": "rsl_inactive789",
+    "active": false,
+    "grant_types": "client_credentials"
+  },
+  "crawler_client": {
+    "client_name": "Web Crawler",
+    "client_id": "rsl_crawler101112",
+    "active": true,
+    "grant_types": "client_credentials"
+  }
+}
