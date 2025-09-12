@@ -312,6 +312,7 @@ class RSL_Admin {
             'content_url' => $content_url,
             'server_url' => $server_url,
             'encrypted' => isset($_POST['encrypted']) ? 1 : 0,
+            'lastmod' => current_time('mysql'),
             'permits_usage' => sanitize_text_field($_POST['permits_usage']),
             'permits_user' => sanitize_text_field($_POST['permits_user']),
             'permits_geo' => sanitize_text_field($_POST['permits_geo']),
