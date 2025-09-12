@@ -137,7 +137,7 @@ if (!defined('ABSPATH')) {
                                     </td>
                                 </tr>
                                 <tr>
-                                    <td><?php _e('WooCommerce Integration', 'rsl-licensing'); ?></td>
+                                    <td><?php _e('WooCommerce', 'rsl-licensing'); ?></td>
                                     <td>
                                         <?php if (class_exists('WooCommerce')) : ?>
                                             <span class="rsl-enabled">✓ <?php _e('Active', 'rsl-licensing'); ?></span>
