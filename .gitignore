@@ -1,0 +1,34 @@
+# Composer
+composer.phar
+/vendor/*
+!/vendor/autoload.php
+!/vendor/composer/
+!/vendor/firebase/
+
+# Development
+node_modules/
+*.log
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# WordPress
+wp-config.php
+.htaccess
+
+# Plugin Development
+*.zip
+*.tar.gz
+/build/
+/dist/
+
+# OS Generated
+.DS_Store?
+ehthumbs.db
+Icon?
+Thumbs.db

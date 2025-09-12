@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: RSL Licensing 1.0.0\n"
 "Report-Msgid-Bugs-To: james@lepage.com\n"
-"POT-Creation-Date: 2025-09-11 21:31-0400\n"
+"POT-Creation-Date: 2025-09-11 23:32-0400\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -23,6 +23,7 @@ msgid "RSL Licensing"
 msgstr ""
 
 #: includes/class-rsl-admin.php:44 includes/class-rsl-admin.php:45
+#: rsl-licensing.php:126
 msgid "Dashboard"
 msgstr ""
 
@@ -36,7 +37,7 @@ msgid "Add New License"
 msgstr ""
 
 #: includes/class-rsl-admin.php:71 includes/class-rsl-admin.php:72
-#: admin/templates/admin-dashboard.php:70
+#: admin/templates/admin-dashboard.php:70 rsl-licensing.php:127
 msgid "Settings"
 msgstr ""
 
@@ -829,16 +830,16 @@ msgstr ""
 msgid "Download XML"
 msgstr ""
 
-#: rsl-licensing.php:91
+#: rsl-licensing.php:100
 msgid ""
 "RSL Licensing: Failed to create required database tables. Please check "
 "database permissions."
 msgstr ""
 
-#: rsl-licensing.php:219
+#: rsl-licensing.php:238
 msgid "Default Site License"
 msgstr ""
 
-#: rsl-licensing.php:220
+#: rsl-licensing.php:239
 msgid "Default licensing terms for this WordPress site"
 msgstr ""
