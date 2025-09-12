@@ -77,13 +77,31 @@ class RSL_Admin {
     }
     
     public function register_settings() {
-        register_setting('rsl_settings', 'rsl_global_license_id');
-        register_setting('rsl_settings', 'rsl_enable_html_injection');
-        register_setting('rsl_settings', 'rsl_enable_http_headers');
-        register_setting('rsl_settings', 'rsl_enable_robots_txt');
-        register_setting('rsl_settings', 'rsl_enable_rss_feed');
-        register_setting('rsl_settings', 'rsl_enable_media_metadata');
-        register_setting('rsl_settings', 'rsl_default_namespace');
+        register_setting('rsl_settings', 'rsl_global_license_id', array(
+            'sanitize_callback' => 'absint'
+        ));
+        register_setting('rsl_settings', 'rsl_enable_html_injection', array(
+            'sanitize_callback' => array($this, 'sanitize_checkbox')
+        ));
+        register_setting('rsl_settings', 'rsl_enable_http_headers', array(
+            'sanitize_callback' => array($this, 'sanitize_checkbox')
+        ));
+        register_setting('rsl_settings', 'rsl_enable_robots_txt', array(
+            'sanitize_callback' => array($this, 'sanitize_checkbox')
+        ));
+        register_setting('rsl_settings', 'rsl_enable_rss_feed', array(
+            'sanitize_callback' => array($this, 'sanitize_checkbox')
+        ));
+        register_setting('rsl_settings', 'rsl_enable_media_metadata', array(
+            'sanitize_callback' => array($this, 'sanitize_checkbox')
+        ));
+        register_setting('rsl_settings', 'rsl_default_namespace', array(
+            'sanitize_callback' => 'esc_url_raw'
+        ));
+    }
+    
+    public function sanitize_checkbox($value) {
+        return intval($value) ? 1 : 0;
     }
     
     public function enqueue_admin_scripts($hook) {
@@ -94,7 +112,19 @@ class RSL_Admin {
             
             wp_localize_script('rsl-admin', 'rsl_ajax', array(
                 'url' => admin_url('admin-ajax.php'),
-                'nonce' => wp_create_nonce('rsl_nonce')
+                'nonce' => wp_create_nonce('rsl_nonce'),
+                'redirect_url' => admin_url('admin.php?page=rsl-licenses'),
+                'strings' => array(
+                    'saving' => __('Saving...', 'rsl-licensing'),
+                    'error_occurred' => __('An error occurred while saving the license.', 'rsl-licensing'),
+                    'error_generating_xml' => __('Error generating XML', 'rsl-licensing'),
+                    'delete_confirm' => __('Are you sure you want to delete the license "%s"? This action cannot be undone.', 'rsl-licensing'),
+                    'error_deleting' => __('Error deleting license', 'rsl-licensing'),
+                    'xml_copied' => __('XML copied to clipboard!', 'rsl-licensing'),
+                    'copy_failed' => __('Failed to copy to clipboard. Please select and copy manually.', 'rsl-licensing'),
+                    'validate_url' => __('Please enter a valid URL', 'rsl-licensing'),
+                    'validate_email' => __('Please enter a valid email address', 'rsl-licensing')
+                )
             ));
         }
     }

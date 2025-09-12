@@ -80,7 +80,7 @@ jQuery(document).ready(function($) {
             var originalText = $submitButton.val();
             
             // Update submit button
-            $submitButton.val('Saving...').prop('disabled', true);
+            $submitButton.val(rsl_ajax.strings.saving).prop('disabled', true);
             
             // Prepare form data
             var formData = $form.serialize();
@@ -110,7 +110,7 @@ jQuery(document).ready(function($) {
                         
                         // Redirect after short delay
                         setTimeout(function() {
-                            window.location.href = window.location.href.replace(/[?&]edit=\d+/, '').replace('rsl-add-license', 'rsl-licenses');
+                            window.location.href = rsl_ajax.redirect_url;
                         }, 1500);
                     } else {
                         rslAdmin.showMessage(response.data.message, 'error');
@@ -118,7 +118,7 @@ jQuery(document).ready(function($) {
                     }
                 },
                 error: function() {
-                    rslAdmin.showMessage('An error occurred while saving the license.', 'error');
+                    rslAdmin.showMessage(rsl_ajax.strings.error_occurred, 'error');
                     $submitButton.val(originalText).prop('disabled', false);
                 }
             });
@@ -144,7 +144,7 @@ jQuery(document).ready(function($) {
                     }
                 },
                 error: function() {
-                    alert('Error generating XML');
+                    alert(rsl_ajax.strings.error_generating_xml);
                 }
             });
         },
@@ -153,7 +153,7 @@ jQuery(document).ready(function($) {
             var licenseId = $(this).data('license-id');
             var licenseName = $(this).data('license-name');
             
-            if (!confirm('Are you sure you want to delete the license "' + licenseName + '"? This action cannot be undone.')) {
+            if (!confirm(rsl_ajax.strings.delete_confirm.replace('%s', licenseName))) {
                 return;
             }
             
@@ -173,7 +173,7 @@ jQuery(document).ready(function($) {
                     }
                 },
                 error: function() {
-                    alert('Error deleting license');
+                    alert(rsl_ajax.strings.error_deleting);
                 }
             });
         },
@@ -196,10 +196,10 @@ jQuery(document).ready(function($) {
                 
                 try {
                     document.execCommand('copy');
-                    rslAdmin.showTempMessage('XML copied to clipboard!');
+                    rslAdmin.showTempMessage(rsl_ajax.strings.xml_copied);
                 } catch (err) {
                     console.error('Failed to copy: ', err);
-                    alert('Failed to copy to clipboard. Please select and copy manually.');
+                    alert(rsl_ajax.strings.copy_failed);
                 }
             }
         },
@@ -282,7 +282,7 @@ jQuery(document).ready(function($) {
         if (value && !rslValidation.validateURL(value)) {
             $field.css('border-color', '#dc3545');
             if ($field.next('.validation-error').length === 0) {
-                $field.after('<span class="validation-error" style="color: #dc3545; font-size: 12px;">Please enter a valid URL</span>');
+                $field.after('<span class="validation-error" style="color: #dc3545; font-size: 12px;">' + rsl_ajax.strings.validate_url + '</span>');
             }
         } else {
             $field.css('border-color', '');
@@ -297,7 +297,7 @@ jQuery(document).ready(function($) {
         if (value && !rslValidation.validateEmail(value)) {
             $field.css('border-color', '#dc3545');
             if ($field.next('.validation-error').length === 0) {
-                $field.after('<span class="validation-error" style="color: #dc3545; font-size: 12px;">Please enter a valid email address</span>');
+                $field.after('<span class="validation-error" style="color: #dc3545; font-size: 12px;">' + rsl_ajax.strings.validate_email + '</span>');
             }
         } else {
             $field.css('border-color', '');
