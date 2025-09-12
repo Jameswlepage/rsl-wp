@@ -761,29 +761,7 @@ This plugin is licensed under GPL v2 or later, allowing you to freely use, modif
 
 ## Changelog
 
-### 0.0.2 Alpha
-- OAuth 2.0 client credentials authentication system
-- JWT token system with automatic revocation on refunds/cancellations
-- Rate limiting protection for API endpoints
-- WooCommerce integration with automatic product creation
-- Session-based payment flows for complex licensing scenarios
-- Comprehensive error handling with standard OAuth 2.0 responses
-- Security improvements and AI review feedback addressed
-- Enhanced documentation and help system
-
-### 0.0.1 Alpha
-- Initial alpha release
-- Full RSL 1.0 specification support
-- WordPress admin interface
-- Multiple integration methods
-- Media file support
-- **OAuth 2.0 client credential authentication** for secure API access
-- **JWT token system** with automatic revocation on refunds/cancellations
-- **Rate limiting protection** for API endpoints (30/min tokens, 100/min introspection, 20/min sessions)
-- **WooCommerce integration** with automatic product creation
-- **Session-based payment flows** for complex licensing scenarios
-- **Comprehensive error handling** with standard OAuth 2.0 responses
-- License server compatibility with RSL Open Licensing Protocol
+See [CHANGELOG.md](docs/CHANGELOG.md) for detailed version history.
 
 ---
 

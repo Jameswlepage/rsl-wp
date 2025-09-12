@@ -5,7 +5,51 @@ All notable changes to the RSL Licensing for WordPress plugin will be documented
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [1.0.0] - 2024-09-11
+## [0.0.2] - 2024-09-12
+
+### Added
+- **OAuth 2.0 Authentication System**
+  - Client credentials flow for secure API access
+  - JWT token generation and validation with Firebase library support
+  - Automatic token revocation on refunds/cancellations
+  - Rate limiting protection (30/min tokens, 100/min introspection, 20/min sessions)
+
+- **Enhanced License Server**
+  - RSL Open Licensing Protocol (OLP) endpoints
+  - Session-based payment flows for complex licensing scenarios
+  - Comprehensive error handling with standard OAuth 2.0 responses
+  - Token introspection with revocation status checking
+
+- **WooCommerce Integration**
+  - Automatic product creation for paid licenses
+  - Support for all RSL payment types through WooCommerce gateways
+  - Order-based token generation and validation
+  - Subscription support with WooCommerce Subscriptions
+
+- **Security Improvements**
+  - Enhanced REQUEST_URI sanitization using proper URL parsing
+  - CORS origin validation instead of wildcard access
+  - Consistent debug logging with rsl_log() function
+  - Input validation and error handling improvements
+
+- **Admin Enhancements**
+  - WordPress help tabs across all admin pages
+  - Improved form data handling to prevent duplicates
+  - Dynamic currency symbol display
+  - Enhanced error messaging and validation
+
+### Changed
+- Improved API error responses to follow OAuth 2.0 standards
+- Enhanced token validation with proper expiration and audience checks
+- Better rate limiting with informative HTTP headers
+
+### Fixed
+- Currency field corruption in admin forms
+- Double URL encoding issues in frontend
+- Form data duplication in admin interface
+- Various security vulnerabilities identified by AI review
+
+## [0.0.1] - 2024-09-11
 
 ### Added
 - **Core RSL Implementation**
