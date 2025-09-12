@@ -20,6 +20,10 @@ class RSL_Admin {
         
         add_action('add_meta_boxes', array($this, 'add_meta_boxes'));
         add_action('save_post', array($this, 'save_post_meta'));
+        
+        // Gutenberg support
+        add_action('enqueue_block_editor_assets', array($this, 'enqueue_block_editor_assets'));
+        add_action('init', array($this, 'register_meta_fields'));
     }
     
     public function add_admin_menu() {
@@ -301,45 +305,76 @@ class RSL_Admin {
         $licenses = $this->license_handler->get_licenses();
         $selected_license = get_post_meta($post->ID, '_rsl_license_id', true);
         $override_content_url = get_post_meta($post->ID, '_rsl_override_content_url', true);
+        $global_license_id = get_option('rsl_global_license_id', 0);
         
-        echo '<p><label for="rsl_license_select">' . __('Select License:', 'rsl-licensing') . '</label></p>';
+        // Show global license info if configured
+        if ($global_license_id > 0 && empty($selected_license)) {
+            $global_license = $this->license_handler->get_license($global_license_id);
+            if ($global_license) {
+                echo '<div style="background: #f0f6fc; border: 1px solid #c3c4c7; padding: 8px; margin-bottom: 12px; border-radius: 4px;">';
+                echo '<strong>' . __('Global License Active:', 'rsl-licensing') . '</strong><br>';
+                echo '<small>' . esc_html($global_license['name']) . ' (' . esc_html($global_license['payment_type']) . ')</small>';
+                echo '</div>';
+            }
+        }
+        
+        echo '<p><label for="rsl_license_select">' . __('License Override:', 'rsl-licensing') . '</label></p>';
         echo '<select id="rsl_license_select" name="rsl_license_id" style="width: 100%;">';
         echo '<option value="">' . __('Use Global License', 'rsl-licensing') . '</option>';
         
         foreach ($licenses as $license) {
             $selected = selected($selected_license, $license['id'], false);
             echo '<option value="' . esc_attr($license['id']) . '" ' . $selected . '>';
-            echo esc_html($license['name']);
+            echo esc_html($license['name']) . ' (' . esc_html($license['payment_type']) . ')';
             echo '</option>';
         }
         
         echo '</select>';
+        echo '<p><small>' . __('Select a specific license to override the global license for this content.', 'rsl-licensing') . '</small></p>';
         
         echo '<p style="margin-top: 15px;"><label for="rsl_override_url">';
         echo __('Override Content URL:', 'rsl-licensing');
         echo '</label></p>';
-        echo '<input type="text" id="rsl_override_url" name="rsl_override_content_url" ';
+        echo '<input type="url" id="rsl_override_url" name="rsl_override_content_url" ';
         echo 'value="' . esc_attr($override_content_url) . '" style="width: 100%;" ';
         echo 'placeholder="' . __('Leave empty to use post URL', 'rsl-licensing') . '">';
         
-        echo '<p><small>' . __('Override the content URL for this specific post/page.', 'rsl-licensing') . '</small></p>';
+        echo '<p><small>' . __('Override the content URL for this specific post/page. Useful for syndicated content.', 'rsl-licensing') . '</small></p>';
     }
     
     public function save_post_meta($post_id) {
-        if (!isset($_POST['rsl_meta_nonce']) || !wp_verify_nonce($_POST['rsl_meta_nonce'], 'rsl_meta_box')) {
-            return;
-        }
-        
+        // Skip if this is an autosave
         if (defined('DOING_AUTOSAVE') && DOING_AUTOSAVE) {
             return;
         }
         
+        // Check user permissions
         if (!current_user_can('edit_post', $post_id)) {
             return;
         }
         
+        // Check if this is a REST API request (Gutenberg saves via REST)
+        if (defined('REST_REQUEST') && REST_REQUEST) {
+            // For Gutenberg, meta is saved automatically via REST API
+            // We just need to validate the data
+            $this->validate_post_meta($post_id);
+            return;
+        }
+        
+        // Classic editor nonce verification
+        if (!isset($_POST['rsl_meta_nonce']) || !wp_verify_nonce($_POST['rsl_meta_nonce'], 'rsl_meta_box')) {
+            return;
+        }
+        
+        // Process classic editor form data
         $license_id = isset($_POST['rsl_license_id']) ? intval($_POST['rsl_license_id']) : 0;
         $override_url = isset($_POST['rsl_override_content_url']) ? esc_url_raw($_POST['rsl_override_content_url']) : '';
+        
+        // Validate override URL if provided
+        if (!empty($override_url) && !filter_var($override_url, FILTER_VALIDATE_URL)) {
+            // Invalid URL, don't save it
+            $override_url = '';
+        }
         
         if ($license_id > 0) {
             update_post_meta($post_id, '_rsl_license_id', $license_id);
@@ -352,10 +387,85 @@ class RSL_Admin {
         } else {
             delete_post_meta($post_id, '_rsl_override_content_url');
         }
+        
+        $this->validate_post_meta($post_id);
+    }
+    
+    private function validate_post_meta($post_id) {
+        // Validate license ID exists if set
+        $license_id = get_post_meta($post_id, '_rsl_license_id', true);
+        if ($license_id > 0) {
+            $license = $this->license_handler->get_license($license_id);
+            if (!$license || !$license['active']) {
+                // Invalid license, remove it
+                delete_post_meta($post_id, '_rsl_license_id');
+                error_log('RSL: Removed invalid license ID ' . $license_id . ' from post ' . $post_id);
+            }
+        }
+        
+        // Validate override URL format
+        $override_url = get_post_meta($post_id, '_rsl_override_content_url', true);
+        if (!empty($override_url) && !filter_var($override_url, FILTER_VALIDATE_URL)) {
+            delete_post_meta($post_id, '_rsl_override_content_url');
+            error_log('RSL: Removed invalid override URL from post ' . $post_id);
+        }
     }
     
     private function get_menu_icon() {
         // Return path to PNG icon for WordPress admin menu
         return RSL_PLUGIN_URL . 'assets/icon-128x128.png';
+    }
+    
+    public function register_meta_fields() {
+        $post_types = array('post', 'page');
+        $post_types = apply_filters('rsl_supported_post_types', $post_types);
+        
+        foreach ($post_types as $post_type) {
+            register_post_meta($post_type, '_rsl_license_id', array(
+                'type' => 'integer',
+                'description' => 'RSL License ID for this post',
+                'single' => true,
+                'show_in_rest' => true,
+                'auth_callback' => function() {
+                    return current_user_can('edit_posts');
+                }
+            ));
+            
+            register_post_meta($post_type, '_rsl_override_content_url', array(
+                'type' => 'string',
+                'description' => 'Override content URL for RSL license',
+                'single' => true,
+                'show_in_rest' => true,
+                'auth_callback' => function() {
+                    return current_user_can('edit_posts');
+                }
+            ));
+        }
+    }
+    
+    public function enqueue_block_editor_assets() {
+        $screen = get_current_screen();
+        
+        if (!$screen || !$screen->is_block_editor()) {
+            return;
+        }
+        
+        wp_enqueue_script(
+            'rsl-gutenberg',
+            RSL_PLUGIN_URL . 'admin/js/gutenberg.js',
+            array('wp-plugins', 'wp-edit-post', 'wp-element', 'wp-components', 'wp-data'),
+            RSL_PLUGIN_VERSION,
+            true
+        );
+        
+        // Pass license data to JavaScript
+        $licenses = $this->license_handler->get_licenses();
+        $global_license_id = get_option('rsl_global_license_id', 0);
+        
+        wp_localize_script('rsl-gutenberg', 'rslGutenberg', array(
+            'licenses' => $licenses,
+            'globalLicenseId' => $global_license_id,
+            'nonce' => wp_create_nonce('rsl_nonce')
+        ));
     }
 }
