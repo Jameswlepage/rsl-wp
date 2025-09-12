@@ -130,11 +130,70 @@ class RSL_Admin {
             wp_die(__('Permission denied', 'rsl-licensing'));
         }
         
+        // Validate required fields
+        if (empty($_POST['name']) || empty($_POST['content_url'])) {
+            wp_send_json_error(array(
+                'message' => __('Name and Content URL are required fields.', 'rsl-licensing')
+            ));
+            return;
+        }
+        
+        // Validate URLs
+        $content_url = esc_url_raw($_POST['content_url']);
+        if (!empty($content_url) && !filter_var($content_url, FILTER_VALIDATE_URL)) {
+            wp_send_json_error(array(
+                'message' => __('Invalid Content URL format.', 'rsl-licensing')
+            ));
+            return;
+        }
+        
+        $server_url = esc_url_raw($_POST['server_url']);
+        if (!empty($server_url) && !filter_var($server_url, FILTER_VALIDATE_URL)) {
+            wp_send_json_error(array(
+                'message' => __('Invalid Server URL format.', 'rsl-licensing')
+            ));
+            return;
+        }
+        
+        // Validate amount
+        $amount = floatval($_POST['amount']);
+        if ($amount < 0 || $amount > 999999.99) {
+            wp_send_json_error(array(
+                'message' => __('Amount must be between 0 and 999,999.99.', 'rsl-licensing')
+            ));
+            return;
+        }
+        
+        // Validate currency code
+        $currency = strtoupper(sanitize_text_field($_POST['currency']));
+        if (!empty($currency) && !preg_match('/^[A-Z]{3}$/', $currency)) {
+            wp_send_json_error(array(
+                'message' => __('Currency must be a valid 3-letter ISO code (e.g., USD, EUR).', 'rsl-licensing')
+            ));
+            return;
+        }
+        
+        // Validate email
+        $contact_email = sanitize_email($_POST['contact_email']);
+        if (!empty($contact_email) && !is_email($contact_email)) {
+            wp_send_json_error(array(
+                'message' => __('Invalid email address format.', 'rsl-licensing')
+            ));
+            return;
+        }
+        
+        // Validate payment type
+        $allowed_payment_types = array('free', 'purchase', 'subscription', 'training', 'crawl', 'inference', 'attribution');
+        $payment_type = sanitize_text_field($_POST['payment_type']);
+        if (!in_array($payment_type, $allowed_payment_types)) {
+            $payment_type = 'free';
+        }
+        
         $license_data = array(
             'name' => sanitize_text_field($_POST['name']),
             'description' => sanitize_textarea_field($_POST['description']),
-            'content_url' => esc_url_raw($_POST['content_url']),
-            'server_url' => esc_url_raw($_POST['server_url']),
+            'content_url' => $content_url,
+            'server_url' => $server_url,
             'encrypted' => isset($_POST['encrypted']) ? 1 : 0,
             'permits_usage' => sanitize_text_field($_POST['permits_usage']),
             'permits_user' => sanitize_text_field($_POST['permits_user']),
@@ -142,17 +201,17 @@ class RSL_Admin {
             'prohibits_usage' => sanitize_text_field($_POST['prohibits_usage']),
             'prohibits_user' => sanitize_text_field($_POST['prohibits_user']),
             'prohibits_geo' => sanitize_text_field($_POST['prohibits_geo']),
-            'payment_type' => sanitize_text_field($_POST['payment_type']),
+            'payment_type' => $payment_type,
             'standard_url' => esc_url_raw($_POST['standard_url']),
             'custom_url' => esc_url_raw($_POST['custom_url']),
-            'amount' => floatval($_POST['amount']),
-            'currency' => sanitize_text_field($_POST['currency']),
+            'amount' => $amount,
+            'currency' => $currency,
             'warranty' => sanitize_text_field($_POST['warranty']),
             'disclaimer' => sanitize_text_field($_POST['disclaimer']),
             'schema_url' => esc_url_raw($_POST['schema_url']),
             'copyright_holder' => sanitize_text_field($_POST['copyright_holder']),
             'copyright_type' => sanitize_text_field($_POST['copyright_type']),
-            'contact_email' => sanitize_email($_POST['contact_email']),
+            'contact_email' => $contact_email,
             'contact_url' => esc_url_raw($_POST['contact_url']),
             'terms_url' => esc_url_raw($_POST['terms_url']),
             'active' => isset($_POST['active']) ? 1 : 0

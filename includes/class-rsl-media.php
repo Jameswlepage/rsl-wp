@@ -104,9 +104,9 @@ class RSL_Media {
         update_post_meta($attachment_id, '_rsl_embedded', 1);
         update_post_meta($attachment_id, '_rsl_xml_data', $rsl_xml);
         
-        // Create companion RSL file
+        // Create companion RSL file with security validation
         $rsl_file_path = str_replace('.pdf', '.rsl.xml', $file_path);
-        file_put_contents($rsl_file_path, $rsl_xml);
+        $this->safe_write_rsl_file($rsl_file_path, $rsl_xml);
     }
     
     private function embed_rsl_in_epub($attachment_id, $file_path) {
@@ -126,7 +126,7 @@ class RSL_Media {
         update_post_meta($attachment_id, '_rsl_xml_data', $rsl_xml);
         
         $rsl_file_path = str_replace('.epub', '.rsl.xml', $file_path);
-        file_put_contents($rsl_file_path, $rsl_xml);
+        $this->safe_write_rsl_file($rsl_file_path, $rsl_xml);
     }
     
     private function generate_xmp_rsl($license_data, $attachment_id) {
@@ -169,15 +169,19 @@ class RSL_Media {
             return false;
         }
         
-        // Read current image data
-        $image_data = file_get_contents($file_path);
+        // Read current image data with error handling
+        $image_data = @file_get_contents($file_path);
+        if ($image_data === false) {
+            error_log('RSL: Failed to read image file: ' . $file_path);
+            return false;
+        }
         
         // For demonstration, we'll create a sidecar XMP file
         // In a production environment, you'd use a proper XMP library
         $xmp_file = str_replace('.jpg', '.xmp', $file_path);
         $xmp_file = str_replace('.jpeg', '.xmp', $xmp_file);
         
-        file_put_contents($xmp_file, $xmp_data);
+        $this->safe_write_rsl_file($xmp_file, $xmp_data);
         
         return true;
     }
@@ -330,5 +334,51 @@ class RSL_Media {
         $license_data['content_url'] = wp_get_attachment_url($attachment_id);
         
         return $this->license_handler->generate_rsl_xml($license_data);
+    }
+    
+    private function safe_write_rsl_file($file_path, $content) {
+        // Validate file path to prevent directory traversal
+        $file_path = realpath(dirname($file_path)) . '/' . basename($file_path);
+        
+        // Ensure we're writing within WordPress upload directory
+        $upload_dir = wp_upload_dir();
+        $upload_path = realpath($upload_dir['path']);
+        $target_dir = realpath(dirname($file_path));
+        
+        if (!$upload_path || !$target_dir || strpos($target_dir, $upload_path) !== 0) {
+            error_log('RSL: Attempted to write file outside upload directory: ' . $file_path);
+            return false;
+        }
+        
+        // Check if directory is writable
+        if (!is_writable(dirname($file_path))) {
+            error_log('RSL: Cannot write to directory: ' . dirname($file_path));
+            return false;
+        }
+        
+        // Validate file extension
+        $allowed_extensions = array('.xml', '.xmp', '.rsl.xml');
+        $file_extension = '';
+        foreach ($allowed_extensions as $ext) {
+            if (substr($file_path, -strlen($ext)) === $ext) {
+                $file_extension = $ext;
+                break;
+            }
+        }
+        
+        if (empty($file_extension)) {
+            error_log('RSL: Invalid file extension for RSL file: ' . $file_path);
+            return false;
+        }
+        
+        // Attempt to write file
+        $bytes_written = @file_put_contents($file_path, $content);
+        
+        if ($bytes_written === false) {
+            error_log('RSL: Failed to write RSL file: ' . $file_path);
+            return false;
+        }
+        
+        return true;
     }
 }
