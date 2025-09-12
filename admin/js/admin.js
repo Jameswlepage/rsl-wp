@@ -67,12 +67,27 @@ jQuery(document).ready(function($) {
         
         validateWooCommerceRequirement: function() {
             var amount = parseFloat($('#amount').val()) || 0;
+            var paymentType = $('#payment_type').val();
             var hasWooCommerce = typeof rsl_ajax.woocommerce_active !== 'undefined' ? rsl_ajax.woocommerce_active : false;
             
+            // Allow any payment type with $0 amount (including attribution)
+            if (amount === 0) {
+                return { valid: true };
+            }
+            
+            // Block any amount > 0 without WooCommerce
             if (amount > 0 && !hasWooCommerce) {
+                var message = 'WooCommerce is required for paid licensing (amount > $0). ';
+                
+                if (paymentType === 'attribution') {
+                    message += 'For attribution licenses, set the amount to $0 or install WooCommerce for paid attribution.';
+                } else {
+                    message += 'Please install WooCommerce or set amount to $0.';
+                }
+                
                 return {
                     valid: false,
-                    message: 'WooCommerce is required for paid licensing (amount > 0). Please install WooCommerce or set amount to 0.'
+                    message: message
                 };
             }
             
@@ -317,7 +332,35 @@ jQuery(document).ready(function($) {
         }
     };
     
-    // Add real-time validation
+    // Add real-time validation for payment fields
+    $('#amount, #payment_type').on('change blur', function() {
+        var validation = rslAdmin.validateWooCommerceRequirement();
+        var $amountField = $('#amount');
+        var $paymentField = $('#payment_type');
+        
+        if (!validation.valid) {
+            // Highlight both amount and payment type fields
+            $amountField.css('border-color', '#dc3545');
+            $paymentField.css('border-color', '#dc3545');
+            
+            // Show error message under amount field
+            $amountField.next('.validation-error').remove();
+            $amountField.after('<div class="validation-error" style="color: #dc3545; font-size: 12px; margin-top: 5px; padding: 8px; background: #f8d7da; border: 1px solid #f5c6cb; border-radius: 4px;">' + validation.message + '</div>');
+            
+            // Disable submit button
+            $('input[type="submit"]').prop('disabled', true).css('opacity', '0.6');
+        } else {
+            // Clear validation errors
+            $amountField.css('border-color', '');
+            $paymentField.css('border-color', '');
+            $amountField.next('.validation-error').remove();
+            
+            // Re-enable submit button
+            $('input[type="submit"]').prop('disabled', false).css('opacity', '1');
+        }
+    });
+    
+    // Add real-time validation for URLs
     $('#content_url, #server_url, #standard_url, #custom_url, #schema_url, #contact_url, #terms_url').on('blur', function() {
         var $field = $(this);
         var value = $field.val();
