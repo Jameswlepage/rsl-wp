@@ -148,11 +148,16 @@ jQuery(document).ready(function($) {
             }
             // External option uses the URL field value (already in formData)
             
-            // Handle multiselect fields
+            // Handle multiselect fields (convert to comma-separated values)
             $('.rsl-multiselect').each(function() {
                 var fieldName = $(this).attr('name');
                 var values = $(this).val();
                 
+                // Remove existing field from formData to prevent duplicates
+                var regex = new RegExp('&?' + encodeURIComponent(fieldName) + '=[^&]*', 'g');
+                formData = formData.replace(regex, '');
+                
+                // Add the multiselect field with proper comma-separated values
                 if (values && values.length > 0) {
                     formData += '&' + fieldName + '=' + encodeURIComponent(values.join(','));
                 } else {
@@ -162,6 +167,7 @@ jQuery(document).ready(function($) {
             
             // Add action and nonce
             formData += '&action=rsl_save_license&nonce=' + rsl_ajax.nonce;
+            
             
             $.ajax({
                 url: rsl_ajax.url,
