@@ -90,6 +90,10 @@ class RSL_Licensing
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-rss.php";
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-media.php";
         
+        // Load OAuth client management and rate limiting
+        require_once RSL_PLUGIN_PATH . "includes/class-rsl-oauth-client.php";
+        require_once RSL_PLUGIN_PATH . "includes/class-rsl-rate-limiter.php";
+        
         // Load modular payment system
         require_once RSL_PLUGIN_PATH . "includes/interfaces/interface-rsl-payment-processor.php";
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-payment-registry.php";
@@ -211,6 +215,69 @@ class RSL_Licensing
             if ($wpdb->last_error) {
                 error_log('RSL: Database error: ' . $wpdb->last_error);
             }
+            return false;
+        }
+        
+        // Create OAuth clients table
+        $oauth_table = $wpdb->prefix . "rsl_oauth_clients";
+        $oauth_sql = "CREATE TABLE $oauth_table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            client_id varchar(100) NOT NULL UNIQUE,
+            client_secret_hash varchar(255) NOT NULL,
+            client_name varchar(255) NOT NULL,
+            redirect_uris text,
+            grant_types varchar(255) DEFAULT 'client_credentials',
+            active tinyint(1) DEFAULT 1,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY idx_client_id (client_id)
+        ) $charset_collate;";
+        
+        $oauth_result = dbDelta($oauth_sql);
+        
+        // Verify OAuth table was created
+        $oauth_table_exists = $wpdb->get_var($wpdb->prepare(
+            "SHOW TABLES LIKE %s",
+            $oauth_table
+        ));
+        
+        if (!$oauth_table_exists) {
+            error_log('RSL: Failed to create OAuth clients table: ' . $oauth_table);
+            if ($wpdb->last_error) {
+                error_log('RSL: Database error: ' . $wpdb->last_error);
+            }
+            return false;
+        }
+        
+        // Create tokens revocation table for jti tracking
+        $tokens_table = $wpdb->prefix . "rsl_tokens";
+        $tokens_sql = "CREATE TABLE $tokens_table (
+            id mediumint(9) NOT NULL AUTO_INCREMENT,
+            jti varchar(100) NOT NULL UNIQUE,
+            client_id varchar(100) NOT NULL,
+            license_id mediumint(9) NOT NULL,
+            order_id mediumint(9) NULL,
+            subscription_id mediumint(9) NULL,
+            expires_at datetime NOT NULL,
+            revoked tinyint(1) DEFAULT 0,
+            created_at datetime DEFAULT CURRENT_TIMESTAMP,
+            PRIMARY KEY (id),
+            UNIQUE KEY idx_jti (jti),
+            KEY idx_client_license (client_id, license_id),
+            KEY idx_expires (expires_at)
+        ) $charset_collate;";
+        
+        $tokens_result = dbDelta($tokens_sql);
+        
+        // Verify tokens table was created
+        $tokens_table_exists = $wpdb->get_var($wpdb->prepare(
+            "SHOW TABLES LIKE %s",
+            $tokens_table
+        ));
+        
+        if (!$tokens_table_exists) {
+            error_log('RSL: Failed to create tokens table: ' . $tokens_table);
             return false;
         }
         
