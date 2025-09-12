@@ -3,7 +3,7 @@
  * Plugin Name: RSL Licensing for WordPress
  * Plugin URI: https://github.com/jameswlepage/rsl-wp
  * Description: Complete Really Simple Licensing (RSL) support for WordPress sites. Define machine-readable licensing terms for your content, enabling AI companies and crawlers to properly license your digital assets.
- * Version: 1.0.0
+ * Version: 0.0.1
  * Author: James W. LePage
  * Author URI: https://j.cv
  * License: GPL v2 or later
