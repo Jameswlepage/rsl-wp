@@ -20,6 +20,18 @@ if (!defined("ABSPATH")) {
     exit();
 }
 
+/**
+ * Debug logging helper function
+ * Only logs when WP_DEBUG and RSL_DEBUG are enabled
+ */
+if (!function_exists('rsl_log')) {
+    function rsl_log($message, $level = 'info') {
+        if (defined('WP_DEBUG') && WP_DEBUG && defined('RSL_DEBUG') && RSL_DEBUG) {
+            error_log(sprintf('[RSL %s] %s', strtoupper($level), $message));
+        }
+    }
+}
+
 define("RSL_PLUGIN_VERSION", "1.0.0");
 define("RSL_PLUGIN_URL", plugin_dir_url(__FILE__));
 define("RSL_PLUGIN_PATH", plugin_dir_path(__FILE__));
@@ -116,15 +128,15 @@ class RSL_Licensing
         }
         
         if (!$this->create_default_options()) {
-            error_log('RSL: Warning - Failed to create default options during activation');
+            rsl_log('Failed to create default options during activation', 'warning');
         }
         
         if (!$this->seed_global_license()) {
-            error_log('RSL: Warning - Failed to create default license during activation');
+            rsl_log('Failed to create default license during activation', 'warning');
         }
         
         if (!$this->create_database_indexes()) {
-            error_log('RSL: Warning - Failed to create database indexes during activation');
+            rsl_log('Failed to create database indexes during activation', 'warning');
         }
         
         flush_rewrite_rules();

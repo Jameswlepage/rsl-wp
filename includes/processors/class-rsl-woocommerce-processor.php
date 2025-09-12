@@ -25,11 +25,18 @@ class RSL_WooCommerce_Processor implements RSL_Payment_Processor_Interface {
     }
     
     public function get_supported_payment_types() {
-        $types = ['purchase'];
+        // WooCommerce can handle ALL RSL payment types as purchases or subscriptions
+        $types = [
+            'purchase',     // One-time payment
+            'crawl',        // Pay-per-crawl (one-time payment)
+            'training',     // AI training fee (one-time payment)
+            'inference',    // AI inference fee (one-time payment)
+            'attribution'   // Paid attribution (one-time payment)
+        ];
         
-        // Add subscription if WC Subscriptions is active
+        // Add subscription-based payment types if WC Subscriptions is active
         if (class_exists('WC_Subscriptions') || function_exists('wcs_get_subscriptions')) {
-            $types[] = 'subscription';
+            $types[] = 'subscription';  // Recurring subscription
         }
         
         return $types;
