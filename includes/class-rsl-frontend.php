@@ -113,7 +113,7 @@ class RSL_Frontend {
         } else {
             // For non-post pages, use current URL if content_url is empty
             if (empty($license_data['content_url'])) {
-                $license_data['content_url'] = home_url($_SERVER['REQUEST_URI']);
+                $license_data['content_url'] = home_url(esc_url_raw(sanitize_text_field($_SERVER['REQUEST_URI'])));
             } else if ($license_data['content_url'] === '/') {
                 $license_data['content_url'] = home_url('/');
             }

@@ -15,6 +15,14 @@ if (!defined('ABSPATH')) {
     </a>
     <hr class="wp-header-end">
     
+    <?php
+    // Display admin notices
+    if (function_exists('settings_errors')) {
+        settings_errors();
+    }
+    do_action('admin_notices');
+    ?>
+    
     <?php if (isset($_GET['settings-updated'])) : ?>
         <div class="notice notice-success is-dismissible">
             <p><?php _e('Settings saved successfully.', 'rsl-licensing'); ?></p>
@@ -134,6 +142,22 @@ if (!defined('ABSPATH')) {
                                         <span class="<?php echo get_option('rsl_enable_media_metadata', 1) ? 'rsl-enabled' : 'rsl-disabled'; ?>">
                                             <?php echo get_option('rsl_enable_media_metadata', 1) ? __('Enabled', 'rsl-licensing') : __('Disabled', 'rsl-licensing'); ?>
                                         </span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td><?php _e('WooCommerce', 'rsl-licensing'); ?></td>
+                                    <td>
+                                        <?php if (class_exists('WooCommerce')) : ?>
+                                            <span class="rsl-enabled">✓ <?php _e('Active', 'rsl-licensing'); ?></span>
+                                            <?php if (class_exists('WC_Subscriptions')) : ?>
+                                                <br><small><?php _e('Subscriptions: Available', 'rsl-licensing'); ?></small>
+                                            <?php else : ?>
+                                                <br><small style="color: #856404;"><?php _e('Subscriptions: Extension needed', 'rsl-licensing'); ?></small>
+                                            <?php endif; ?>
+                                        <?php else : ?>
+                                            <span class="rsl-disabled">✗ <?php _e('Not installed', 'rsl-licensing'); ?></span>
+                                            <br><small><?php _e('Required for paid licensing', 'rsl-licensing'); ?></small>
+                                        <?php endif; ?>
                                     </td>
                                 </tr>
                             </tbody>

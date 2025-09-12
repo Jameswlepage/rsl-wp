@@ -1,10 +1,10 @@
 # RSL Licensing for WordPress
 
-**Version:** 0.01 Alpha (Early Development)
+**Version:** 0.0.2 Alpha (Early Development)
 
 Complete Really Simple Licensing (RSL) support for WordPress sites. Define machine-readable licensing terms for your content, enabling AI companies, crawlers, and other automated systems to properly license your digital assets.
 
-> **Alpha Notice:** This is an early alpha release (v0.01) of the RSL Licensing plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
+> **Alpha Notice:** This is an early alpha release (v0.0.2) of the RSL Licensing plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
 
 ## Features
 
@@ -29,8 +29,11 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
 
 ### Developer Features
 - **REST API Endpoints** - Programmatic access to license data
+- **WordPress Abilities API** - Standardized interface for AI agents and automated systems
 - **License Server Compatibility** - Integration with RSL License Servers
-- **Authentication Support** - Handle license-based authentication
+- **OAuth 2.0 Authentication** - Secure client credential authentication for paid licenses
+- **Token Revocation System** - JWT-based tokens with automatic refund/cancellation handling
+- **Rate Limiting Protection** - Built-in abuse prevention for API endpoints
 - **Shortcodes** - Display license information anywhere on your site
 
 ## Installation
@@ -64,6 +67,205 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
 - Check your site's source code for RSL `<script>` tags
 - Visit `yoursite.com/robots.txt` to see RSL directives
 - Access `yoursite.com/?rsl_feed=1` for your RSL feed
+
+## Payment Processing Architecture
+
+RSL uses a **modular payment processor architecture** that supports multiple payment systems:
+
+### WooCommerce Integration (Primary)
+
+WooCommerce handles **all payment gateways** (Stripe, PayPal, Square, etc.) as a first-class citizen:
+
+1. **Install WooCommerce** plugin and complete setup wizard
+2. **Configure your payment gateways** in WooCommerce (Stripe, PayPal, etc.)
+3. **Create paid license** in Settings > Add RSL License:
+   - Set **Payment Type**: "Purchase" or "Subscription" 
+   - Add **Amount**: e.g., 99.99
+   - Set **Server URL**: `https://yoursite.com/wp-json/rsl-olp/v1`
+4. **RSL automatically creates** hidden WooCommerce products
+5. **AI companies pay** through your WooCommerce checkout using any configured gateway
+
+### OAuth 2.0 Client Credentials (Simplified)
+
+For **paid licenses**, RSL implements **OAuth 2.0 Client Credentials Grant only** - a simplified approach focused on API authentication rather than user authorization:
+
+```bash
+# 1. Register OAuth client (admin interface or CLI)
+# Returns client_id and client_secret
+
+# 2. Request access token with client credentials
+curl -X POST https://yoursite.com/wp-json/rsl-olp/v1/token \
+  -H "Authorization: Basic $(echo -n 'client_id:client_secret' | base64)" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "license_id": 1,
+    "resource": "https://yoursite.com/content",
+    "client": "my-ai-company"
+  }'
+
+# 3. Use token for licensed content access
+curl -H "Authorization: Bearer eyJ0eXAiOiJKV1QiLCJhbGc..." \
+     https://yoursite.com/licensed-content
+```
+
+**Free licenses** remain authentication-free for maximum accessibility.
+
+### Session-Based Payment Flow (MCP-Inspired)
+
+For complex payment scenarios, RSL supports session-based flows:
+
+```javascript
+// 1. Create payment session
+const session = await fetch('/wp-json/rsl-olp/v1/session', {
+  method: 'POST',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ license_id: 2, client: 'openai-crawler' })
+});
+
+// 2. Poll session status until payment complete
+const { session_id, polling_url } = await session.json();
+// ... polling logic with exponential backoff ...
+
+// 3. Extract token from completed session
+const final = await fetch(`/wp-json/rsl-olp/v1/session/${session_id}`);
+const { token } = await final.json();
+```
+
+### Extensible Architecture
+
+The system supports additional payment processors through a plugin interface:
+
+- **WooCommerce Processor**: Handles all WooCommerce payment gateways
+- **Custom Processors**: Third-party plugins can add new payment methods
+- **Enterprise Processors**: Direct integrations for large-scale licensing
+
+📖 **For detailed setup, pricing models, and business use cases, see [Payment Integration Guide](docs/PAYMENTS.md)**
+
+## OAuth Client Management & Security
+
+### OAuth 2.0 Client Registration
+
+RSL uses **only the OAuth 2.0 Client Credentials Grant** - the simplest OAuth flow designed for machine-to-machine authentication. This is **not a full OAuth server** - just API key authentication with OAuth-standard formatting. **Paid licenses require authentication**, while **free licenses remain open** for maximum accessibility.
+
+#### Creating OAuth Clients
+
+**Method 1: WordPress Admin Interface**
+1. Navigate to **RSL Licensing > OAuth Clients**
+2. Click "Add New Client"
+3. Enter client name (e.g., "OpenAI Crawler")
+4. Copy the generated `client_id` and `client_secret` (shown only once)
+5. Provide credentials to the AI company securely
+
+**Method 2: WordPress CLI** (if available)
+```bash
+wp rsl oauth create-client "AI Company Name"
+# Returns: client_id and client_secret
+```
+
+#### Client Credential Security
+- **Client secrets are hashed** using WordPress password functions
+- **Secrets shown only once** during creation
+- **Client IDs are unique** and cannot be duplicated
+- **Rate limiting applied** per client to prevent abuse
+
+### Rate Limiting & Abuse Prevention
+
+RSL implements comprehensive rate limiting to protect your licensing endpoints:
+
+| Endpoint | Rate Limit | Purpose |
+|----------|------------|---------|
+| `/token` | 30 requests/minute | Prevent token minting abuse |
+| `/introspect` | 100 requests/minute | Allow reasonable token validation |
+| `/session` | 20 requests/minute | Session creation throttling |
+
+**Rate limit headers** are included in all responses:
+```
+X-RateLimit-Limit: 30
+X-RateLimit-Remaining: 25
+X-RateLimit-Reset: 1672531200
+```
+
+**HTTP 429** responses include retry information:
+```json
+{
+  "code": "rate_limit_exceeded",
+  "message": "Rate limit exceeded. Maximum 30 requests per minute allowed.",
+  "data": {
+    "status": 429,
+    "headers": {
+      "Retry-After": "60"
+    }
+  }
+}
+```
+
+### Token Revocation System
+
+RSL implements comprehensive token revocation for refunds and cancellations:
+
+#### Automatic Revocation Triggers
+- **WooCommerce Order Refunded** → All order tokens revoked
+- **WooCommerce Order Cancelled** → All order tokens revoked  
+- **WooCommerce Subscription Cancelled** → All subscription tokens revoked
+- **WooCommerce Subscription Expired** → All subscription tokens revoked
+
+#### Token Validation
+Every token includes a `jti` (JWT ID) claim for unique identification:
+```json
+{
+  "iss": "https://yoursite.com",
+  "sub": "client_abc123",
+  "jti": "550e8400-e29b-41d4-a716-446655440000",
+  "lic": 123,
+  "exp": 1672617600
+}
+```
+
+The `/introspect` endpoint checks both **expiration** and **revocation status**:
+```bash
+curl -X POST https://yoursite.com/wp-json/rsl-olp/v1/introspect \
+  -H "Authorization: Basic $(echo -n 'client_id:client_secret' | base64)" \
+  -d '{"token": "eyJ0eXAiOiJKV1Q..."}'
+
+# Returns:
+{
+  "active": false  // if expired or revoked
+}
+```
+
+### Security Best Practices
+
+#### For Site Owners
+1. **Store JWT secrets in wp-config.php**: `define('RSL_JWT_SECRET', 'your-secret');`
+2. **Regularly rotate OAuth client credentials** for high-value licenses
+3. **Monitor rate limit violations** in server logs
+4. **Use HTTPS only** for all licensing endpoints
+5. **Configure CORS carefully** - avoid wildcard origins
+
+#### For AI Companies  
+1. **Securely store client credentials** - never commit to version control
+2. **Implement exponential backoff** for rate-limited requests
+3. **Cache tokens until expiration** - don't request new tokens unnecessarily
+4. **Handle HTTP 429 responses gracefully** with retry logic
+5. **Include meaningful client identifiers** in requests
+
+### Error Responses & Troubleshooting
+
+RSL returns standard OAuth 2.0 error responses:
+
+```json
+{
+  "error": "invalid_client",
+  "error_description": "Client authentication failed"
+}
+```
+
+Common errors:
+- `invalid_client`: Wrong credentials or inactive client
+- `invalid_license`: License not found or inactive  
+- `invalid_resource`: Resource not covered by license
+- `rate_limit_exceeded`: Too many requests
+- `invalid_request`: Missing required parameters
 
 ## License Types & Use Cases
 
@@ -100,6 +302,7 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
         <amount currency="USD">99.99</amount>
         <custom>https://example.com/licensing</custom>
       </payment>
+      <server url="https://yoursite.com/wp-json/rsl-olp/v1"/>
     </license>
   </content>
 </rsl>
@@ -262,9 +465,93 @@ RSL metadata is embedded using industry-standard methods:
 
 ### REST Endpoints
 
-- `GET /wp-json/rsl/v1/licenses` - List all licenses
-- `GET /wp-json/rsl/v1/licenses/{id}` - Get specific license
+#### Public License API
+- `GET /wp-json/rsl/v1/licenses` - List all active licenses
+- `GET /wp-json/rsl/v1/licenses/{id}` - Get specific license details
 - `POST /wp-json/rsl/v1/validate` - Validate content licensing
+
+#### OAuth 2.0 License Server (RSL OLP)
+- `POST /wp-json/rsl-olp/v1/token` - Issue access tokens (requires OAuth for paid licenses)
+- `POST /wp-json/rsl-olp/v1/introspect` - Validate tokens (requires OAuth client auth)
+- `GET /wp-json/rsl-olp/v1/key` - Key delivery endpoint (not implemented)
+
+#### Session Management (MCP-Inspired)
+- `POST /wp-json/rsl-olp/v1/session` - Create payment session
+- `GET /wp-json/rsl-olp/v1/session/{id}` - Poll session status
+
+### OAuth 2.0 Token Endpoint
+
+**Request Format:**
+```bash
+POST /wp-json/rsl-olp/v1/token
+Authorization: Basic <base64(client_id:client_secret)>
+Content-Type: application/json
+
+{
+  "license_id": 1,
+  "resource": "https://example.com/content",
+  "client": "my-company-crawler"
+}
+```
+
+**Response (Success):**
+```json
+{
+  "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "token_type": "Bearer",
+  "expires_in": 3600,
+  "expires_at": "2024-01-01T12:00:00Z",
+  "license_url": "https://example.com/rsl-license/1/"
+}
+```
+
+**Response (Payment Required):**
+```json
+{
+  "checkout_url": "https://example.com/checkout/?add-to-cart=123"
+}
+```
+
+### Token Introspection Endpoint
+
+**Request:**
+```bash
+POST /wp-json/rsl-olp/v1/introspect
+Authorization: Basic <base64(client_id:client_secret)>
+Content-Type: application/json
+
+{
+  "token": "eyJ0eXAiOiJKV1Q..."
+}
+```
+
+**Response (Active Token):**
+```json
+{
+  "active": true,
+  "client_id": "rsl_abc123",
+  "exp": 1672617600,
+  "iat": 1672531200,
+  "license_id": 1,
+  "scope": "train-ai"
+}
+```
+
+**Response (Inactive Token):**
+```json
+{
+  "active": false
+}
+```
+
+### WordPress Abilities API
+
+When the WordPress Abilities API plugin is installed, RSL provides standardized abilities for:
+- License management (create, update, delete, list)
+- Content licensing validation and XML generation
+- Token issuance and authentication
+
+Abilities use semantic descriptions and JSON Schema validation, making them ideal for AI agents and automated systems.
 
 ### License Server Endpoints
 
@@ -316,6 +603,32 @@ Returns 401 Unauthorized for unlicensed access with proper WWW-Authenticate head
 - Check that posts have applicable licenses
 - Verify feed URLs are working
 
+### OAuth & Authentication Issues
+
+**"invalid_client" errors**
+- Verify client credentials are correct
+- Check that client is active in the database
+- Ensure Authorization header format: `Basic base64(client_id:client_secret)`
+- Confirm HTTPS is being used
+
+**"rate_limit_exceeded" errors**
+- Wait for rate limit reset (check `X-RateLimit-Reset` header)
+- Implement exponential backoff in client code
+- Consider requesting rate limit increase for legitimate use cases
+- Check for multiple clients using same credentials
+
+**Token validation failures**
+- Verify token hasn't expired (`exp` claim)
+- Check if token was revoked due to refund/cancellation
+- Ensure token is being sent in correct format: `Authorization: Bearer <token>`
+- Validate that resource URL matches license coverage
+
+**Payment/checkout issues**
+- Verify WooCommerce is active and configured
+- Check that products are being created automatically
+- Ensure order status changes are triggering correctly
+- Confirm webhook URLs are accessible
+
 ### Debug Mode
 
 Add to wp-config.php for debugging:
@@ -360,10 +673,14 @@ This plugin implements the complete RSL 1.0 draft specification:
 - Optimized media processing
 
 ### Security Considerations
-- Input validation and sanitization
-- Proper nonce usage
-- Capability checks
-- SQL injection prevention
+- **OAuth 2.0 client credential authentication** for paid license endpoints
+- **JWT token-based authorization** with revocation support
+- **Rate limiting** to prevent API abuse and brute force attacks
+- **Input validation and sanitization** across all endpoints
+- **SQL injection prevention** with prepared statements
+- **CORS restrictions** to trusted origins only
+- **Secure credential storage** using WordPress password hashing
+- **HTTPS enforcement** for authentication endpoints
 
 ## Frequently Asked Questions
 
@@ -409,7 +726,13 @@ This plugin is licensed under GPL v2 or later, allowing you to freely use, modif
 - WordPress admin interface
 - Multiple integration methods
 - Media file support
-- License server compatibility
+- **OAuth 2.0 client credential authentication** for secure API access
+- **JWT token system** with automatic revocation on refunds/cancellations
+- **Rate limiting protection** for API endpoints (30/min tokens, 100/min introspection, 20/min sessions)
+- **WooCommerce integration** with automatic product creation
+- **Session-based payment flows** for complex licensing scenarios
+- **Comprehensive error handling** with standard OAuth 2.0 responses
+- License server compatibility with RSL Open Licensing Protocol
 
 ---
 

@@ -19,6 +19,14 @@ $title = $is_edit ? __('Edit RSL License', 'rsl-licensing') : __('Add RSL Licens
     </a>
     <hr class="wp-header-end">
     
+    <?php
+    // Display admin notices
+    if (function_exists('settings_errors')) {
+        settings_errors();
+    }
+    do_action('admin_notices');
+    ?>
+    
     <div id="rsl-message" class="notice rsl-hidden"></div>
     
     <form id="rsl-license-form" method="post">
@@ -67,15 +75,46 @@ $title = $is_edit ? __('Edit RSL License', 'rsl-licensing') : __('Add RSL Licens
                 
                 <tr>
                     <th scope="row">
-                        <label for="server_url"><?php _e('License Server URL', 'rsl-licensing'); ?></label>
+                        <label for="server_option"><?php _e('License Server', 'rsl-licensing'); ?></label>
                     </th>
                     <td>
-                        <input type="url" id="server_url" name="server_url" class="regular-text"
-                               value="<?php echo esc_attr($license_data['server_url'] ?? ''); ?>"
-                               placeholder="https://rslcollective.org/api">
-                        <p class="description">
-                            <?php _e('Optional RSL License Server URL for managed licensing.', 'rsl-licensing'); ?>
-                        </p>
+                        <fieldset>
+                            <legend class="screen-reader-text"><?php _e('License Server Options', 'rsl-licensing'); ?></legend>
+                            
+                            <p>
+                                <label>
+                                    <input type="radio" name="server_option" value="builtin" 
+                                           <?php checked(empty($license_data['server_url']) || parse_url($license_data['server_url'] ?? '', PHP_URL_HOST) === parse_url(home_url(), PHP_URL_HOST)); ?>>
+                                    <strong><?php _e('Built-in License Server', 'rsl-licensing'); ?></strong> (<?php _e('Recommended', 'rsl-licensing'); ?>)
+                                </label>
+                                <br>
+                                <span class="description" style="margin-left: 25px;">
+                                    <?php _e('Use this WordPress site as the license server. Handles free licenses immediately and integrates with WooCommerce for paid licensing.', 'rsl-licensing'); ?>
+                                </span>
+                            </p>
+                            
+                            <p>
+                                <label>
+                                    <input type="radio" name="server_option" value="external" 
+                                           <?php checked(!empty($license_data['server_url']) && parse_url($license_data['server_url'] ?? '', PHP_URL_HOST) !== parse_url(home_url(), PHP_URL_HOST)); ?>>
+                                    <strong><?php _e('External License Server', 'rsl-licensing'); ?></strong>
+                                </label>
+                                <br>
+                                <span class="description" style="margin-left: 25px;">
+                                    <?php _e('Use an external RSL License Server (e.g., RSL Collective) for centralized licensing and payment processing.', 'rsl-licensing'); ?>
+                                </span>
+                            </p>
+                            
+                            <div id="external_server_url_field" style="margin-top: 15px; padding-left: 25px; display: none;">
+                                <label for="server_url"><?php _e('External Server URL:', 'rsl-licensing'); ?></label><br>
+                                <input type="url" id="server_url" name="server_url" class="regular-text"
+                                       value="<?php echo esc_attr($license_data['server_url'] ?? ''); ?>"
+                                       placeholder="https://rslcollective.org/api">
+                                <p class="description">
+                                    <?php _e('Enter the URL of the external RSL License Server API endpoint.', 'rsl-licensing'); ?>
+                                </p>
+                            </div>
+                        </fieldset>
                     </td>
                 </tr>
                 
@@ -240,6 +279,9 @@ $title = $is_edit ? __('Edit RSL License', 'rsl-licensing') : __('Add RSL Licens
                                 </option>
                             <?php endforeach; ?>
                         </select>
+                        <p class="description">
+                            <?php _e('Select the payment model for this license. Set amount to 0 for free licenses of any type.', 'rsl-licensing'); ?>
+                        </p>
                     </td>
                 </tr>
                 
@@ -256,6 +298,18 @@ $title = $is_edit ? __('Edit RSL License', 'rsl-licensing') : __('Add RSL Licens
                             <option value="GBP" <?php selected($license_data['currency'] ?? 'USD', 'GBP'); ?>>GBP</option>
                             <option value="BTC" <?php selected($license_data['currency'] ?? 'USD', 'BTC'); ?>>BTC</option>
                         </select>
+                        <p class="description">
+                            <?php _e('Set to 0 for free licenses. Amounts > 0 require WooCommerce for payment processing.', 'rsl-licensing'); ?>
+                            <?php if (!$woocommerce_active) : ?>
+                                <br><span style="color: #d63638;">
+                                    <strong><?php _e('WooCommerce not installed:', 'rsl-licensing'); ?></strong>
+                                    <?php _e('Only amount = 0 will work for token generation.', 'rsl-licensing'); ?>
+                                    <a href="<?php echo admin_url('plugin-install.php?s=woocommerce&tab=search&type=term'); ?>">
+                                        <?php _e('Install WooCommerce', 'rsl-licensing'); ?>
+                                    </a>
+                                </span>
+                            <?php endif; ?>
+                        </p>
                     </td>
                 </tr>
                 
