@@ -178,6 +178,9 @@ jQuery(document).ready(function($) {
                     } else {
                         rslAdmin.showMessage(response.data.message, 'error');
                         $submitButton.val(originalText).prop('disabled', false);
+                        
+                        // Form fields should retain their values after validation error
+                        // (AJAX errors shouldn't reset form fields)
                     }
                 },
                 error: function() {
@@ -286,10 +289,10 @@ jQuery(document).ready(function($) {
             var $message = $('#rsl-message');
             
             $message
-                .removeClass('notice-success notice-error')
-                .addClass(className)
+                .removeClass('notice-success notice-error rsl-hidden')
+                .addClass('notice ' + className)
                 .html('<p>' + message + '</p>')
-                .show();
+                .css('display', 'block');
             
             $('html, body').animate({scrollTop: 0}, 500);
         },
