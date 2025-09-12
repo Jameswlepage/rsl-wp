@@ -136,6 +136,22 @@ if (!defined('ABSPATH')) {
                                         </span>
                                     </td>
                                 </tr>
+                                <tr>
+                                    <td><?php _e('WooCommerce Integration', 'rsl-licensing'); ?></td>
+                                    <td>
+                                        <?php if (class_exists('WooCommerce')) : ?>
+                                            <span class="rsl-enabled">✓ <?php _e('Active', 'rsl-licensing'); ?></span>
+                                            <?php if (class_exists('WC_Subscriptions')) : ?>
+                                                <br><small><?php _e('Subscriptions: Available', 'rsl-licensing'); ?></small>
+                                            <?php else : ?>
+                                                <br><small style="color: #856404;"><?php _e('Subscriptions: Extension needed', 'rsl-licensing'); ?></small>
+                                            <?php endif; ?>
+                                        <?php else : ?>
+                                            <span class="rsl-disabled">✗ <?php _e('Not installed', 'rsl-licensing'); ?></span>
+                                            <br><small><?php _e('Required for paid licensing', 'rsl-licensing'); ?></small>
+                                        <?php endif; ?>
+                                    </td>
+                                </tr>
                             </tbody>
                         </table>
                     </div>

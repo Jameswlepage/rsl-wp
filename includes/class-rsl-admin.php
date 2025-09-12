@@ -163,6 +163,10 @@ class RSL_Admin {
             $license_data = $this->license_handler->get_license($license_id);
         }
         
+        // Check WooCommerce availability for paid licensing
+        $woocommerce_active = class_exists('WooCommerce');
+        $woocommerce_subscriptions_active = class_exists('WC_Subscriptions') || function_exists('wcs_get_subscriptions');
+        
         include RSL_PLUGIN_PATH . 'admin/templates/admin-add-license.php';
     }
     
