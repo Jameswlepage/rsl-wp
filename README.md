@@ -61,6 +61,24 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
 - Visit `yoursite.com/robots.txt` to see RSL directives
 - Access `yoursite.com/?rsl_feed=1` for your RSL feed
 
+## WooCommerce Integration for Paid Licensing
+
+For paid licensing (purchase, subscription, training fees), install WooCommerce:
+
+### Quick WooCommerce Setup
+
+1. **Install WooCommerce** plugin and complete setup wizard
+2. **Create paid license** in Settings > Add RSL License:
+   - Set **Payment Type**: "Purchase" or "Subscription"
+   - Add **Amount**: e.g., 99.99
+   - Set **Server URL**: `https://yoursite.com/wp-json/rsl-olp/v1`
+3. **Configure payment gateway** (PayPal, Stripe, etc.) in WooCommerce
+4. **Test the flow**: AI companies can now request licensing tokens and complete payments
+
+The plugin automatically creates hidden WooCommerce products and handles the entire payment-to-token flow.
+
+📖 **For detailed setup, pricing models, and business use cases, see [Payment Integration Guide](docs/PAYMENTS.md)**
+
 ## License Types & Use Cases
 
 ### Free Content
@@ -96,6 +114,7 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
         <amount currency="USD">99.99</amount>
         <custom>https://example.com/licensing</custom>
       </payment>
+      <server url="https://yoursite.com/wp-json/rsl-olp/v1"/>
     </license>
   </content>
 </rsl>
