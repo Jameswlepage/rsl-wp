@@ -1,0 +1,868 @@
+# German translation for RSL Licensing
+# Copyright (C) 2024 RSL Licensing
+# This file is distributed under the same license as the RSL Licensing package.
+# Translator: RSL Team <support@rslstandard.org>, 2024.
+#
+#, fuzzy
+msgid ""
+msgstr ""
+"Project-Id-Version: RSL Licensing 1.0.0\n"
+"Report-Msgid-Bugs-To: james@lepage.com\n"
+"POT-Creation-Date: 2025-09-11 21:31-0400\n"
+"PO-Revision-Date: 2024-12-11 18:00+0000\n"
+"Last-Translator: RSL Team <support@rslstandard.org>\n"
+"Language-Team: German\n"
+"Language: de_DE\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
+
+#: includes/class-rsl-admin.php:32 includes/class-rsl-admin.php:33
+#: admin/templates/admin-dashboard.php:11
+msgid "RSL Licensing"
+msgstr "RSL-Lizenzierung"
+
+#: includes/class-rsl-admin.php:44 includes/class-rsl-admin.php:45
+msgid "Dashboard"
+msgstr "Dashboard"
+
+#: includes/class-rsl-admin.php:53 includes/class-rsl-admin.php:54
+msgid "All Licenses"
+msgstr "Alle Lizenzen"
+
+#: includes/class-rsl-admin.php:62 includes/class-rsl-admin.php:63
+#: admin/templates/admin-dashboard.php:14 admin/templates/admin-licenses.php:14
+msgid "Add New License"
+msgstr "Neue Lizenz hinzufügen"
+
+#: includes/class-rsl-admin.php:71 includes/class-rsl-admin.php:72
+#: admin/templates/admin-dashboard.php:70
+msgid "Settings"
+msgstr "Einstellungen"
+
+#: includes/class-rsl-admin.php:118
+msgid "Saving..."
+msgstr "Speichern..."
+
+#: includes/class-rsl-admin.php:119
+msgid "An error occurred while saving the license."
+msgstr "Beim Speichern der Lizenz ist ein Fehler aufgetreten."
+
+#: includes/class-rsl-admin.php:120
+msgid "Error generating XML"
+msgstr "Fehler beim Generieren der XML"
+
+#: includes/class-rsl-admin.php:121
+#, php-format
+msgid ""
+"Are you sure you want to delete the license \"%s\"? This action cannot be "
+"undone."
+msgstr ""
+"Sind Sie sicher, dass Sie die Lizenz \"%s\" löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden."
+
+#: includes/class-rsl-admin.php:122
+msgid "Error deleting license"
+msgstr "Fehler beim Löschen der Lizenz"
+
+#: includes/class-rsl-admin.php:123
+msgid "XML copied to clipboard!"
+msgstr "XML in die Zwischenablage kopiert!"
+
+#: includes/class-rsl-admin.php:124
+msgid "Failed to copy to clipboard. Please select and copy manually."
+msgstr "Fehler beim Kopieren in die Zwischenablage. Bitte manuell markieren und kopieren."
+
+#: includes/class-rsl-admin.php:125
+msgid "Please enter a valid URL"
+msgstr "Bitte geben Sie eine gültige URL ein"
+
+#: includes/class-rsl-admin.php:126
+msgid "Please enter a valid email address"
+msgstr "Bitte geben Sie eine gültige E-Mail-Adresse ein"
+
+#: includes/class-rsl-admin.php:173 includes/class-rsl-admin.php:306
+#: includes/class-rsl-admin.php:326
+msgid "Permission denied"
+msgstr "Zugriff verweigert"
+
+#: includes/class-rsl-admin.php:179
+msgid "Name and Content URL are required fields."
+msgstr "Name und Inhalts-URL sind Pflichtfelder."
+
+#: includes/class-rsl-admin.php:196
+msgid "Invalid Content URL format."
+msgstr "Ungültiges Inhalts-URL-Format."
+
+#: includes/class-rsl-admin.php:202
+msgid "Invalid server-relative path/pattern."
+msgstr "Ungültiger server-relativer Pfad/Muster."
+
+#: includes/class-rsl-admin.php:207
+msgid ""
+"Content URL must be an absolute URL (http/https) or a server-relative path "
+"(starting with \"/\")."
+msgstr ""
+"Die Inhalts-URL muss eine absolute URL (http/https) oder ein server-relativer Pfad "
+"(beginnend mit \"/\") sein."
+
+#: includes/class-rsl-admin.php:215
+msgid "Invalid Server URL format."
+msgstr "Ungültiges Server-URL-Format."
+
+#: includes/class-rsl-admin.php:224
+msgid "Amount must be between 0 and 999,999.99."
+msgstr "Der Betrag muss zwischen 0 und 999.999,99 liegen."
+
+#: includes/class-rsl-admin.php:233
+msgid "Currency must be a valid 3-letter ISO code (e.g., USD, EUR)."
+msgstr "Die Währung muss ein gültiger 3-stelliger ISO-Code sein (z.B. USD, EUR)."
+
+#: includes/class-rsl-admin.php:242
+msgid "Invalid email address format."
+msgstr "Ungültiges E-Mail-Adressformat."
+
+#: includes/class-rsl-admin.php:292
+msgid "License saved successfully"
+msgstr "Lizenz erfolgreich gespeichert"
+
+#: includes/class-rsl-admin.php:297
+msgid "Failed to save license"
+msgstr "Fehler beim Speichern der Lizenz"
+
+#: includes/class-rsl-admin.php:313
+msgid "License deleted successfully"
+msgstr "Lizenz erfolgreich gelöscht"
+
+#: includes/class-rsl-admin.php:317
+msgid "Failed to delete license"
+msgstr "Fehler beim Löschen der Lizenz"
+
+#: includes/class-rsl-admin.php:339
+msgid "License not found"
+msgstr "Lizenz nicht gefunden"
+
+#: includes/class-rsl-admin.php:359 includes/class-rsl-media.php:224
+#: includes/class-rsl-media.php:263
+msgid "RSL License"
+msgstr "RSL-Lizenz"
+
+#: includes/class-rsl-admin.php:381
+msgid "Global License Active:"
+msgstr "Globale Lizenz aktiv:"
+
+#: includes/class-rsl-admin.php:387
+msgid "License Override:"
+msgstr "Lizenz überschreiben:"
+
+#: includes/class-rsl-admin.php:389 includes/class-rsl-media.php:215
+msgid "Use Global License"
+msgstr "Globale Lizenz verwenden"
+
+#: includes/class-rsl-admin.php:399
+msgid ""
+"Select a specific license to override the global license for this content."
+msgstr ""
+"Wählen Sie eine spezifische Lizenz aus, um die globale Lizenz für diesen Inhalt zu überschreiben."
+
+#: includes/class-rsl-admin.php:402
+msgid "Override Content URL:"
+msgstr "Inhalts-URL überschreiben:"
+
+#: includes/class-rsl-admin.php:406
+msgid "Leave empty to use post URL"
+msgstr "Leer lassen, um die Beitrag-URL zu verwenden"
+
+#: includes/class-rsl-admin.php:408
+msgid ""
+"Override the content URL for this specific post/page. Useful for syndicated "
+"content."
+msgstr ""
+"Die Inhalts-URL für diesen spezifischen Beitrag/diese Seite überschreiben. Nützlich für syndizierte "
+"Inhalte."
+
+#: includes/class-rsl-media.php:227
+msgid "Select RSL license for this media file."
+msgstr "RSL-Lizenz für diese Mediendatei auswählen."
+
+#: includes/class-rsl-media.php:234
+msgid "RSL Status"
+msgstr "RSL-Status"
+
+#: includes/class-rsl-media.php:236
+msgid "RSL metadata embedded"
+msgstr "RSL-Metadaten eingebettet"
+
+#: includes/class-rsl-media.php:237
+msgid "This file contains embedded RSL licensing information."
+msgstr "Diese Datei enthält eingebettete RSL-Lizenzierungsinformationen."
+
+#: includes/class-rsl-media.php:277 includes/class-rsl-media.php:290
+msgid "Embedded"
+msgstr "Eingebettet"
+
+#: includes/class-rsl-media.php:296
+msgid "No license"
+msgstr "Keine Lizenz"
+
+#: includes/class-rsl-robots.php:173
+msgid "License URL is not valid"
+msgstr "Lizenz-URL ist nicht gültig"
+
+#: includes/class-rsl-robots.php:176
+msgid "No License directive found"
+msgstr "Keine Lizenz-Direktive gefunden"
+
+#: includes/class-rsl-license.php:339
+msgid "All automated processing"
+msgstr "Alle automatisierten Verarbeitungen"
+
+#: includes/class-rsl-license.php:340
+msgid "Train AI model"
+msgstr "KI-Modell trainieren"
+
+#: includes/class-rsl-license.php:341
+msgid "Train generative AI model"
+msgstr "Generatives KI-Modell trainieren"
+
+#: includes/class-rsl-license.php:342
+msgid "Use as AI input (RAG)"
+msgstr "Als KI-Eingabe verwenden (RAG)"
+
+#: includes/class-rsl-license.php:343
+msgid "AI summarization"
+msgstr "KI-Zusammenfassung"
+
+#: includes/class-rsl-license.php:344
+msgid "Search indexing"
+msgstr "Suchindexierung"
+
+#: includes/class-rsl-license.php:350
+msgid "Commercial use"
+msgstr "Kommerzielle Nutzung"
+
+#: includes/class-rsl-license.php:351
+msgid "Non-commercial use"
+msgstr "Nicht-kommerzielle Nutzung"
+
+#: includes/class-rsl-license.php:352
+msgid "Educational use"
+msgstr "Bildungsnutzung"
+
+#: includes/class-rsl-license.php:353
+msgid "Government use"
+msgstr "Behördliche Nutzung"
+
+#: includes/class-rsl-license.php:354
+msgid "Personal use"
+msgstr "Private Nutzung"
+
+#: includes/class-rsl-license.php:360
+msgid "Free"
+msgstr "Kostenlos"
+
+#: includes/class-rsl-license.php:361
+msgid "One-time purchase"
+msgstr "Einmaliger Kauf"
+
+#: includes/class-rsl-license.php:362
+msgid "Subscription"
+msgstr "Abonnement"
+
+#: includes/class-rsl-license.php:363
+msgid "Per training use"
+msgstr "Pro Trainingsnutzung"
+
+#: includes/class-rsl-license.php:364
+msgid "Per crawl"
+msgstr "Pro Crawl"
+
+#: includes/class-rsl-license.php:365
+msgid "Per inference"
+msgstr "Pro Inferenz"
+
+#: includes/class-rsl-license.php:366
+msgid "Attribution required"
+msgstr "Namensnennung erforderlich"
+
+#: includes/class-rsl-license.php:367
+msgid "Royalty"
+msgstr "Lizenzgebühr"
+
+#: includes/class-rsl-license.php:373
+msgid "Ownership rights"
+msgstr "Eigentumsrechte"
+
+#: includes/class-rsl-license.php:374
+msgid "Authorization to license"
+msgstr "Lizenzierungsautorisierung"
+
+#: includes/class-rsl-license.php:375
+msgid "No third-party infringement"
+msgstr "Keine Rechtsverletzung durch Dritte"
+
+#: includes/class-rsl-license.php:376
+msgid "Privacy consents obtained"
+msgstr "Datenschutzeinverständnisse eingeholt"
+
+#: includes/class-rsl-license.php:377
+msgid "Free from malware"
+msgstr "Frei von Malware"
+
+#: includes/class-rsl-license.php:383
+msgid "Provided \"as is\""
+msgstr "Bereitgestellt \"wie besehen\""
+
+#: includes/class-rsl-license.php:384
+msgid "No warranties"
+msgstr "Keine Gewährleistungen"
+
+#: includes/class-rsl-license.php:385
+msgid "No liability"
+msgstr "Keine Haftung"
+
+#: includes/class-rsl-license.php:386
+msgid "No indemnification"
+msgstr "Keine Schadloshaltung"
+
+#: includes/class-rsl-frontend.php:195
+msgid "View License"
+msgstr "Lizenz anzeigen"
+
+#: includes/class-rsl-frontend.php:228
+msgid "Payment Type:"
+msgstr "Zahlungsart:"
+
+#: includes/class-rsl-frontend.php:232
+msgid "Permitted Usage:"
+msgstr "Erlaubte Nutzung:"
+
+#: includes/class-rsl-frontend.php:237
+msgid "Copyright:"
+msgstr "Urheberrecht:"
+
+#: admin/templates/admin-dashboard.php:20 admin/templates/admin-settings.php:17
+msgid "Settings saved successfully."
+msgstr "Einstellungen erfolgreich gespeichert."
+
+#: admin/templates/admin-dashboard.php:30
+msgid "At a Glance"
+msgstr "Auf einen Blick"
+
+#: admin/templates/admin-dashboard.php:39
+msgid "Total Licenses"
+msgstr "Lizenzen insgesamt"
+
+#: admin/templates/admin-dashboard.php:43
+msgid "Active Licenses"
+msgstr "Aktive Lizenzen"
+
+#: admin/templates/admin-dashboard.php:49
+msgid "Global License Configured"
+msgstr "Globale Lizenz konfiguriert"
+
+#: admin/templates/admin-dashboard.php:60
+#: admin/templates/admin-add-license.php:424
+msgid "Create License"
+msgstr "Lizenz erstellen"
+
+#: admin/templates/admin-dashboard.php:65
+msgid "Manage Licenses"
+msgstr "Lizenzen verwalten"
+
+#: admin/templates/admin-dashboard.php:74
+#: admin/templates/admin-dashboard.php:206
+msgid "RSL Standard"
+msgstr "RSL-Standard"
+
+#: admin/templates/admin-dashboard.php:90
+msgid "Integration Status"
+msgstr "Integrationsstatus"
+
+#: admin/templates/admin-dashboard.php:92
+msgid "Go to Settings"
+msgstr "Zu den Einstellungen"
+
+#: admin/templates/admin-dashboard.php:100
+msgid "HTML Head Injection"
+msgstr "HTML-Head-Injektion"
+
+#: admin/templates/admin-dashboard.php:103
+#: admin/templates/admin-dashboard.php:111
+#: admin/templates/admin-dashboard.php:119
+#: admin/templates/admin-dashboard.php:127
+#: admin/templates/admin-dashboard.php:135
+msgid "Enabled"
+msgstr "Aktiviert"
+
+#: admin/templates/admin-dashboard.php:103
+#: admin/templates/admin-dashboard.php:111
+#: admin/templates/admin-dashboard.php:119
+#: admin/templates/admin-dashboard.php:127
+#: admin/templates/admin-dashboard.php:135
+msgid "Disabled"
+msgstr "Deaktiviert"
+
+#: admin/templates/admin-dashboard.php:108
+msgid "HTTP Link Headers"
+msgstr "HTTP-Link-Header"
+
+#: admin/templates/admin-dashboard.php:116
+#: admin/templates/admin-settings.php:77
+msgid "robots.txt Integration"
+msgstr "robots.txt Integration"
+
+#: admin/templates/admin-dashboard.php:124
+msgid "RSS Feed Enhancement"
+msgstr "RSS-Feed-Verbesserung"
+
+#: admin/templates/admin-dashboard.php:132
+#: admin/templates/admin-settings.php:105
+msgid "Media Metadata"
+msgstr "Medien-Metadaten"
+
+#: admin/templates/admin-dashboard.php:154
+msgid "Recent Licenses"
+msgstr "Neueste Lizenzen"
+
+#: admin/templates/admin-dashboard.php:176
+msgid "View all licenses →"
+msgstr "Alle Lizenzen anzeigen →"
+
+#: admin/templates/admin-dashboard.php:181
+msgid "No licenses created yet."
+msgstr "Noch keine Lizenzen erstellt."
+
+#: admin/templates/admin-dashboard.php:183
+#: admin/templates/admin-licenses.php:25
+msgid "Create your first license"
+msgstr "Ihre erste Lizenz erstellen"
+
+#: admin/templates/admin-dashboard.php:196
+msgid "About RSL"
+msgstr "Über RSL"
+
+#: admin/templates/admin-dashboard.php:200
+msgid ""
+"Really Simple Licensing (RSL) is a machine-readable format for defining "
+"licensing terms for digital content. It enables content owners to specify "
+"how their content can be used by AI systems, search engines, and other "
+"automated tools."
+msgstr ""
+"Really Simple Licensing (RSL) ist ein maschinenlesbares Format zur Definition "
+"von Lizenzbestimmungen für digitale Inhalte. Es ermöglicht Inhaltseigentümern zu spezifizieren, "
+"wie ihre Inhalte von KI-Systemen, Suchmaschinen und anderen "
+"automatisierten Tools genutzt werden können."
+
+#: admin/templates/admin-dashboard.php:210
+msgid "RSL Collective"
+msgstr "RSL-Kollektiv"
+
+#: admin/templates/admin-dashboard.php:218
+msgid "System Status"
+msgstr "Systemstatus"
+
+#: admin/templates/admin-dashboard.php:224
+msgid "WordPress"
+msgstr "WordPress"
+
+#: admin/templates/admin-dashboard.php:228
+msgid "PHP"
+msgstr "PHP"
+
+#: admin/templates/admin-dashboard.php:232
+msgid "RSL Plugin"
+msgstr "RSL-Plugin"
+
+#: admin/templates/admin-dashboard.php:237
+msgid "cURL Support"
+msgstr "cURL-Unterstützung"
+
+#: admin/templates/admin-settings.php:11
+msgid "RSL Licensing Settings"
+msgstr "RSL-Lizenzierung-Einstellungen"
+
+#: admin/templates/admin-settings.php:30
+msgid "Global License"
+msgstr "Globale Lizenz"
+
+#: admin/templates/admin-settings.php:34
+msgid "No global license"
+msgstr "Keine globale Lizenz"
+
+#: admin/templates/admin-settings.php:43
+msgid ""
+"Select a license to apply site-wide. Individual posts/pages can override "
+"this."
+msgstr ""
+"Wählen Sie eine Lizenz für die gesamte Website. Einzelne Beiträge/Seiten können dies "
+"überschreiben."
+
+#: admin/templates/admin-settings.php:49
+msgid "HTML Injection"
+msgstr "HTML-Injektion"
+
+#: admin/templates/admin-settings.php:54
+msgid "Enable HTML head injection"
+msgstr "HTML-Head-Injektion aktivieren"
+
+#: admin/templates/admin-settings.php:57
+msgid "Automatically inject RSL license information into HTML head section."
+msgstr "RSL-Lizenzinformationen automatisch in den HTML-Head-Bereich einfügen."
+
+#: admin/templates/admin-settings.php:63
+msgid "HTTP Headers"
+msgstr "HTTP-Header"
+
+#: admin/templates/admin-settings.php:68
+msgid "Enable HTTP Link headers"
+msgstr "HTTP-Link-Header aktivieren"
+
+#: admin/templates/admin-settings.php:71
+msgid "Add RSL license information to HTTP response headers."
+msgstr "RSL-Lizenzinformationen zu HTTP-Antwort-Headern hinzufügen."
+
+#: admin/templates/admin-settings.php:82
+msgid "Enable robots.txt license directive"
+msgstr "robots.txt Lizenz-Direktive aktivieren"
+
+#: admin/templates/admin-settings.php:85
+msgid "Add License directive to robots.txt file."
+msgstr "Lizenz-Direktive zur robots.txt-Datei hinzufügen."
+
+#: admin/templates/admin-settings.php:91
+msgid "RSS Feed Integration"
+msgstr "RSS-Feed-Integration"
+
+#: admin/templates/admin-settings.php:96
+msgid "Enable RSS feed RSL integration"
+msgstr "RSS-Feed RSL-Integration aktivieren"
+
+#: admin/templates/admin-settings.php:99
+msgid "Add RSL licensing information to RSS feeds."
+msgstr "RSL-Lizenzinformationen zu RSS-Feeds hinzufügen."
+
+#: admin/templates/admin-settings.php:110
+msgid "Enable media file metadata embedding"
+msgstr "Metadaten-Einbettung in Mediendateien aktivieren"
+
+#: admin/templates/admin-settings.php:113
+msgid "Embed RSL license information in uploaded media files."
+msgstr "RSL-Lizenzinformationen in hochgeladene Mediendateien einbetten."
+
+#: admin/templates/admin-settings.php:120
+msgid "RSL Namespace"
+msgstr "RSL-Namespace"
+
+#: admin/templates/admin-settings.php:127
+msgid ""
+"RSL XML namespace URI. Use default unless you have a custom implementation."
+msgstr ""
+"RSL XML-Namespace-URI. Standard verwenden, es sei denn, Sie haben eine benutzerdefinierte Implementierung."
+
+#: admin/templates/admin-add-license.php:8
+msgid "Edit RSL License"
+msgstr "RSL-Lizenz bearbeiten"
+
+#: admin/templates/admin-add-license.php:8
+msgid "Add RSL License"
+msgstr "RSL-Lizenz hinzufügen"
+
+#: admin/templates/admin-add-license.php:18
+msgid "View All Licenses"
+msgstr "Alle Lizenzen anzeigen"
+
+#: admin/templates/admin-add-license.php:35
+msgid "License Name"
+msgstr "Lizenzname"
+
+#: admin/templates/admin-add-license.php:40
+msgid "A descriptive name for this license configuration."
+msgstr "Ein beschreibender Name für diese Lizenzkonfiguration."
+
+#: admin/templates/admin-add-license.php:46
+msgid "Description"
+msgstr "Beschreibung"
+
+#: admin/templates/admin-add-license.php:50
+msgid "Optional description of this license."
+msgstr "Optionale Beschreibung dieser Lizenz."
+
+#: admin/templates/admin-add-license.php:56
+#: admin/templates/admin-licenses.php:34
+msgid "Content URL"
+msgstr "Inhalts-URL"
+
+#: admin/templates/admin-add-license.php:63
+msgid ""
+"URL pattern for licensed content. Use \"/\" for entire site, or specific "
+"paths like \"/images/\". Supports wildcards (* and $)."
+msgstr ""
+"URL-Muster für lizenzierte Inhalte. Verwenden Sie \"/\" für die gesamte Website oder spezifische "
+"Pfade wie \"/images/\". Unterstützt Platzhalter (* und $)."
+
+#: admin/templates/admin-add-license.php:70
+msgid "License Server URL"
+msgstr "Lizenzserver-URL"
+
+#: admin/templates/admin-add-license.php:77
+msgid "Optional RSL License Server URL for managed licensing."
+msgstr "Optionale RSL-Lizenzserver-URL für verwaltete Lizenzierung."
+
+#: admin/templates/admin-add-license.php:83
+msgid "Content Encryption"
+msgstr "Inhaltsverschlüsselung"
+
+#: admin/templates/admin-add-license.php:88
+msgid "Content is encrypted"
+msgstr "Inhalt ist verschlüsselt"
+
+#: admin/templates/admin-add-license.php:91
+msgid ""
+"Check if the licensed content requires decryption keys from the license "
+"server."
+msgstr ""
+"Aktivieren, wenn der lizenzierte Inhalt Entschlüsselungsschlüssel vom Lizenz"
+"server benötigt."
+
+#: admin/templates/admin-add-license.php:98
+msgid "Permissions"
+msgstr "Berechtigungen"
+
+#: admin/templates/admin-add-license.php:104
+msgid "Permitted Usage"
+msgstr "Erlaubte Nutzung"
+
+#: admin/templates/admin-add-license.php:119
+msgid "Select permitted usage types. Leave empty to permit all usage types."
+msgstr "Wählen Sie erlaubte Nutzungsarten. Leer lassen, um alle Nutzungsarten zu erlauben."
+
+#: admin/templates/admin-add-license.php:126
+msgid "Permitted Users"
+msgstr "Erlaubte Benutzer"
+
+#: admin/templates/admin-add-license.php:141
+msgid "Select permitted user types. Leave empty to permit all user types."
+msgstr "Wählen Sie erlaubte Benutzertypen. Leer lassen, um alle Benutzertypen zu erlauben."
+
+#: admin/templates/admin-add-license.php:148
+msgid "Permitted Geography"
+msgstr "Erlaubte Geografie"
+
+#: admin/templates/admin-add-license.php:155
+msgid ""
+"Comma-separated list of permitted countries/regions (ISO 3166-1 alpha-2 "
+"codes)."
+msgstr ""
+"Kommagetrennte Liste erlaubter Länder/Regionen (ISO 3166-1 alpha-2 "
+"Codes)."
+
+#: admin/templates/admin-add-license.php:162
+msgid "Restrictions"
+msgstr "Beschränkungen"
+
+#: admin/templates/admin-add-license.php:168
+msgid "Prohibited Usage"
+msgstr "Verbotene Nutzung"
+
+#: admin/templates/admin-add-license.php:183
+msgid "Select explicitly prohibited usage types."
+msgstr "Wählen Sie explizit verbotene Nutzungsarten."
+
+#: admin/templates/admin-add-license.php:190
+msgid "Prohibited Users"
+msgstr "Verbotene Benutzer"
+
+#: admin/templates/admin-add-license.php:205
+msgid "Select explicitly prohibited user types."
+msgstr "Wählen Sie explizit verbotene Benutzertypen."
+
+#: admin/templates/admin-add-license.php:212
+msgid "Prohibited Geography"
+msgstr "Verbotene Geografie"
+
+#: admin/templates/admin-add-license.php:219
+msgid ""
+"Comma-separated list of prohibited countries/regions (ISO 3166-1 alpha-2 "
+"codes)."
+msgstr ""
+"Kommagetrennte Liste verbotener Länder/Regionen (ISO 3166-1 alpha-2 "
+"Codes)."
+
+#: admin/templates/admin-add-license.php:226
+msgid "Payment & Compensation"
+msgstr "Zahlung & Entschädigung"
+
+#: admin/templates/admin-add-license.php:232
+#: admin/templates/admin-licenses.php:35
+msgid "Payment Type"
+msgstr "Zahlungsart"
+
+#: admin/templates/admin-add-license.php:248
+msgid "Amount"
+msgstr "Betrag"
+
+#: admin/templates/admin-add-license.php:264
+msgid "Standard License URL"
+msgstr "Standard-Lizenz-URL"
+
+#: admin/templates/admin-add-license.php:271
+msgid "URL to standard license terms (e.g., Creative Commons, RSL Collective)."
+msgstr "URL zu Standard-Lizenzbestimmungen (z.B. Creative Commons, RSL Collective)."
+
+#: admin/templates/admin-add-license.php:278
+msgid "Custom License URL"
+msgstr "Benutzerdefinierte Lizenz-URL"
+
+#: admin/templates/admin-add-license.php:284
+msgid "URL to custom licensing terms and contact information."
+msgstr "URL zu benutzerdefinierten Lizenzbestimmungen und Kontaktinformationen."
+
+#: admin/templates/admin-add-license.php:291
+msgid "Legal Information"
+msgstr "Rechtliche Informationen"
+
+#: admin/templates/admin-add-license.php:297
+msgid "Warranties"
+msgstr "Gewährleistungen"
+
+#: admin/templates/admin-add-license.php:312
+msgid "Select warranties provided with this license."
+msgstr "Wählen Sie Gewährleistungen aus, die mit dieser Lizenz bereitgestellt werden."
+
+#: admin/templates/admin-add-license.php:319
+msgid "Disclaimers"
+msgstr "Haftungsausschlüsse"
+
+#: admin/templates/admin-add-license.php:334
+msgid "Select disclaimers for this license."
+msgstr "Wählen Sie Haftungsausschlüsse für diese Lizenz."
+
+#: admin/templates/admin-add-license.php:341
+msgid "Additional Information"
+msgstr "Zusätzliche Informationen"
+
+#: admin/templates/admin-add-license.php:347
+msgid "Schema.org URL"
+msgstr "Schema.org-URL"
+
+#: admin/templates/admin-add-license.php:353
+msgid "URL to Schema.org CreativeWork metadata for this content."
+msgstr "URL zu Schema.org CreativeWork-Metadaten für diesen Inhalt."
+
+#: admin/templates/admin-add-license.php:360
+msgid "Copyright Holder"
+msgstr "Urheberrechtsinhaber"
+
+#: admin/templates/admin-add-license.php:367
+msgid "Select Type"
+msgstr "Typ auswählen"
+
+#: admin/templates/admin-add-license.php:369
+msgid "Person"
+msgstr "Person"
+
+#: admin/templates/admin-add-license.php:372
+msgid "Organization"
+msgstr "Organisation"
+
+#: admin/templates/admin-add-license.php:380
+msgid "Contact Email"
+msgstr "Kontakt-E-Mail"
+
+#: admin/templates/admin-add-license.php:390
+msgid "Contact URL"
+msgstr "Kontakt-URL"
+
+#: admin/templates/admin-add-license.php:400
+msgid "Terms URL"
+msgstr "Bestimmungen-URL"
+
+#: admin/templates/admin-add-license.php:406
+msgid "URL to additional legal information about the license."
+msgstr "URL zu zusätzlichen rechtlichen Informationen über die Lizenz."
+
+#: admin/templates/admin-add-license.php:412
+#: admin/templates/admin-licenses.php:37
+msgid "Status"
+msgstr "Status"
+
+#: admin/templates/admin-add-license.php:417
+msgid "License is active"
+msgstr "Lizenz ist aktiv"
+
+#: admin/templates/admin-add-license.php:424
+msgid "Update License"
+msgstr "Lizenz aktualisieren"
+
+#: admin/templates/admin-licenses.php:11
+msgid "RSL Licenses"
+msgstr "RSL-Lizenzen"
+
+#: admin/templates/admin-licenses.php:23
+msgid "No licenses found."
+msgstr "Keine Lizenzen gefunden."
+
+#: admin/templates/admin-licenses.php:33
+msgid "Name"
+msgstr "Name"
+
+#: admin/templates/admin-licenses.php:36
+msgid "Usage Permits"
+msgstr "Nutzungserlaubnisse"
+
+#: admin/templates/admin-licenses.php:38
+msgid "Actions"
+msgstr "Aktionen"
+
+#: admin/templates/admin-licenses.php:84
+msgid "All permitted"
+msgstr "Alles erlaubt"
+
+#: admin/templates/admin-licenses.php:90
+msgid "Active"
+msgstr "Aktiv"
+
+#: admin/templates/admin-licenses.php:92
+msgid "Inactive"
+msgstr "Inaktiv"
+
+#: admin/templates/admin-licenses.php:98
+msgid "Edit"
+msgstr "Bearbeiten"
+
+#: admin/templates/admin-licenses.php:103
+msgid "Generate XML"
+msgstr "XML generieren"
+
+#: admin/templates/admin-licenses.php:109
+msgid "Delete"
+msgstr "Löschen"
+
+#: admin/templates/admin-licenses.php:122
+msgid "Generated RSL XML"
+msgstr "Generierte RSL-XML"
+
+#: admin/templates/admin-licenses.php:129
+msgid "Copy to Clipboard"
+msgstr "In Zwischenablage kopieren"
+
+#: admin/templates/admin-licenses.php:132
+msgid "Download XML"
+msgstr "XML herunterladen"
+
+#: rsl-licensing.php:91
+msgid ""
+"RSL Licensing: Failed to create required database tables. Please check "
+"database permissions."
+msgstr ""
+"RSL-Lizenzierung: Fehler beim Erstellen der erforderlichen Datenbanktabellen. Bitte überprüfen Sie "
+"die Datenbankberechtigungen."
+
+#: rsl-licensing.php:219
+msgid "Default Site License"
+msgstr "Standard-Website-Lizenz"
+
+#: rsl-licensing.php:220
+msgid "Default licensing terms for this WordPress site"
+msgstr "Standard-Lizenzbestimmungen für diese WordPress-Website"

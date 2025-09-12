@@ -72,7 +72,7 @@ class RSL_Frontend {
         }
     }
     
-    private function get_current_page_license() {
+    public function get_current_page_license() {
         global $post;
         
         // Check for post-specific license first

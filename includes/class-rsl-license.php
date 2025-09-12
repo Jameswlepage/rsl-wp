@@ -173,11 +173,18 @@ class RSL_License {
         
         $data['updated_at'] = current_time('mysql');
         
+        $format = array(
+            '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s',
+            '%s', '%s', '%s', '%s', '%s', '%s', '%f', '%s',
+            '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', 
+            '%d', '%s', '%s'
+        );
+        
         $result = $wpdb->update(
             $this->table_name,
             $data,
             array('id' => $id),
-            null,
+            $format,
             array('%d')
         );
         

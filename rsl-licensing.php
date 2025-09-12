@@ -99,6 +99,10 @@ class RSL_Licensing
             error_log('RSL: Warning - Failed to create default license during activation');
         }
         
+        if (!$this->create_database_indexes()) {
+            error_log('RSL: Warning - Failed to create database indexes during activation');
+        }
+        
         flush_rewrite_rules();
     }
 
@@ -269,6 +273,66 @@ class RSL_Licensing
         
         return true; // Licenses already exist
     }
+    
+    private function create_database_indexes()
+    {
+        global $wpdb;
+        
+        $table_name = $wpdb->prefix . "rsl_licenses";
+        
+        $indexes = array(
+            "idx_active" => "active",
+            "idx_updated_at" => "updated_at", 
+            "idx_name" => "name"
+        );
+        
+        $success = true;
+        
+        foreach ($indexes as $index_name => $column) {
+            // Check if index already exists
+            $index_exists = $wpdb->get_var($wpdb->prepare(
+                "SHOW INDEX FROM {$table_name} WHERE Key_name = %s",
+                $index_name
+            ));
+            
+            if (!$index_exists) {
+                $sql = "ALTER TABLE {$table_name} ADD INDEX {$index_name} ({$column})";
+                $result = $wpdb->query($sql);
+                
+                if ($result === false) {
+                    error_log('RSL: Failed to create index ' . $index_name . ': ' . $wpdb->last_error);
+                    $success = false;
+                }
+            }
+        }
+        
+        return $success;
+    }
 }
 
 RSL_Licensing::get_instance();
+
+if (!function_exists('rsl_has_license')) {
+    function rsl_has_license() {
+        static $frontend = null;
+        
+        if ($frontend === null) {
+            $frontend = new RSL_Frontend();
+        }
+        
+        $license_data = $frontend->get_current_page_license();
+        return !empty($license_data);
+    }
+}
+
+if (!function_exists('rsl_get_license_info')) {
+    function rsl_get_license_info() {
+        static $frontend = null;
+        
+        if ($frontend === null) {
+            $frontend = new RSL_Frontend();
+        }
+        
+        return $frontend->get_current_page_license();
+    }
+}
