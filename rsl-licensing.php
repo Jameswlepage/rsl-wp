@@ -233,7 +233,7 @@ class RSL_Licensing
                 'disclaimer' => 'as-is,no-warranty',
                 'schema_url' => 'https://rslstandard.org/schema',
                 'copyright_holder' => $site_name,
-                'copyright_type' => 'copyright',
+                'copyright_type' => 'organization',
                 'contact_email' => $admin_email,
                 'contact_url' => $site_url . '/contact',
                 'terms_url' => $site_url . '/terms',

@@ -321,9 +321,29 @@ define('RSL_DEBUG', true);
 
 This enables additional logging and validation checks.
 
-## Compliance & Best Practices
+## RSL 1.0 Specification Compliance
 
-### RSL Standard Compliance
+This plugin implements the complete RSL 1.0 draft specification:
+
+### Elements
+- `<rsl>`: ✅ Root emitted with xmlns `https://rslstandard.org/rsl`
+- `<content>`: ✅ Supports absolute URLs and server-relative paths per RFC 9309 (wildcards `*` and `$` supported)
+- `<license>`: ✅ Complete implementation with all sub-elements
+- `<permits>` / `<prohibits>`: ✅ Usage (`all`, `train-ai`, `train-genai`, `ai-use`, `ai-summarize`, `search`), user types, and geographic restrictions
+- `<payment>`: ✅ All types supported: `free`, `purchase`, `subscription`, `training`, `crawl`, `inference`, `attribution`, `royalty`
+- `<legal>`: ✅ Warranties and disclaimers with controlled vocabulary
+- `<schema>`: ✅ Schema.org CreativeWork integration
+- `<copyright>`: ✅ Person/organization with contact information
+- `<terms>`: ✅ Additional legal terms URL
+
+### Integration Methods
+- **HTML head**: ✅ `<script type="application/rsl+xml">`
+- **HTTP Link header**: ✅ Standards-compliant Link headers
+- **robots.txt**: ✅ License directive + AI Preferences compatibility
+- **RSS**: ✅ RSL namespace module with per-item licensing
+- **Media files**: ✅ XMP sidecar and companion file embedding
+
+### Compliance & Best Practices
 - Full RSL 1.0 specification implementation
 - Proper XML namespace usage
 - Standard MIME types and headers

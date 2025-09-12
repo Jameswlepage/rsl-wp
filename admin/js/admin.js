@@ -41,7 +41,7 @@ jQuery(document).ready(function($) {
         
         togglePaymentFields: function() {
             var paymentType = $('#payment_type').val();
-            var paidTypes = ['purchase', 'subscription', 'training', 'crawl', 'inference'];
+            var paidTypes = ['purchase', 'subscription', 'training', 'crawl', 'inference', 'royalty'];
             
             if (paidTypes.indexOf(paymentType) !== -1) {
                 $('#payment_amount_row').show();
@@ -255,14 +255,17 @@ jQuery(document).ready(function($) {
     
     // Validation helpers
     window.rslValidation = {
-        validateURL: function(url) {
-            var pattern = new RegExp('^(https?:\\/\\/)?'+ // protocol
-                '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+ // domain name
-                '((\\d{1,3}\\.){3}\\d{1,3}))'+ // OR ip (v4) address
-                '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+ // port and path
-                '(\\?[;&a-z\\d%_.~+=-]*)?'+ // query string
-                '(\\#[-a-z\\d_]*)?$','i'); // fragment locator
-            return !!pattern.test(url);
+        validateURL: function (value) {
+            if (!value) return false;
+            value = value.trim();
+
+            // Absolute http(s) URL
+            var abs = /^(https?:\/\/)((([a-z\d]([a-z\d-]*[a-z\d])*)\.)+[a-z]{2,}|((\d{1,3}\.){3}\d{1,3}))(:\d+)?(\/[-a-z\d%_.~+*]*)*(\?[;&a-z\d%_.~+=-]*)?(#[-a-z\d_]*)?$/i;
+            if (abs.test(value)) return true;
+
+            // Server-relative RFC 9309-style pattern: starts with '/', allows *, $
+            var rel = /^\/[A-Za-z0-9._~!'()*+,;=:@\/\-%]*\*?\$?$/;
+            return rel.test(value);
         },
         
         validateEmail: function(email) {

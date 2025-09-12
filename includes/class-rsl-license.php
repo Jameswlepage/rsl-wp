@@ -356,7 +356,8 @@ class RSL_License {
             'training' => __('Per training use', 'rsl-licensing'),
             'crawl' => __('Per crawl', 'rsl-licensing'),
             'inference' => __('Per inference', 'rsl-licensing'),
-            'attribution' => __('Attribution required', 'rsl-licensing')
+            'attribution' => __('Attribution required', 'rsl-licensing'),
+            'royalty' => __('Royalty', 'rsl-licensing')
         );
     }
     
