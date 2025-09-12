@@ -574,7 +574,7 @@ class RSL_Server {
         }
 
         // Skip core/asset paths
-        $request_uri = esc_url_raw($_SERVER['REQUEST_URI']);
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '';
         $wp_core_paths = array('/wp-admin/','/wp-login.php','/wp-cron.php','/xmlrpc.php','/wp-json/','/wp-content/','/wp-includes/');
         foreach ($wp_core_paths as $core_path) {
             if (strpos($request_uri, $core_path) !== false) {
@@ -741,7 +741,7 @@ class RSL_Server {
 
         // Optional: ensure this URL is within the licensed pattern
         $pattern = isset($payload['pattern']) ? $payload['pattern'] : '';
-        $request_uri = esc_url_raw($_SERVER['REQUEST_URI']);
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '';
         if ($pattern && !$this->url_matches_pattern(home_url($request_uri), $pattern)) {
             return false;
         }
@@ -841,7 +841,8 @@ class RSL_Server {
         status_header(401);
 
         $authorization_uri = home_url('.well-known/rsl/');
-        $current = home_url(esc_url_raw($_SERVER['REQUEST_URI']));
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? sanitize_text_field(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '';
+        $current = home_url($request_uri);
         $licenses = $this->license_handler->get_licenses(['active' => 1]);
 
         foreach ($licenses as $lic) {
