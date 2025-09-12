@@ -293,6 +293,14 @@ class RSL_Admin {
     }
     
     public function add_meta_boxes() {
+        // Only add meta boxes for classic editor (non-Gutenberg)
+        // Gutenberg uses the native Document Settings Panel instead
+        $screen = get_current_screen();
+        
+        if ($screen && method_exists($screen, 'is_block_editor') && $screen->is_block_editor()) {
+            return; // Skip meta boxes for Gutenberg
+        }
+        
         $post_types = array('post', 'page');
         $post_types = apply_filters('rsl_supported_post_types', $post_types);
         
@@ -421,8 +429,18 @@ class RSL_Admin {
     }
     
     private function get_menu_icon() {
-        // Return path to PNG icon for WordPress admin menu
-        return RSL_PLUGIN_URL . 'assets/icon-128x128.png';
+        // Convert PNG to base64 data URI for WordPress admin menu
+        $icon_path = RSL_PLUGIN_PATH . 'admin/images/rsl-logo.png';
+        
+        if (file_exists($icon_path)) {
+            $icon_data = file_get_contents($icon_path);
+            if ($icon_data !== false) {
+                return 'data:image/png;base64,' . base64_encode($icon_data);
+            }
+        }
+        
+        // Fallback to generic icon if PNG not available
+        return 'dashicons-admin-generic';
     }
     
     public function register_meta_fields() {
