@@ -4,26 +4,26 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
 
 ## Features
 
-### 🚀 Core RSL Implementation
+### Core RSL Implementation
 - **Full RSL 1.0 Specification Support** - Complete implementation of the official RSL standard
 - **License Management System** - Create, edit, and manage multiple license configurations
 - **Global and Per-Post Licensing** - Set site-wide licenses or override for specific content
 - **Advanced Permission Controls** - Define permitted/prohibited usage, user types, and geographic restrictions
 
-### 🌐 Multiple Integration Methods
+### Multiple Integration Methods
 - **HTML Head Injection** - Automatically embed RSL licenses in page headers
 - **HTTP Link Headers** - Add RSL license information to HTTP responses
 - **robots.txt Integration** - Extend robots.txt with RSL License directives and AI Preferences compatibility
 - **RSS Feed Enhancement** - Add RSL licensing to RSS feeds and create dedicated RSL feeds
 - **Media File Metadata** - Embed RSL licenses directly in uploaded images, PDFs, and other media
 
-### 🎛️ Professional Admin Interface
+### Professional Admin Interface
 - **Intuitive License Builder** - Visual interface for creating complex licensing terms
 - **Live XML Generation** - Preview and download RSL XML files
 - **License Validation** - Built-in validation and error checking
 - **Bulk Management** - Manage multiple licenses efficiently
 
-### 🔧 Developer Features
+### Developer Features
 - **REST API Endpoints** - Programmatic access to license data
 - **License Server Compatibility** - Integration with RSL License Servers
 - **Authentication Support** - Handle license-based authentication
@@ -326,22 +326,22 @@ This enables additional logging and validation checks.
 This plugin implements the complete RSL 1.0 draft specification:
 
 ### Elements
-- `<rsl>`: ✅ Root emitted with xmlns `https://rslstandard.org/rsl`
-- `<content>`: ✅ Supports absolute URLs and server-relative paths per RFC 9309 (wildcards `*` and `$` supported)
-- `<license>`: ✅ Complete implementation with all sub-elements
-- `<permits>` / `<prohibits>`: ✅ Usage (`all`, `train-ai`, `train-genai`, `ai-use`, `ai-summarize`, `search`), user types, and geographic restrictions
-- `<payment>`: ✅ All types supported: `free`, `purchase`, `subscription`, `training`, `crawl`, `inference`, `attribution`, `royalty`
-- `<legal>`: ✅ Warranties and disclaimers with controlled vocabulary
-- `<schema>`: ✅ Schema.org CreativeWork integration
-- `<copyright>`: ✅ Person/organization with contact information
-- `<terms>`: ✅ Additional legal terms URL
+- `<rsl>`: Root emitted with xmlns `https://rslstandard.org/rsl`
+- `<content>`: Supports absolute URLs and server-relative paths per RFC 9309 (wildcards `*` and `$` supported)
+- `<license>`: Complete implementation with all sub-elements
+- `<permits>` / `<prohibits>`: Usage (`all`, `train-ai`, `train-genai`, `ai-use`, `ai-summarize`, `search`), user types, and geographic restrictions
+- `<payment>`: All types supported: `free`, `purchase`, `subscription`, `training`, `crawl`, `inference`, `attribution`, `royalty`
+- `<legal>`: Warranties and disclaimers with controlled vocabulary
+- `<schema>`: Schema.org CreativeWork integration
+- `<copyright>`: Person/organization with contact information
+- `<terms>`: Additional legal terms URL
 
 ### Integration Methods
-- **HTML head**: ✅ `<script type="application/rsl+xml">`
-- **HTTP Link header**: ✅ Standards-compliant Link headers
-- **robots.txt**: ✅ License directive + AI Preferences compatibility
-- **RSS**: ✅ RSL namespace module with per-item licensing
-- **Media files**: ✅ XMP sidecar and companion file embedding
+- **HTML head**: `<script type="application/rsl+xml">`
+- **HTTP Link header**: Standards-compliant Link headers
+- **robots.txt**: License directive + AI Preferences compatibility
+- **RSS**: RSL namespace module with per-item licensing
+- **Media files**: XMP sidecar and companion file embedding
 
 ### Compliance & Best Practices
 - Full RSL 1.0 specification implementation
@@ -409,4 +409,4 @@ This plugin is licensed under GPL v2 or later, allowing you to freely use, modif
 
 ---
 
-**Made with ❤️ for the open web and fair AI training practices.**
+**Made for the open web and fair AI training practices.**
