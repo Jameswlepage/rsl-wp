@@ -69,20 +69,25 @@ jQuery(document).ready(function($) {
             var amount = parseFloat($('#amount').val()) || 0;
             var paymentType = $('#payment_type').val();
             var hasWooCommerce = typeof rsl_ajax.woocommerce_active !== 'undefined' ? rsl_ajax.woocommerce_active : false;
+            var hasPaymentCapability = typeof rsl_ajax.has_payment_capability !== 'undefined' ? rsl_ajax.has_payment_capability : false;
             
             // Allow any payment type with $0 amount (including attribution)
             if (amount === 0) {
                 return { valid: true };
             }
             
-            // Block any amount > 0 without WooCommerce
-            if (amount > 0 && !hasWooCommerce) {
-                var message = 'WooCommerce is required for paid licensing (amount > $0). ';
+            // Block any amount > 0 without payment capability
+            if (amount > 0 && !hasPaymentCapability) {
+                var message = 'Payment processing is required for paid licensing (amount > $0). ';
                 
-                if (paymentType === 'attribution') {
-                    message += 'For attribution licenses, set the amount to $0 or install WooCommerce for paid attribution.';
+                if (!hasWooCommerce) {
+                    if (paymentType === 'attribution') {
+                        message += 'For paid attribution licenses, please install and activate WooCommerce, then set up your preferred payment gateway (Stripe, PayPal, etc.).';
+                    } else {
+                        message += 'Please install and activate WooCommerce to enable payment processing.';
+                    }
                 } else {
-                    message += 'Please install WooCommerce or set amount to $0.';
+                    message += 'WooCommerce is installed but may not support this payment type.';
                 }
                 
                 return {

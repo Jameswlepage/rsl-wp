@@ -25,6 +25,7 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
 
 ### Developer Features
 - **REST API Endpoints** - Programmatic access to license data
+- **WordPress Abilities API** - Standardized interface for AI agents and automated systems
 - **License Server Compatibility** - Integration with RSL License Servers
 - **Authentication Support** - Handle license-based authentication
 - **Shortcodes** - Display license information anywhere on your site
@@ -310,6 +311,15 @@ RSL metadata is embedded using industry-standard methods:
 - `GET /wp-json/rsl/v1/licenses` - List all licenses
 - `GET /wp-json/rsl/v1/licenses/{id}` - Get specific license
 - `POST /wp-json/rsl/v1/validate` - Validate content licensing
+
+### WordPress Abilities API
+
+When the WordPress Abilities API plugin is installed, RSL provides standardized abilities for:
+- License management (create, update, delete, list)
+- Content licensing validation and XML generation
+- Token issuance and authentication
+
+Abilities use semantic descriptions and JSON Schema validation, making them ideal for AI agents and automated systems.
 
 ### License Server Endpoints
 
