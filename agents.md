@@ -1,0 +1,251 @@
+# AGENTS.md - RSL Licensing for WordPress
+
+Instructions and context for AI coding agents working on the RSL (Really Simple Licensing) WordPress plugin.
+
+## Project Overview
+
+RSL Licensing for WordPress is a complete implementation of the RSL 1.0 specification that enables WordPress site owners to define machine-readable licensing terms for their content. The plugin provides licensing infrastructure for AI companies, crawlers, and automated systems to properly license content.
+
+**Key Features:**
+- Complete RSL 1.0 specification support
+- Modular payment processor architecture with WooCommerce integration
+- MCP-inspired session management for AI agents
+- Multiple integration methods (HTML, HTTP headers, robots.txt, RSS, media metadata)
+- Professional WordPress admin interface
+
+## Architecture
+
+### Core Components
+
+- **`RSL_License`**: License CRUD operations and XML generation
+- **`RSL_Server`**: License server with JWT authentication and REST API
+- **`RSL_Payment_Registry`**: Manages modular payment processors
+- **`RSL_Session_Manager`**: MCP-inspired session state management for AI payments
+- **`RSL_WooCommerce_Processor`**: Handles all WooCommerce payment gateways
+- **`RSL_Admin`**: WordPress admin interface and AJAX handlers
+- **`RSL_Frontend`**: Public-facing HTML injection and HTTP headers
+- **`RSL_Robots`**: robots.txt integration with RSL directives
+- **`RSL_RSS`**: RSS feed enhancement with RSL namespace
+- **`RSL_Media`**: Media file metadata embedding (XMP, sidecar files)
+
+### Key Design Principles
+
+1. **WooCommerce First-Class**: WooCommerce handles ALL payment gateways (Stripe, PayPal, etc.)
+2. **Modular Architecture**: Payment processors are extensible via interface
+3. **MCP-Inspired Sessions**: Server-side session management with polling (no webhooks)
+4. **Security Focus**: JWT tokens, signed payment proofs, CORS restrictions
+5. **WordPress Standards**: Follows WordPress coding standards and best practices
+
+## Development Setup
+
+### Local Development
+
+```bash
+# WordPress Playground (recommended)
+npm install -g @wp-playground/cli
+npx @wp-playground/cli server --auto-mount
+
+# Or use included .wp-playground.json
+npx @wp-playground/cli server
+```
+
+### Testing
+
+```bash
+# Run automated tests (if available)
+./tests/rsl-server-test.sh http://127.0.0.1:9400
+
+# Manual testing endpoints
+curl http://127.0.0.1:9400/.well-known/rsl/
+curl http://127.0.0.1:9400/wp-json/rsl/v1/licenses
+curl http://127.0.0.1:9400/robots.txt
+```
+
+## Code Style Guidelines
+
+### PHP Standards
+
+- Follow **WordPress Coding Standards**
+- Use **proper escaping** (`esc_html()`, `esc_attr()`, `esc_url_raw()`)
+- **Sanitize all input** (`sanitize_text_field()`, `sanitize_textarea_field()`)
+- **Validate user capabilities** (`current_user_can()`)
+- **Use proper nonces** for AJAX security
+
+### Security Requirements
+
+- **Never expose sensitive data** in client-side code
+- **Always sanitize `$_SERVER['REQUEST_URI']`** with `esc_url_raw()`
+- **Use `$this->add_cors_headers()`** instead of `Access-Control-Allow-Origin: *`
+- **Validate payment proofs** cryptographically
+- **Implement proper authentication** for license servers
+
+### Database Operations
+
+- **Use `$wpdb->prepare()`** for all queries with user input
+- **Check `$wpdb->last_error`** after database operations
+- **Use proper format specifiers** (e.g., `%s` for strings, `%f` for floats, `%d` for integers)
+- **Ensure data array order** matches database schema order
+
+## Common Patterns
+
+### Adding New Payment Processors
+
+```php
+class Custom_Payment_Processor implements RSL_Payment_Processor_Interface {
+    public function get_id() { return 'custom'; }
+    public function get_name() { return 'Custom Payment System'; }
+    public function is_available() { return function_exists('custom_payment_api'); }
+    
+    // Implement interface methods...
+}
+
+// Register via hook
+add_action('rsl_register_payment_processors', function($registry) {
+    $registry->register_processor(new Custom_Payment_Processor());
+});
+```
+
+### Adding WordPress Hooks
+
+```php
+// Filter example
+add_filter('rsl_license_price', function($price, $license_id, $client) {
+    if (str_contains($client, '.edu')) {
+        return $price * 0.5; // Educational discount
+    }
+    return $price;
+}, 10, 3);
+
+// Action example  
+add_action('rsl_payment_completed', function($order_id, $license_id, $client) {
+    // Custom post-payment processing
+}, 10, 3);
+```
+
+### AJAX Handlers
+
+- **Always check nonces**: `check_ajax_referer('rsl_nonce', 'nonce')`
+- **Verify capabilities**: `current_user_can('manage_options')`
+- **Return proper JSON**: `wp_send_json_success()` or `wp_send_json_error()`
+- **Sanitize all input**: Use appropriate sanitization functions
+
+## Testing Guidelines
+
+### Manual Testing Checklist
+
+- [ ] Create free license and verify HTML injection
+- [ ] Create paid license and test WooCommerce integration
+- [ ] Test session-based payment flow
+- [ ] Verify robots.txt integration
+- [ ] Check RSS feed enhancement
+- [ ] Test media file metadata embedding
+- [ ] Validate all REST API endpoints
+
+### Common Issues to Avoid
+
+1. **Array/Format Mismatch**: Ensure license data array order matches database schema
+2. **CORS Security**: Never use `Access-Control-Allow-Origin: *` 
+3. **Input Sanitization**: Always sanitize `$_SERVER` variables
+4. **Payment Type Support**: WooCommerce should support all RSL payment types
+5. **Session Management**: Use server-side storage, not client-side
+
+## Database Schema
+
+The main table structure (`wp_rsl_licenses`):
+
+```sql
+CREATE TABLE wp_rsl_licenses (
+    id mediumint(9) NOT NULL AUTO_INCREMENT,
+    name varchar(255) NOT NULL,
+    description text,
+    content_url text NOT NULL,
+    server_url varchar(255),
+    encrypted tinyint(1) DEFAULT 0,
+    lastmod datetime,
+    permits_usage text,
+    permits_user text,
+    permits_geo text,
+    prohibits_usage text,
+    prohibits_user text,
+    prohibits_geo text,
+    payment_type varchar(50) DEFAULT 'free',
+    standard_url varchar(255),
+    custom_url varchar(255),
+    amount decimal(10,2),
+    currency varchar(3),
+    warranty text,
+    disclaimer text,
+    schema_url varchar(255),
+    copyright_holder varchar(255),
+    copyright_type varchar(20),
+    contact_email varchar(255),
+    contact_url varchar(255),
+    terms_url varchar(255),
+    active tinyint(1) DEFAULT 1,
+    created_at datetime DEFAULT CURRENT_TIMESTAMP,
+    updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+```
+
+## File Structure
+
+```
+rsl-licensing.php                           # Main plugin file
+├── includes/
+│   ├── class-rsl-license.php               # Core license management
+│   ├── class-rsl-server.php                # License server and REST API
+│   ├── class-rsl-admin.php                 # WordPress admin integration
+│   ├── class-rsl-payment-registry.php      # Payment processor management
+│   ├── class-rsl-session-manager.php       # Session state management
+│   ├── interfaces/
+│   │   └── interface-rsl-payment-processor.php
+│   └── processors/
+│       └── class-rsl-woocommerce-processor.php
+├── admin/
+│   ├── templates/                          # Admin page templates
+│   ├── css/admin.css                       # Admin styling
+│   └── js/admin.js                         # Admin JavaScript
+└── docs/                                   # Documentation
+```
+
+## Debug Mode
+
+Enable debug logging in `wp-config.php`:
+
+```php
+define('WP_DEBUG', true);
+define('RSL_DEBUG', true);
+define('WP_DEBUG_LOG', true);
+```
+
+Use `rsl_log($message, $level)` for conditional logging that only outputs when debug mode is enabled.
+
+## Build and Test Commands
+
+The plugin doesn't require a build process, but testing can be done via:
+
+```bash
+# Start WordPress Playground
+npx @wp-playground/cli server --auto-mount
+
+# Test endpoints
+curl http://127.0.0.1:9400/.well-known/rsl/
+curl http://127.0.0.1:9400/wp-json/rsl/v1/licenses
+curl http://127.0.0.1:9400/robots.txt
+```
+
+## Contributing Guidelines
+
+1. **Follow WordPress coding standards**
+2. **Maintain security best practices**
+3. **Add proper documentation** for new features
+4. **Test thoroughly** before submitting
+5. **Ensure backwards compatibility** with existing licenses
+6. **Update relevant documentation** files
+
+## Resources
+
+- **WordPress Coding Standards**: https://developer.wordpress.org/coding-standards/
+- **RSL 1.0 Specification**: https://rslstandard.org
+- **WordPress REST API**: https://developer.wordpress.org/rest-api/
+- **WooCommerce Documentation**: https://woocommerce.com/documentation/
