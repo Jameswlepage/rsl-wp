@@ -243,9 +243,18 @@ class RSL_Admin {
         }
         
         // Validate WooCommerce requirement for paid licenses
+        $payment_type = sanitize_text_field($_POST['payment_type']);
         if ($amount > 0 && !class_exists('WooCommerce')) {
+            $message = __('WooCommerce is required for paid licensing (amount > $0). ', 'rsl-licensing');
+            
+            if ($payment_type === 'attribution') {
+                $message .= __('For attribution licenses, set the amount to $0 or install WooCommerce for paid attribution.', 'rsl-licensing');
+            } else {
+                $message .= __('Please install WooCommerce or set amount to $0.', 'rsl-licensing');
+            }
+            
             wp_send_json_error(array(
-                'message' => __('WooCommerce is required for paid licensing (amount > 0). Please install WooCommerce or set amount to 0.', 'rsl-licensing')
+                'message' => $message
             ));
             return;
         }
