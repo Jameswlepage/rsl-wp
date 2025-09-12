@@ -19,6 +19,14 @@ $title = $is_edit ? __('Edit RSL License', 'rsl-licensing') : __('Add RSL Licens
     </a>
     <hr class="wp-header-end">
     
+    <?php
+    // Display admin notices
+    if (function_exists('settings_errors')) {
+        settings_errors();
+    }
+    do_action('admin_notices');
+    ?>
+    
     <div id="rsl-message" class="notice rsl-hidden"></div>
     
     <form id="rsl-license-form" method="post">
