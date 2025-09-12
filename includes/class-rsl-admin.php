@@ -7,9 +7,11 @@ if (!defined('ABSPATH')) {
 class RSL_Admin {
     
     private $license_handler;
+    private $payment_registry;
     
     public function __construct() {
         $this->license_handler = new RSL_License();
+        $this->payment_registry = RSL_Payment_Registry::get_instance();
         
         add_action('admin_menu', array($this, 'add_admin_menu'));
         add_action('admin_init', array($this, 'register_settings'));
@@ -110,13 +112,18 @@ class RSL_Admin {
             wp_enqueue_script('rsl-admin', RSL_PLUGIN_URL . 'admin/js/admin.js', array('jquery'), RSL_PLUGIN_VERSION, true);
             wp_enqueue_style('rsl-admin', RSL_PLUGIN_URL . 'admin/css/admin.css', array(), RSL_PLUGIN_VERSION);
             
+            // Get payment processor info for UI
+            $wc_processor = $this->payment_registry->get_processor('woocommerce');
+            $has_payment_capability = $this->payment_registry->has_payment_capability();
+            
             wp_localize_script('rsl-admin', 'rsl_ajax', array(
                 'url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('rsl_nonce'),
                 'redirect_url' => admin_url('admin.php?page=rsl-licenses'),
                 'rest_url' => rest_url('rsl-olp/v1'),
-                'woocommerce_active' => class_exists('WooCommerce'),
-                'woocommerce_subscriptions_active' => class_exists('WC_Subscriptions') || function_exists('wcs_get_subscriptions'),
+                'woocommerce_active' => ($wc_processor && $wc_processor->is_available()),
+                'woocommerce_subscriptions_active' => ($wc_processor && in_array('subscription', $wc_processor->get_supported_payment_types())),
+                'has_payment_capability' => $has_payment_capability,
                 'strings' => array(
                     'saving' => __('Saving...', 'rsl-licensing'),
                     'error_occurred' => __('An error occurred while saving the license.', 'rsl-licensing'),
@@ -166,9 +173,11 @@ class RSL_Admin {
             $license_data = $this->license_handler->get_license($license_id);
         }
         
-        // Check WooCommerce availability for paid licensing
-        $woocommerce_active = class_exists('WooCommerce');
-        $woocommerce_subscriptions_active = class_exists('WC_Subscriptions') || function_exists('wcs_get_subscriptions');
+        // Get payment processor information for the UI
+        $wc_processor = $this->payment_registry->get_processor('woocommerce');
+        $woocommerce_active = ($wc_processor && $wc_processor->is_available());
+        $woocommerce_subscriptions_active = ($wc_processor && in_array('subscription', $wc_processor->get_supported_payment_types()));
+        $has_payment_capability = $this->payment_registry->has_payment_capability();
         
         include RSL_PLUGIN_PATH . 'admin/templates/admin-add-license.php';
     }
@@ -242,21 +251,43 @@ class RSL_Admin {
             return;
         }
         
-        // Validate WooCommerce requirement for paid licenses
+        // Validate payment processor availability for paid licenses
         $payment_type = sanitize_text_field($_POST['payment_type']);
-        if ($amount > 0 && !class_exists('WooCommerce')) {
-            $message = __('WooCommerce is required for paid licensing (amount > $0). ', 'rsl-licensing');
+        if ($amount > 0) {
+            $processor = $this->payment_registry->get_processor_for_license([
+                'payment_type' => $payment_type,
+                'amount' => $amount
+            ]);
             
-            if ($payment_type === 'attribution') {
-                $message .= __('For attribution licenses, set the amount to $0 or install WooCommerce for paid attribution.', 'rsl-licensing');
-            } else {
-                $message .= __('Please install WooCommerce or set amount to $0.', 'rsl-licensing');
+            if (!$processor) {
+                // Generate WooCommerce-first error message
+                $wc_processor = $this->payment_registry->get_processor('woocommerce');
+                
+                if (!$wc_processor) {
+                    $message = __('WooCommerce is required for paid licensing (amount > $0). ', 'rsl-licensing');
+                    
+                    if ($payment_type === 'attribution') {
+                        $message .= __('For paid attribution licenses, please install and activate WooCommerce, then set up your preferred payment gateway (Stripe, PayPal, etc.).', 'rsl-licensing');
+                    } else {
+                        $message .= __('Please install and activate WooCommerce to enable payment processing.', 'rsl-licensing');
+                    }
+                } else {
+                    $message = sprintf(
+                        __('The %s payment method is not supported. WooCommerce supports %s payment types. ', 'rsl-licensing'),
+                        $payment_type,
+                        implode(', ', $wc_processor->get_supported_payment_types())
+                    );
+                    
+                    if ($payment_type === 'attribution') {
+                        $message .= __('For attribution licenses, set the amount to $0 or use "purchase" payment type.', 'rsl-licensing');
+                    }
+                }
+                
+                wp_send_json_error(array(
+                    'message' => $message
+                ));
+                return;
             }
-            
-            wp_send_json_error(array(
-                'message' => $message
-            ));
-            return;
         }
         
         // Validate email
