@@ -107,9 +107,7 @@ class RSL_Server {
         
         header('Content-Type: application/rsl+xml; charset=UTF-8');
         header('Cache-Control: public, max-age=3600');
-        header('Access-Control-Allow-Origin: *');
-        header('Access-Control-Allow-Methods: GET');
-        header('Access-Control-Allow-Headers: User-Agent, Authorization');
+        $this->add_cors_headers();
         
         echo $this->license_handler->generate_rsl_xml($license_data);
     }
@@ -150,7 +148,7 @@ class RSL_Server {
         
         header('Content-Type: application/json; charset=UTF-8');
         header('Cache-Control: public, max-age=1800');
-        header('Access-Control-Allow-Origin: *');
+        $this->add_cors_headers();
         
         echo json_encode($site_info, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES);
     }
@@ -362,7 +360,7 @@ class RSL_Server {
         if (!empty($payload['exp']) && $now > intval($payload['exp'])) {
             return new \WP_Error('expired', 'Token expired', ['status' => 401]);
         }
-        header('Access-Control-Allow-Origin: *');
+        $this->add_cors_headers();
         return rest_ensure_response(['active' => true, 'payload' => $payload]);
     }
 
@@ -455,7 +453,7 @@ class RSL_Server {
         }
 
         // Skip core/asset paths
-        $request_uri = $_SERVER['REQUEST_URI'];
+        $request_uri = esc_url_raw($_SERVER['REQUEST_URI']);
         $wp_core_paths = array('/wp-admin/','/wp-login.php','/wp-cron.php','/xmlrpc.php','/wp-json/','/wp-content/','/wp-includes/');
         foreach ($wp_core_paths as $core_path) {
             if (strpos($request_uri, $core_path) !== false) {
@@ -591,7 +589,8 @@ class RSL_Server {
 
         // Optional: ensure this URL is within the licensed pattern
         $pattern = isset($payload['pattern']) ? $payload['pattern'] : '';
-        if ($pattern && !$this->url_matches_pattern(home_url(esc_url_raw($_SERVER['REQUEST_URI'])), $pattern)) {
+        $request_uri = esc_url_raw($_SERVER['REQUEST_URI']);
+        if ($pattern && !$this->url_matches_pattern(home_url($request_uri), $pattern)) {
             return false;
         }
         return true;
@@ -672,7 +671,7 @@ class RSL_Server {
         status_header(401);
 
         $authorization_uri = home_url('.well-known/rsl/');
-        $current = home_url($_SERVER['REQUEST_URI']);
+        $current = home_url(esc_url_raw($_SERVER['REQUEST_URI']));
         $licenses = $this->license_handler->get_licenses(['active' => 1]);
 
         foreach ($licenses as $lic) {

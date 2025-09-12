@@ -114,6 +114,7 @@ class RSL_Admin {
                 'url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('rsl_nonce'),
                 'redirect_url' => admin_url('admin.php?page=rsl-licenses'),
+                'rest_url' => rest_url('rsl-olp/v1'),
                 'woocommerce_active' => class_exists('WooCommerce'),
                 'woocommerce_subscriptions_active' => class_exists('WC_Subscriptions') || function_exists('wcs_get_subscriptions'),
                 'strings' => array(
@@ -492,18 +493,21 @@ class RSL_Admin {
     }
     
     private function get_menu_icon() {
-        // Convert PNG to base64 data URI for WordPress admin menu
-        $icon_path = RSL_PLUGIN_PATH . 'admin/images/rsl-logo.png';
+        // RSL SVG icon as base64 data URI for WordPress admin menu
+        $svg_icon = '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" width="20" height="20">
+  <defs>
+    <mask id="text-mask">
+      <rect width="100%" height="100%" fill="white"/>
+      <text x="10" y="14" font-family="Arial, sans-serif" font-size="10" font-weight="bold"
+            fill="black" text-anchor="middle">RSL</text>
+    </mask>
+  </defs>
+  <!-- Shield shape with applied mask -->
+  <path d="M0 4 L10 0 L20 4 L18 16 L10 20 L2 16 Z" fill="#E44D26" mask="url(#text-mask)"/>
+  <path d="M10 0 L20 4 L18 16 L10 20 Z" fill="#F16529" mask="url(#text-mask)"/>
+</svg>';
         
-        if (file_exists($icon_path)) {
-            $icon_data = file_get_contents($icon_path);
-            if ($icon_data !== false) {
-                return 'data:image/png;base64,' . base64_encode($icon_data);
-            }
-        }
-        
-        // Fallback to generic icon if PNG not available
-        return 'dashicons-admin-generic';
+        return 'data:image/svg+xml;base64,' . base64_encode($svg_icon);
     }
     
     public function register_meta_fields() {
