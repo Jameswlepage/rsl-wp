@@ -61,21 +61,51 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
 - Visit `yoursite.com/robots.txt` to see RSL directives
 - Access `yoursite.com/?rsl_feed=1` for your RSL feed
 
-## WooCommerce Integration for Paid Licensing
+## Payment Processing Architecture
 
-For paid licensing (purchase, subscription, training fees), install WooCommerce:
+RSL uses a **modular payment processor architecture** that supports multiple payment systems:
 
-### Quick WooCommerce Setup
+### WooCommerce Integration (Primary)
+
+WooCommerce handles **all payment gateways** (Stripe, PayPal, Square, etc.) as a first-class citizen:
 
 1. **Install WooCommerce** plugin and complete setup wizard
-2. **Create paid license** in Settings > Add RSL License:
-   - Set **Payment Type**: "Purchase" or "Subscription"
+2. **Configure your payment gateways** in WooCommerce (Stripe, PayPal, etc.)
+3. **Create paid license** in Settings > Add RSL License:
+   - Set **Payment Type**: "Purchase" or "Subscription" 
    - Add **Amount**: e.g., 99.99
    - Set **Server URL**: `https://yoursite.com/wp-json/rsl-olp/v1`
-3. **Configure payment gateway** (PayPal, Stripe, etc.) in WooCommerce
-4. **Test the flow**: AI companies can now request licensing tokens and complete payments
+4. **RSL automatically creates** hidden WooCommerce products
+5. **AI companies pay** through your WooCommerce checkout using any configured gateway
 
-The plugin automatically creates hidden WooCommerce products and handles the entire payment-to-token flow.
+### Session-Based Payment Flow (MCP-Inspired)
+
+AI agents use session-based authentication patterns for seamless integration:
+
+```javascript
+// 1. Create payment session
+const session = await fetch('/wp-json/rsl-olp/v1/session', {
+  method: 'POST',
+  body: JSON.stringify({ license_id: 2, client: 'openai-crawler' })
+});
+
+// 2. Poll session status until payment complete
+const { session_id, polling_url } = await session.json();
+// ... polling logic ...
+
+// 3. Use signed proof to get access token
+const token = await fetch('/wp-json/rsl-olp/v1/token', {
+  body: JSON.stringify({ signed_proof: session.proof })
+});
+```
+
+### Extensible Architecture
+
+The system supports additional payment processors through a plugin interface:
+
+- **WooCommerce Processor**: Handles all WooCommerce payment gateways
+- **Custom Processors**: Third-party plugins can add new payment methods
+- **Enterprise Processors**: Direct integrations for large-scale licensing
 
 📖 **For detailed setup, pricing models, and business use cases, see [Payment Integration Guide](docs/PAYMENTS.md)**
 

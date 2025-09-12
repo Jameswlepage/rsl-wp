@@ -7,9 +7,13 @@ if (!defined('ABSPATH')) {
 class RSL_Server {
     
     private $license_handler;
+    private $payment_registry;
+    private $session_manager;
     
     public function __construct() {
         $this->license_handler = new RSL_License();
+        $this->payment_registry = RSL_Payment_Registry::get_instance();
+        $this->session_manager = RSL_Session_Manager::get_instance();
         
         add_action('init', array($this, 'add_rewrite_rules'));
         add_action('template_redirect', array($this, 'handle_license_requests'));
@@ -20,6 +24,10 @@ class RSL_Server {
         
         // REST API endpoints for license server functionality
         add_action('rest_api_init', array($this, 'register_rest_routes'));
+        
+        // Hook into WooCommerce payment completion
+        add_action('woocommerce_order_status_completed', array($this, 'handle_wc_payment_completed'));
+        add_action('woocommerce_payment_complete', array($this, 'handle_wc_payment_completed'));
     }
     
     public function add_rewrite_rules() {
@@ -189,6 +197,19 @@ class RSL_Server {
         register_rest_route('rsl-olp/v1', '/key', [
             'methods' => 'GET',
             'callback' => [$this, 'olp_get_key'],
+            'permission_callback' => '__return_true'
+        ]);
+        
+        // === Session Management Endpoints (MCP-inspired) ===
+        register_rest_route('rsl-olp/v1', '/session', [
+            'methods' => 'POST',
+            'callback' => [$this, 'olp_create_session'],
+            'permission_callback' => '__return_true'
+        ]);
+        
+        register_rest_route('rsl-olp/v1', '/session/(?P<session_id>[a-f0-9\-]+)', [
+            'methods' => 'GET',
+            'callback' => [$this, 'olp_get_session'],
             'permission_callback' => '__return_true'
         ]);
     }
@@ -746,8 +767,124 @@ class RSL_Server {
             'features' => array(
                 'license_authentication' => true,
                 'content_encryption' => false, // Not implemented in this version
-                'payment_processing' => false  // Not implemented in this version
+                'payment_processing' => true,   // Now available via processors
+                'session_management' => true    // MCP-inspired sessions
             )
         );
+    }
+    
+    // === Session Management Methods ===
+    
+    /**
+     * Create payment session (MCP-inspired)
+     */
+    public function olp_create_session(\WP_REST_Request $req) {
+        $license_id = intval($req->get_param('license_id'));
+        $client = sanitize_text_field($req->get_param('client')) ?: 'anonymous';
+        
+        $license = $this->license_handler->get_license($license_id);
+        if (!$license || !$license['active']) {
+            return new \WP_Error('license_not_found', 'License not found', ['status' => 404]);
+        }
+        
+        // Create session
+        $session_data = $this->session_manager->create_session($license, $client, $req->get_params());
+        
+        // If free license, no payment needed
+        $amount = floatval($license['amount']);
+        if ($amount === 0.0) {
+            $this->session_manager->update_session_status($session_data['session_id'], 'completed');
+            
+            // Generate free token immediately
+            $token_data = $this->mint_token_for_license($license, $client);
+            return rest_ensure_response(array_merge($session_data, [
+                'token' => $token_data['token'],
+                'expires_at' => $token_data['expires_at']
+            ]));
+        }
+        
+        // Get payment processor
+        $processor = $this->payment_registry->get_processor_for_license($license);
+        if (!$processor) {
+            return new \WP_Error('no_processor', 'No payment processor available for this license', ['status' => 501]);
+        }
+        
+        // Create checkout session
+        $checkout_result = $processor->create_checkout_session($license, $client, $session_data['session_id']);
+        if (is_wp_error($checkout_result)) {
+            return $checkout_result;
+        }
+        
+        // Update session with checkout URL
+        $this->session_manager->set_checkout_url(
+            $session_data['session_id'],
+            $checkout_result['checkout_url'],
+            $processor->get_id()
+        );
+        
+        return rest_ensure_response(array_merge($session_data, [
+            'checkout_url' => $checkout_result['checkout_url'],
+            'processor' => $processor->get_name()
+        ]));
+    }
+    
+    /**
+     * Get session status (MCP-inspired polling)
+     */
+    public function olp_get_session(\WP_REST_Request $req) {
+        $session_id = $req->get_param('session_id');
+        
+        if (!$session_id) {
+            return new \WP_Error('missing_session_id', 'Session ID required', ['status' => 400]);
+        }
+        
+        $status = $this->session_manager->get_session_status($session_id);
+        
+        if (is_wp_error($status)) {
+            return $status;
+        }
+        
+        return rest_ensure_response($status);
+    }
+    
+    /**
+     * Handle WooCommerce payment completion
+     */
+    public function handle_wc_payment_completed($order_id) {
+        $order = wc_get_order($order_id);
+        if (!$order || !$order->is_paid()) {
+            return;
+        }
+        
+        $session_id = $order->get_meta('rsl_session_id');
+        $license_id = $order->get_meta('rsl_license_id');
+        
+        if (!$session_id || !$license_id) {
+            return;
+        }
+        
+        $session = $this->session_manager->get_session($session_id);
+        if (!$session) {
+            return;
+        }
+        
+        $license = $this->license_handler->get_license($license_id);
+        if (!$license) {
+            return;
+        }
+        
+        // Get WooCommerce processor to generate proof
+        $processor = $this->payment_registry->get_processor('woocommerce');
+        if (!$processor) {
+            return;
+        }
+        
+        $proof = $processor->generate_payment_proof($license, $session_id, [
+            'order_id' => $order_id
+        ]);
+        
+        if (!is_wp_error($proof)) {
+            $this->session_manager->store_payment_proof($session_id, $proof);
+        }
     }
 }

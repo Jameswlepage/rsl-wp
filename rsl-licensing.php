@@ -77,7 +77,17 @@ class RSL_Licensing
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-robots.php";
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-rss.php";
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-media.php";
+        
+        // Load modular payment system
+        require_once RSL_PLUGIN_PATH . "includes/interfaces/interface-rsl-payment-processor.php";
+        require_once RSL_PLUGIN_PATH . "includes/class-rsl-payment-registry.php";
+        require_once RSL_PLUGIN_PATH . "includes/class-rsl-session-manager.php";
+        
+        // Load server (depends on payment system)
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-server.php";
+        
+        // Load WordPress Abilities API integration
+        require_once RSL_PLUGIN_PATH . "includes/class-rsl-abilities.php";
     }
 
     private function init_hooks()
@@ -91,6 +101,11 @@ class RSL_Licensing
         new RSL_RSS();
         new RSL_Media();
         new RSL_Server();
+        
+        // Initialize WordPress Abilities API integration
+        if (function_exists('wp_register_ability')) {
+            new RSL_Abilities();
+        }
     }
 
     public function activate()
