@@ -11,6 +11,9 @@ jQuery(document).ready(function($) {
             // Payment type change
             $(document).on('change', '#payment_type', this.togglePaymentFields);
             
+            // Server option change
+            $(document).on('change', 'input[name="server_option"]', this.toggleServerFields);
+            
             // Form submission
             $(document).on('submit', '#rsl-license-form', this.handleFormSubmission);
             
@@ -36,6 +39,7 @@ jQuery(document).ready(function($) {
         
         initializeFields: function() {
             this.togglePaymentFields();
+            this.toggleServerFields();
             this.styleMultiselects();
         },
         
@@ -48,6 +52,31 @@ jQuery(document).ready(function($) {
             } else {
                 $('#payment_amount_row').hide();
             }
+        },
+        
+        toggleServerFields: function() {
+            var serverOption = $('input[name="server_option"]:checked').val();
+            
+            if (serverOption === 'external') {
+                $('#external_server_url_field').show();
+            } else {
+                $('#external_server_url_field').hide();
+                $('#server_url').val(''); // Clear external URL when using built-in
+            }
+        },
+        
+        validateWooCommerceRequirement: function() {
+            var amount = parseFloat($('#amount').val()) || 0;
+            var hasWooCommerce = typeof rsl_ajax.woocommerce_active !== 'undefined' ? rsl_ajax.woocommerce_active : false;
+            
+            if (amount > 0 && !hasWooCommerce) {
+                return {
+                    valid: false,
+                    message: 'WooCommerce is required for paid licensing (amount > 0). Please install WooCommerce or set amount to 0.'
+                };
+            }
+            
+            return { valid: true };
         },
         
         styleMultiselects: function() {
@@ -79,11 +108,25 @@ jQuery(document).ready(function($) {
             var $submitButton = $form.find('input[type="submit"]');
             var originalText = $submitButton.val();
             
+            // Validate WooCommerce requirement before submission
+            var wooValidation = rslAdmin.validateWooCommerceRequirement();
+            if (!wooValidation.valid) {
+                rslAdmin.showMessage(wooValidation.message, 'error');
+                return;
+            }
+            
             // Update submit button
             $submitButton.val(rsl_ajax.strings.saving).prop('disabled', true);
             
             // Prepare form data
             var formData = $form.serialize();
+            
+            // Handle server option - set server_url based on radio selection
+            var serverOption = $('input[name="server_option"]:checked').val();
+            if (serverOption === 'builtin') {
+                formData += '&server_url=' + encodeURIComponent('/wp-json/rsl-olp/v1');
+            }
+            // External option uses the URL field value (already in formData)
             
             // Handle multiselect fields
             $('.rsl-multiselect').each(function() {

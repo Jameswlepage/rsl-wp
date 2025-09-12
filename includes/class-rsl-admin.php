@@ -114,6 +114,8 @@ class RSL_Admin {
                 'url' => admin_url('admin-ajax.php'),
                 'nonce' => wp_create_nonce('rsl_nonce'),
                 'redirect_url' => admin_url('admin.php?page=rsl-licenses'),
+                'woocommerce_active' => class_exists('WooCommerce'),
+                'woocommerce_subscriptions_active' => class_exists('WC_Subscriptions') || function_exists('wcs_get_subscriptions'),
                 'strings' => array(
                     'saving' => __('Saving...', 'rsl-licensing'),
                     'error_occurred' => __('An error occurred while saving the license.', 'rsl-licensing'),
@@ -235,6 +237,14 @@ class RSL_Admin {
         if (!empty($currency) && !preg_match('/^[A-Z]{3}$/', $currency)) {
             wp_send_json_error(array(
                 'message' => __('Currency must be a valid 3-letter ISO code (e.g., USD, EUR).', 'rsl-licensing')
+            ));
+            return;
+        }
+        
+        // Validate WooCommerce requirement for paid licenses
+        if ($amount > 0 && !class_exists('WooCommerce')) {
+            wp_send_json_error(array(
+                'message' => __('WooCommerce is required for paid licensing (amount > 0). Please install WooCommerce or set amount to 0.', 'rsl-licensing')
             ));
             return;
         }
