@@ -37,7 +37,7 @@ async function runRSLTests() {
             php: '8.3',
             wp: 'latest',
             port: 0, // Auto-assign port
-            autoMount: true,
+            'auto-mount': '.',
             login: true
         });
         

@@ -269,7 +269,7 @@ class RSL_Server {
         // Free license (amount = 0 or free/attribution type) → mint immediately
         if ($this->is_free_license($license)) {
             $out = $this->mint_token_for_license($license, $client);
-            header('Access-Control-Allow-Origin: *');
+            $this->add_cors_headers();
             return rest_ensure_response($out);
         }
 
@@ -288,7 +288,7 @@ class RSL_Server {
                 $url = wc_get_checkout_url();
                 // Add-to-cart param keeps it simple; cart must be empty ideally
                 $url = add_query_arg(['add-to-cart' => $product_id], $url);
-                header('Access-Control-Allow-Origin: *');
+                $this->add_cors_headers();
                 return rest_ensure_response(['checkout_url' => esc_url_raw($url)]);
             }
 
@@ -312,7 +312,7 @@ class RSL_Server {
             if (!$ok) return new \WP_Error('product_mismatch', 'Order does not contain the license product', ['status' => 403]);
 
             $out = $this->mint_token_for_license($license, $client ?: ('order:'.$order_id));
-            header('Access-Control-Allow-Origin: *');
+            $this->add_cors_headers();
             return rest_ensure_response($out);
         }
 
@@ -327,7 +327,7 @@ class RSL_Server {
             if ($create_checkout) {
                 $url = wc_get_checkout_url();
                 $url = add_query_arg(['add-to-cart' => $product_id], $url);
-                header('Access-Control-Allow-Origin: *');
+                $this->add_cors_headers();
                 return rest_ensure_response(['checkout_url' => esc_url_raw($url)]);
             }
 
@@ -345,7 +345,7 @@ class RSL_Server {
             }
 
             $out = $this->mint_token_for_license($license, $client ?: ('subscription:'.$sub_id));
-            header('Access-Control-Allow-Origin: *');
+            $this->add_cors_headers();
             return rest_ensure_response($out);
         }
 
@@ -550,7 +550,7 @@ class RSL_Server {
         }
         // Fallback HS256
         $h = ['alg'=>'HS256','typ'=>'JWT'];
-        $b64 = fn($d)=> rtrim(strtr(base64_encode(is_string($d)?$d:wp_json_encode($d)), '+/', '-_'), '=');
+        $b64 = function($d) { return rtrim(strtr(base64_encode(is_string($d) ? $d : wp_json_encode($d)), '+/', '-_'), '='); };
         $head = $b64($h); $body = $b64($payload);
         $sig = hash_hmac('sha256', $head.'.'.$body, $this->get_jwt_secret(), true);
         return $head.'.'.$body.'.'.$b64($sig);
@@ -569,7 +569,7 @@ class RSL_Server {
         $parts = explode('.', $jwt);
         if (count($parts) !== 3) return new \WP_Error('invalid_token', 'Malformed token');
         [$h,$p,$s] = $parts;
-        $b64d = fn($x)=> base64_decode(strtr($x, '-_', '+/'));
+        $b64d = function($x) { return base64_decode(strtr($x, '-_', '+/')); };
         $expected = hash_hmac('sha256', $h.'.'.$p, $this->get_jwt_secret(), true);
         if (!hash_equals($expected, $b64d($s))) return new \WP_Error('invalid_token', 'Signature mismatch');
         $payload = json_decode($b64d($p), true);
@@ -591,7 +591,7 @@ class RSL_Server {
 
         // Optional: ensure this URL is within the licensed pattern
         $pattern = isset($payload['pattern']) ? $payload['pattern'] : '';
-        if ($pattern && !$this->url_matches_pattern(home_url($_SERVER['REQUEST_URI']), $pattern)) {
+        if ($pattern && !$this->url_matches_pattern(home_url(esc_url_raw($_SERVER['REQUEST_URI'])), $pattern)) {
             return false;
         }
         return true;
@@ -709,6 +709,28 @@ class RSL_Server {
         header('Content-Type: text/plain');
         
         echo "Invalid license token. Please obtain a valid license at " . home_url('.well-known/rsl/');
+    }
+    
+    private function add_cors_headers() {
+        // Restrict CORS to trusted origins for security
+        $allowed_origins = apply_filters('rsl_cors_allowed_origins', array(
+            home_url(), // Allow the site's own origin
+            'https://rslcollective.org', // RSL Collective
+            // Add other trusted origins as needed
+        ));
+        
+        if (isset($_SERVER['HTTP_ORIGIN'])) {
+            $origin = esc_url_raw($_SERVER['HTTP_ORIGIN']);
+            if (in_array($origin, $allowed_origins, true)) {
+                header('Access-Control-Allow-Origin: ' . $origin);
+            }
+        } else {
+            // Allow same-origin requests
+            header('Access-Control-Allow-Origin: ' . home_url());
+        }
+        
+        header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+        header('Access-Control-Allow-Headers: Content-Type, Authorization');
     }
     
     public function get_server_info() {
