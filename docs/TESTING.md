@@ -2,14 +2,28 @@
 
 This guide covers testing the RSL Licensing plugin, including automated tests, manual testing procedures, and server functionality verification.
 
-## Quick Test Script
+## Quick Test Setup
 
-Run the automated test suite:
+### WordPress Playground CLI Testing
+
+Use WordPress Playground CLI for quick testing without local WordPress setup:
 
 ```bash
-# Start WordPress Playground (auto-mounts plugin)
+# Install Playground CLI globally (one-time setup)
+npm install -g @wp-playground/cli
+
+# Start WordPress with plugin auto-mounted
 npx @wp-playground/cli server --auto-mount
 
+# Plugin will be available at http://127.0.0.1:9400
+# Visit wp-admin to configure RSL licenses and test functionality
+```
+
+### Automated Test Script
+
+If available, run the automated test suite:
+
+```bash
 # In another terminal, run tests against the playground URL
 ./tests/rsl-server-test.sh http://127.0.0.1:9400
 
