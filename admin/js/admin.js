@@ -41,27 +41,12 @@ jQuery(document).ready(function($) {
         
         togglePaymentFields: function() {
             var paymentType = $('#payment_type').val();
-            var paidTypes = ['purchase', 'subscription', 'training', 'crawl', 'inference', 'royalty'];
+            var typesWithAmounts = ['purchase', 'subscription', 'training', 'crawl', 'inference', 'royalty'];
             
-            if (paidTypes.indexOf(paymentType) !== -1) {
+            if (typesWithAmounts.indexOf(paymentType) !== -1) {
                 $('#payment_amount_row').show();
-                
-                // Show WooCommerce requirement warning if needed
-                var isWooActive = $('option[value="' + paymentType + '"]:selected').prop('disabled');
-                if (isWooActive) {
-                    this.showWooCommerceWarning();
-                }
             } else {
                 $('#payment_amount_row').hide();
-            }
-        },
-        
-        showWooCommerceWarning: function() {
-            if ($('#woocommerce-warning').length === 0) {
-                var warning = '<div id="woocommerce-warning" class="notice notice-error" style="margin: 10px 0;">' +
-                    '<p><strong>WooCommerce Required:</strong> This payment type requires WooCommerce to be installed and activated for payment processing.</p>' +
-                    '</div>';
-                $('#payment_amount_row').before(warning);
             }
         },
         

@@ -266,16 +266,16 @@ class RSL_Server {
 
         $ptype = $license['payment_type'] ?: 'free';
 
-        // Free / attribution → mint immediately
-        if ($this->is_freeish_payment_type($ptype)) {
+        // Free license (amount = 0 or free/attribution type) → mint immediately
+        if ($this->is_free_license($license)) {
             $out = $this->mint_token_for_license($license, $client);
             header('Access-Control-Allow-Origin: *');
             return rest_ensure_response($out);
         }
 
-        // Paid → require WooCommerce
+        // Paid license (amount > 0) → require WooCommerce
         if (!$this->is_wc_active()) {
-            return new \WP_Error('payment_not_available', 'Paid licensing requires WooCommerce', ['status' => 501]);
+            return new \WP_Error('payment_not_available', 'Paid licensing (amount > 0) requires WooCommerce', ['status' => 501]);
         }
 
         // Purchase (one-time) — simplest happy path
@@ -512,12 +512,16 @@ class RSL_Server {
         return class_exists('WC_Subscriptions') || function_exists('wcs_get_subscriptions');
     }
     
-    private function is_paid_payment_type($type) {
-        return in_array($type, ['purchase','subscription','training','crawl','inference','royalty'], true);
+    private function requires_payment_processing($license) {
+        $amount = floatval($license['amount'] ?? 0);
+        return $amount > 0;
     }
     
-    private function is_freeish_payment_type($type) {
-        return in_array($type, ['free','attribution'], true);
+    private function is_free_license($license) {
+        $amount = floatval($license['amount'] ?? 0);
+        $type = $license['payment_type'] ?? 'free';
+        // Free if amount is 0 OR explicitly free/attribution type
+        return $amount === 0.0 || in_array($type, ['free', 'attribution'], true);
     }
     
     // ===== JWT Secret Management =====
