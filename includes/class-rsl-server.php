@@ -273,8 +273,30 @@ class RSL_Server {
     }
     
     private function requires_license_auth() {
+        // Never require license auth for admin pages or logged-in admin users
+        if (is_admin() || current_user_can('manage_options')) {
+            return false;
+        }
+        
+        // Skip authentication for WordPress core URLs and API endpoints
+        $request_uri = $_SERVER['REQUEST_URI'];
+        $wp_core_paths = array(
+            '/wp-admin/', 
+            '/wp-login.php', 
+            '/wp-cron.php', 
+            '/xmlrpc.php',
+            '/wp-json/',
+            '/wp-content/',
+            '/wp-includes/'
+        );
+        foreach ($wp_core_paths as $core_path) {
+            if (strpos($request_uri, $core_path) !== false) {
+                return false;
+            }
+        }
+        
         // Check if current request matches a license that requires server authentication
-        $current_url = home_url($_SERVER['REQUEST_URI']);
+        $current_url = home_url($request_uri);
         
         $licenses = $this->license_handler->get_licenses(array('active' => 1));
         
