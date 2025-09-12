@@ -6,6 +6,47 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
 
 > **Alpha Notice:** This is an early alpha release (v0.0.2) of the RSL Licensing plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
 
+## What is RSL (Really Simple Licensing)?
+
+**Really Simple Licensing (RSL)** is an open standard for machine-readable content licensing, making it easy for AI companies, crawlers, and other automated systems to understand how they can legally use your content.
+
+### Key RSL Resources
+
+- **[RSL Standard Website](https://rslstandard.org)** - Official specification and documentation
+- **[RSL 1.0 Specification](https://rslstandard.org/spec)** - Technical specification details
+- **[Why RSL Matters](https://rslstandard.org/why)** - Understanding the need for machine-readable licensing
+- **[Community & Support](https://rslstandard.org/community)** - Join discussions and get help
+- **[Implementation Examples](https://rslstandard.org/examples)** - Real-world RSL usage patterns
+
+### How RSL Works
+
+RSL transforms traditional copyright notices into **machine-readable licensing terms**:
+
+```xml
+<!-- Traditional copyright notice -->
+© 2024 Your Name. All rights reserved.
+
+<!-- RSL machine-readable equivalent -->
+<rsl xmlns="https://rslstandard.org/rsl">
+  <content url="/">
+    <license>
+      <permits type="usage">search</permits>
+      <prohibits type="usage">train-ai</prohibits>
+      <payment type="subscription">
+        <amount currency="USD">99.99</amount>
+      </payment>
+      <server url="https://yoursite.com/wp-json/rsl-olp/v1"/>
+    </license>
+  </content>
+</rsl>
+```
+
+This enables:
+- **AI companies** to automatically discover licensing terms
+- **Search engines** to understand usage permissions  
+- **Legal compliance** for automated content usage
+- **Fair compensation** through built-in payment systems
+
 ## Features
 
 ### Core RSL Implementation
@@ -720,8 +761,18 @@ This plugin is licensed under GPL v2 or later, allowing you to freely use, modif
 
 ## Changelog
 
-### 1.0.0
-- Initial release
+### 0.0.2 Alpha
+- OAuth 2.0 client credentials authentication system
+- JWT token system with automatic revocation on refunds/cancellations
+- Rate limiting protection for API endpoints
+- WooCommerce integration with automatic product creation
+- Session-based payment flows for complex licensing scenarios
+- Comprehensive error handling with standard OAuth 2.0 responses
+- Security improvements and AI review feedback addressed
+- Enhanced documentation and help system
+
+### 0.0.1 Alpha
+- Initial alpha release
 - Full RSL 1.0 specification support
 - WordPress admin interface
 - Multiple integration methods
