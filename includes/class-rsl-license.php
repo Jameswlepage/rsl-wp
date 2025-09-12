@@ -47,6 +47,12 @@ class RSL_License {
         
         $data = wp_parse_args($data, $defaults);
         
+        // Validate required fields
+        if (empty($data['name']) || empty($data['content_url'])) {
+            error_log('RSL: Cannot create license - name and content_url are required');
+            return false;
+        }
+        
         $result = $wpdb->insert(
             $this->table_name,
             $data,
@@ -57,23 +63,36 @@ class RSL_License {
             )
         );
         
-        if ($result !== false) {
-            return $wpdb->insert_id;
+        if ($result === false) {
+            error_log('RSL: Database error creating license: ' . $wpdb->last_error);
+            return false;
         }
         
-        return false;
+        return $wpdb->insert_id;
     }
     
     public function get_license($id) {
         global $wpdb;
         
-        return $wpdb->get_row(
+        $id = intval($id);
+        if ($id <= 0) {
+            return null;
+        }
+        
+        $result = $wpdb->get_row(
             $wpdb->prepare(
                 "SELECT * FROM {$this->table_name} WHERE id = %d",
                 $id
             ),
             ARRAY_A
         );
+        
+        if ($wpdb->last_error) {
+            error_log('RSL: Database error getting license: ' . $wpdb->last_error);
+            return null;
+        }
+        
+        return $result;
     }
     
     public function get_licenses($args = array()) {
@@ -89,12 +108,25 @@ class RSL_License {
         
         $args = wp_parse_args($args, $defaults);
         
+        // Validate and sanitize orderby to prevent SQL injection
+        $allowed_orderby = array('id', 'name', 'created_at', 'updated_at', 'lastmod', 'payment_type');
+        if (!in_array($args['orderby'], $allowed_orderby)) {
+            $args['orderby'] = 'name';
+        }
+        
+        // Validate order parameter
+        $args['order'] = strtoupper($args['order']) === 'DESC' ? 'DESC' : 'ASC';
+        
+        // Validate numeric parameters
+        $args['limit'] = max(-1, intval($args['limit']));
+        $args['offset'] = max(0, intval($args['offset']));
+        
         $where = array();
         $values = array();
         
         if ($args['active'] !== null) {
             $where[] = "active = %d";
-            $values[] = $args['active'];
+            $values[] = intval($args['active']);
         }
         
         $sql = "SELECT * FROM {$this->table_name}";
@@ -103,12 +135,15 @@ class RSL_License {
             $sql .= " WHERE " . implode(' AND ', $where);
         }
         
-        $sql .= " ORDER BY {$args['orderby']} {$args['order']}";
+        $sql .= " ORDER BY `{$args['orderby']}` {$args['order']}";
         
         if ($args['limit'] > 0) {
-            $sql .= " LIMIT {$args['limit']}";
+            $sql .= " LIMIT %d";
+            $values[] = $args['limit'];
+            
             if ($args['offset'] > 0) {
-                $sql .= " OFFSET {$args['offset']}";
+                $sql .= " OFFSET %d";
+                $values[] = $args['offset'];
             }
         }
         
@@ -116,11 +151,25 @@ class RSL_License {
             $sql = $wpdb->prepare($sql, $values);
         }
         
-        return $wpdb->get_results($sql, ARRAY_A);
+        $results = $wpdb->get_results($sql, ARRAY_A);
+        
+        // Add error handling
+        if ($wpdb->last_error) {
+            error_log('RSL License Query Error: ' . $wpdb->last_error);
+            return array();
+        }
+        
+        return $results ? $results : array();
     }
     
     public function update_license($id, $data) {
         global $wpdb;
+        
+        $id = intval($id);
+        if ($id <= 0) {
+            error_log('RSL: Invalid license ID for update: ' . $id);
+            return false;
+        }
         
         $data['updated_at'] = current_time('mysql');
         
@@ -132,17 +181,35 @@ class RSL_License {
             array('%d')
         );
         
+        if ($result === false) {
+            error_log('RSL: Database error updating license ID ' . $id . ': ' . $wpdb->last_error);
+            return false;
+        }
+        
         return $result !== false;
     }
     
     public function delete_license($id) {
         global $wpdb;
         
-        return $wpdb->delete(
+        $id = intval($id);
+        if ($id <= 0) {
+            error_log('RSL: Invalid license ID for deletion: ' . $id);
+            return false;
+        }
+        
+        $result = $wpdb->delete(
             $this->table_name,
             array('id' => $id),
             array('%d')
-        ) !== false;
+        );
+        
+        if ($result === false) {
+            error_log('RSL: Database error deleting license ID ' . $id . ': ' . $wpdb->last_error);
+            return false;
+        }
+        
+        return $result !== false;
     }
     
     public function generate_rsl_xml($license_data, $options = array()) {

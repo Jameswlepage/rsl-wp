@@ -86,9 +86,19 @@ class RSL_Licensing
 
     public function activate()
     {
-        $this->create_tables();
-        $this->create_default_options();
-        $this->seed_global_license();
+        if (!$this->create_tables()) {
+            deactivate_plugins(plugin_basename(__FILE__));
+            wp_die(__('RSL Licensing: Failed to create required database tables. Please check database permissions.', 'rsl-licensing'));
+        }
+        
+        if (!$this->create_default_options()) {
+            error_log('RSL: Warning - Failed to create default options during activation');
+        }
+        
+        if (!$this->seed_global_license()) {
+            error_log('RSL: Warning - Failed to create default license during activation');
+        }
+        
         flush_rewrite_rules();
     }
 
@@ -102,7 +112,6 @@ class RSL_Licensing
         global $wpdb;
 
         $charset_collate = $wpdb->get_charset_collate();
-
         $table_name = $wpdb->prefix . "rsl_licenses";
 
         $sql = "CREATE TABLE $table_name (
@@ -139,7 +148,23 @@ class RSL_Licensing
         ) $charset_collate;";
 
         require_once ABSPATH . "wp-admin/includes/upgrade.php";
-        dbDelta($sql);
+        $result = dbDelta($sql);
+        
+        // Verify table was created successfully
+        $table_exists = $wpdb->get_var($wpdb->prepare(
+            "SHOW TABLES LIKE %s",
+            $table_name
+        ));
+        
+        if (!$table_exists) {
+            error_log('RSL: Failed to create database table: ' . $table_name);
+            if ($wpdb->last_error) {
+                error_log('RSL: Database error: ' . $wpdb->last_error);
+            }
+            return false;
+        }
+        
+        return true;
     }
 
     private function create_default_options()
@@ -154,11 +179,18 @@ class RSL_Licensing
             "rsl_default_namespace" => "https://rslstandard.org/rsl",
         ];
 
+        $success = true;
         foreach ($default_options as $option => $value) {
             if (get_option($option) === false) {
-                add_option($option, $value);
+                $result = add_option($option, $value);
+                if (!$result) {
+                    error_log('RSL: Failed to create option: ' . $option);
+                    $success = false;
+                }
             }
         }
+        
+        return $success;
     }
 
     private function seed_global_license()
@@ -168,6 +200,11 @@ class RSL_Licensing
         $table_name = $wpdb->prefix . "rsl_licenses";
         
         $existing_licenses = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+        
+        if ($wpdb->last_error) {
+            error_log('RSL: Database error checking existing licenses: ' . $wpdb->last_error);
+            return false;
+        }
         
         if ($existing_licenses == 0) {
             $site_url = home_url();
@@ -218,9 +255,19 @@ class RSL_Licensing
             
             if ($license_inserted) {
                 $license_id = $wpdb->insert_id;
-                update_option('rsl_global_license_id', $license_id);
+                $option_updated = update_option('rsl_global_license_id', $license_id);
+                if (!$option_updated) {
+                    error_log('RSL: Failed to set global license ID: ' . $license_id);
+                    return false;
+                }
+                return true;
+            } else {
+                error_log('RSL: Failed to insert default license: ' . $wpdb->last_error);
+                return false;
             }
         }
+        
+        return true; // Licenses already exist
     }
 }
 
