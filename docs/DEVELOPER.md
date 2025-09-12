@@ -59,9 +59,35 @@ The plugin uses a modular class-based architecture:
 - **Location**: `includes/class-rsl-server.php`
 - **Features**:
   - JWT token generation/validation
-  - WooCommerce integration
+  - Modular payment processor integration
+  - MCP-inspired session management
   - Crawler authentication
   - REST endpoints
+
+#### `RSL_Payment_Registry` - Payment Processor Management
+- **Purpose**: Manages available payment processors
+- **Location**: `includes/class-rsl-payment-registry.php`
+- **Features**:
+  - Auto-discovery of payment processors
+  - Extensible processor registration
+  - Payment capability detection
+
+#### `RSL_Session_Manager` - Session State Management
+- **Purpose**: MCP-inspired session handling for AI agents
+- **Location**: `includes/class-rsl-session-manager.php`
+- **Features**:
+  - Server-side session storage
+  - Session lifecycle management
+  - Automatic cleanup of expired sessions
+
+#### `RSL_WooCommerce_Processor` - WooCommerce Integration
+- **Purpose**: Handles all WooCommerce payment gateways
+- **Location**: `includes/processors/class-rsl-woocommerce-processor.php`
+- **Features**:
+  - Automatic product creation for licenses
+  - Support for all WooCommerce payment gateways (Stripe, PayPal, etc.)
+  - Purchase and subscription payment types
+  - Signed payment proof generation
 
 ## WordPress Hooks & Filters
 
@@ -337,6 +363,67 @@ Validate access tokens.
 }
 ```
 
+#### `POST /wp-json/rsl-olp/v1/session`
+Create payment session (MCP-inspired).
+
+**Request Body:**
+```json
+{
+  "license_id": 2,
+  "client": "ai-company-crawler"
+}
+```
+
+**Response (Free License):**
+```json
+{
+  "session_id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "completed",
+  "polling_url": "https://example.com/wp-json/rsl-olp/v1/session/550e8400-e29b-41d4-a716-446655440000",
+  "token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "expires_at": "2025-09-12T22:30:00Z"
+}
+```
+
+**Response (Paid License):**
+```json
+{
+  "session_id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "awaiting_payment",
+  "polling_url": "https://example.com/wp-json/rsl-olp/v1/session/550e8400-e29b-41d4-a716-446655440000",
+  "checkout_url": "https://example.com/checkout/?add-to-cart=123&rsl_session_id=550e8400-e29b-41d4-a716-446655440000",
+  "processor": "WooCommerce",
+  "expires_at": "2025-09-12T11:30:00Z"
+}
+```
+
+#### `GET /wp-json/rsl-olp/v1/session/{session_id}`
+Poll session status (MCP-inspired).
+
+**Response (Awaiting Payment):**
+```json
+{
+  "session_id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "awaiting_payment",
+  "checkout_url": "https://example.com/checkout/?add-to-cart=123",
+  "message": "Payment required",
+  "created_at": "2025-09-12T10:30:00Z",
+  "expires_at": "2025-09-12T11:30:00Z"
+}
+```
+
+**Response (Payment Complete):**
+```json
+{
+  "session_id": "550e8400-e29b-41d4-a716-446655440000",
+  "status": "proof_ready",
+  "signed_proof": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+  "message": "Payment confirmed, use signed_proof to get token",
+  "created_at": "2025-09-12T10:30:00Z",
+  "expires_at": "2025-09-12T11:30:00Z"
+}
+```
+
 ## Discovery Endpoints
 
 ### `GET /.well-known/rsl/`
@@ -351,7 +438,9 @@ RSL server discovery endpoint.
     "licenses": "https://example.com/wp-json/rsl/v1/licenses",
     "validate": "https://example.com/wp-json/rsl/v1/validate",
     "token": "https://example.com/wp-json/rsl-olp/v1/token",
-    "introspect": "https://example.com/wp-json/rsl-olp/v1/introspect"
+    "introspect": "https://example.com/wp-json/rsl-olp/v1/introspect",
+    "session": "https://example.com/wp-json/rsl-olp/v1/session",
+    "session_status": "https://example.com/wp-json/rsl-olp/v1/session/{session_id}"
   },
   "feeds": {
     "rsl_licenses": "https://example.com/feed/rsl-licenses/",
@@ -438,6 +527,97 @@ if (can_ai_train_on_content()) {
     echo '<p>AI training permitted on this content.</p>';
 } else {
     echo '<p>AI training not permitted.</p>';
+}
+```
+
+### Payment Processor Extension
+
+#### Creating Custom Payment Processors
+```php
+// Create a custom payment processor
+class Custom_Payment_Processor implements RSL_Payment_Processor_Interface {
+    
+    public function get_id() {
+        return 'custom_processor';
+    }
+    
+    public function get_name() {
+        return 'Custom Payment System';
+    }
+    
+    public function is_available() {
+        return function_exists('custom_payment_api');
+    }
+    
+    public function get_supported_payment_types() {
+        return ['purchase', 'subscription', 'credits'];
+    }
+    
+    public function create_checkout_session($license, $client, $session_id, $options = []) {
+        // Implement custom checkout logic
+        return [
+            'checkout_url' => 'https://custom-processor.com/checkout/' . $session_id
+        ];
+    }
+    
+    public function validate_payment_proof($license, $session_id, $proof_data) {
+        // Implement custom validation logic
+        return true;
+    }
+    
+    public function generate_payment_proof($license, $session_id, $payment_data) {
+        // Generate signed proof after payment
+        return $this->sign_payment_proof($payment_data);
+    }
+}
+
+// Register the processor
+add_action('rsl_register_payment_processors', function($registry) {
+    $registry->register_processor(new Custom_Payment_Processor());
+});
+```
+
+#### Session-Based Payment Flow Example
+```php
+// AI agent integration example
+function ai_agent_license_flow($license_id, $client_id) {
+    // 1. Create session
+    $session_response = wp_remote_post(home_url('/wp-json/rsl-olp/v1/session'), [
+        'headers' => ['Content-Type' => 'application/json'],
+        'body' => json_encode([
+            'license_id' => $license_id,
+            'client' => $client_id
+        ])
+    ]);
+    
+    $session_data = json_decode(wp_remote_retrieve_body($session_response), true);
+    
+    // 2. If payment required, handle checkout
+    if ($session_data['status'] === 'awaiting_payment') {
+        // Direct user/system to checkout_url
+        handle_payment_checkout($session_data['checkout_url']);
+        
+        // 3. Poll session until complete
+        do {
+            sleep(2);
+            $status_response = wp_remote_get($session_data['polling_url']);
+            $status = json_decode(wp_remote_retrieve_body($status_response), true);
+        } while ($status['status'] === 'awaiting_payment');
+        
+        // 4. Get token with signed proof
+        if ($status['status'] === 'proof_ready') {
+            $token_response = wp_remote_post(home_url('/wp-json/rsl-olp/v1/token'), [
+                'headers' => ['Content-Type' => 'application/json'],
+                'body' => json_encode([
+                    'signed_proof' => $status['signed_proof']
+                ])
+            ]);
+            
+            return json_decode(wp_remote_retrieve_body($token_response), true);
+        }
+    }
+    
+    return $session_data; // Free license returns token immediately
 }
 ```
 

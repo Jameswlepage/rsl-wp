@@ -115,7 +115,45 @@ wp plugin install woocommerce --activate
 
 ### API Integration
 
-#### Request License Token
+RSL now supports both **legacy token requests** and **modern session-based flows** (MCP-inspired).
+
+#### Session-Based Flow (Recommended)
+
+Modern AI agents should use the session-based approach for better security and user experience:
+
+```bash
+# 1. Create payment session
+curl -X POST "https://yoursite.com/wp-json/rsl-olp/v1/session" \
+  -H "Content-Type: application/json" \
+  -d '{"license_id": 2, "client": "ai-company-crawler"}'
+
+# Response (Paid License):
+# {
+#   "session_id": "550e8400-e29b-41d4-a716-446655440000",
+#   "status": "awaiting_payment",
+#   "polling_url": "https://yoursite.com/wp-json/rsl-olp/v1/session/550e8400-e29b-41d4-a716-446655440000",
+#   "checkout_url": "https://yoursite.com/checkout/?add-to-cart=123&rsl_session_id=550e8400-e29b-41d4-a716-446655440000",
+#   "processor": "WooCommerce",
+#   "expires_at": "2025-09-12T11:30:00Z"
+# }
+
+# 2. Poll session status until payment complete
+curl "https://yoursite.com/wp-json/rsl-olp/v1/session/550e8400-e29b-41d4-a716-446655440000"
+
+# Response (Payment Complete):
+# {
+#   "status": "proof_ready",
+#   "signed_proof": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+#   "message": "Payment confirmed, use signed_proof to get token"
+# }
+
+# 3. Exchange signed proof for access token
+curl -X POST "https://yoursite.com/wp-json/rsl-olp/v1/token" \
+  -H "Content-Type: application/json" \
+  -d '{"signed_proof": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9..."}'
+```
+
+#### Legacy Token Request (Deprecated)
 
 ```bash
 # For free license
