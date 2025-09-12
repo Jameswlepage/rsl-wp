@@ -70,7 +70,7 @@ if (!defined('ABSPATH')) {
                                 <?php echo esc_html(ucfirst(str_replace('-', ' ', $license['payment_type']))); ?>
                             </span>
                             <?php if (!empty($license['amount']) && $license['amount'] > 0) : ?>
-                                <br><small><?php echo esc_html($license['amount'] . ' ' . $license['currency']); ?></small>
+                                <br><small>$<?php echo esc_html(number_format($license['amount'], 2) . ' ' . $license['currency']); ?></small>
                             <?php endif; ?>
                         </td>
                         <td>
