@@ -144,6 +144,8 @@ jQuery(document).ready(function($) {
             // Handle server option - set server_url based on radio selection
             var serverOption = $('input[name="server_option"]:checked').val();
             if (serverOption === 'builtin') {
+                // Remove any existing server_url parameter to prevent duplicates
+                formData = formData.replace(/&?server_url=[^&]*/g, '');
                 formData += '&server_url=' + encodeURIComponent(rsl_ajax.rest_url);
             }
             // External option uses the URL field value (already in formData)
