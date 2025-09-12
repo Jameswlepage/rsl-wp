@@ -177,8 +177,8 @@ class RSL_Licensing
             $default_license = [
                 'name' => __('Default Site License', 'rsl-licensing'),
                 'description' => __('Default licensing terms for this WordPress site', 'rsl-licensing'),
-                'content_url' => $site_url . '/*',
-                'server_url' => $site_url . '/wp-json/rsl/v1/',
+                'content_url' => $site_url,
+                'server_url' => '', // Don't require server authentication for default license
                 'encrypted' => 0,
                 'lastmod' => current_time('mysql'),
                 'permits_usage' => 'search',
