@@ -173,6 +173,26 @@ class RSL_Server {
             'callback' => array($this, 'rest_validate_license'),
             'permission_callback' => '__return_true'
         ));
+        
+        // === RSL Open Licensing Protocol (OLP) endpoints ===
+        register_rest_route('rsl-olp/v1', '/token', [
+            'methods' => 'POST',
+            'callback' => [$this, 'olp_issue_token'],
+            'permission_callback' => '__return_true'
+        ]);
+        
+        register_rest_route('rsl-olp/v1', '/introspect', [
+            'methods' => 'POST',
+            'callback' => [$this, 'olp_introspect'],
+            'permission_callback' => '__return_true'
+        ]);
+        
+        // Optional future: key delivery for encrypted assets
+        register_rest_route('rsl-olp/v1', '/key', [
+            'methods' => 'GET',
+            'callback' => [$this, 'olp_get_key'],
+            'permission_callback' => '__return_true'
+        ]);
     }
     
     public function rest_get_licenses($request) {
@@ -215,6 +235,140 @@ class RSL_Server {
             'valid' => true,
             'licenses' => array_map(array($this, 'format_license_for_api'), $matching_licenses)
         ));
+    }
+    
+    // ===== RSL Open Licensing Protocol (OLP) Endpoints =====
+    
+    public function olp_issue_token(\WP_REST_Request $req) {
+        $license_id = intval($req->get_param('license_id'));
+        $client     = sanitize_text_field($req->get_param('client'));
+        $create_checkout = filter_var($req->get_param('create_checkout'), FILTER_VALIDATE_BOOLEAN);
+        $order_key  = sanitize_text_field($req->get_param('wc_order_key')); // Woo order key flow
+        $sub_id     = intval($req->get_param('wc_subscription_id'));        // optional for subs
+
+        $license = $this->license_handler->get_license($license_id);
+        if (!$license || !$license['active']) {
+            return new \WP_Error('license_not_found', 'License not found', ['status' => 404]);
+        }
+
+        // If license points to an external server, refuse and forward
+        if (!empty($license['server_url'])) {
+            $srv = $license['server_url'];
+            $here = parse_url(home_url(), PHP_URL_HOST);
+            $there = parse_url($srv, PHP_URL_HOST);
+            if ($there && $there !== $here) {
+                return new \WP_Error('external_server', 'Managed by external server', [
+                    'status' => 409,
+                    'server_url' => $srv
+                ]);
+            }
+        }
+
+        $ptype = $license['payment_type'] ?: 'free';
+
+        // Free / attribution → mint immediately
+        if ($this->is_freeish_payment_type($ptype)) {
+            $out = $this->mint_token_for_license($license, $client);
+            header('Access-Control-Allow-Origin: *');
+            return rest_ensure_response($out);
+        }
+
+        // Paid → require WooCommerce
+        if (!$this->is_wc_active()) {
+            return new \WP_Error('payment_not_available', 'Paid licensing requires WooCommerce', ['status' => 501]);
+        }
+
+        // Purchase (one-time) — simplest happy path
+        if ($ptype === 'purchase') {
+            $product_id = $this->ensure_wc_product_for_license($license);
+            if (is_wp_error($product_id)) return $product_id;
+
+            if ($create_checkout) {
+                // Send back a checkout URL with the product pre-added
+                $url = wc_get_checkout_url();
+                // Add-to-cart param keeps it simple; cart must be empty ideally
+                $url = add_query_arg(['add-to-cart' => $product_id], $url);
+                header('Access-Control-Allow-Origin: *');
+                return rest_ensure_response(['checkout_url' => esc_url_raw($url)]);
+            }
+
+            if (!$order_key) {
+                return new \WP_Error('missing_order', 'Provide wc_order_key or set create_checkout=true', ['status' => 400]);
+            }
+
+            $order_id = wc_get_order_id_by_order_key($order_key);
+            if (!$order_id) return new \WP_Error('order_not_found', 'Order not found', ['status' => 404]);
+
+            $order = wc_get_order($order_id);
+            if (!$order || !$order->is_paid()) {
+                return new \WP_Error('payment_required', 'Order not paid', ['status' => 402]);
+            }
+
+            // Verify the product is in the order
+            $ok = false;
+            foreach ($order->get_items() as $item) {
+                if ((int) $item->get_product_id() === (int) $product_id) { $ok = true; break; }
+            }
+            if (!$ok) return new \WP_Error('product_mismatch', 'Order does not contain the license product', ['status' => 403]);
+
+            $out = $this->mint_token_for_license($license, $client ?: ('order:'.$order_id));
+            header('Access-Control-Allow-Origin: *');
+            return rest_ensure_response($out);
+        }
+
+        // Subscription (if Woo Subscriptions is present)
+        if ($ptype === 'subscription') {
+            if (!$this->is_wcs_active()) {
+                return new \WP_Error('subscriptions_unavailable', 'WooCommerce Subscriptions not active', ['status' => 501]);
+            }
+            $product_id = $this->ensure_wc_product_for_license($license);
+            if (is_wp_error($product_id)) return $product_id;
+
+            if ($create_checkout) {
+                $url = wc_get_checkout_url();
+                $url = add_query_arg(['add-to-cart' => $product_id], $url);
+                header('Access-Control-Allow-Origin: *');
+                return rest_ensure_response(['checkout_url' => esc_url_raw($url)]);
+            }
+
+            if (!$sub_id) {
+                return new \WP_Error('missing_subscription', 'Provide wc_subscription_id or set create_checkout=true', ['status' => 400]);
+            }
+
+            // Minimal subscription check (pseudo; refine as needed)
+            $subscription = wcs_get_subscription($sub_id);
+            if (!$subscription || !$subscription->has_product($product_id)) {
+                return new \WP_Error('subscription_mismatch', 'Subscription does not cover this license', ['status' => 403]);
+            }
+            if (!$subscription->has_status('active')) {
+                return new \WP_Error('subscription_inactive', 'Subscription is not active', ['status' => 402]);
+            }
+
+            $out = $this->mint_token_for_license($license, $client ?: ('subscription:'.$sub_id));
+            header('Access-Control-Allow-Origin: *');
+            return rest_ensure_response($out);
+        }
+
+        // Other paid models not implemented locally → advise external server
+        return new \WP_Error('not_implemented', 'Use an external license server for this payment type', ['status' => 501]);
+    }
+
+    public function olp_introspect(\WP_REST_Request $req) {
+        $token = $req->get_param('token');
+        if (!$token) return new \WP_Error('bad_request', 'Missing token', ['status' => 400]);
+        $payload = $this->jwt_decode_token($token);
+        if (is_wp_error($payload)) return new \WP_Error('invalid_token', $payload->get_error_message(), ['status' => 401]);
+        $now = time();
+        if (!empty($payload['exp']) && $now > intval($payload['exp'])) {
+            return new \WP_Error('expired', 'Token expired', ['status' => 401]);
+        }
+        header('Access-Control-Allow-Origin: *');
+        return rest_ensure_response(['active' => true, 'payload' => $payload]);
+    }
+
+    public function olp_get_key(\WP_REST_Request $req) {
+        // Optional; return 501 for now
+        return new \WP_Error('not_implemented', 'Key delivery not implemented', ['status' => 501]);
     }
     
     private function format_license_for_api($license_data) {
@@ -348,22 +502,199 @@ class RSL_Server {
         return trim(substr($auth_header, 8)); // Remove "License " prefix
     }
     
+    // ===== WooCommerce Integration Helpers =====
+    
+    private function is_wc_active() {
+        return class_exists('WooCommerce');
+    }
+    
+    private function is_wcs_active() {
+        return class_exists('WC_Subscriptions') || function_exists('wcs_get_subscriptions');
+    }
+    
+    private function is_paid_payment_type($type) {
+        return in_array($type, ['purchase','subscription','training','crawl','inference','royalty'], true);
+    }
+    
+    private function is_freeish_payment_type($type) {
+        return in_array($type, ['free','attribution'], true);
+    }
+    
+    // ===== JWT Secret Management =====
+    
+    private function get_jwt_secret() {
+        if (defined('RSL_JWT_SECRET') && RSL_JWT_SECRET) {
+            return RSL_JWT_SECRET;
+        }
+        $secret = get_option('rsl_jwt_secret');
+        if (!$secret) { 
+            $secret = wp_generate_password(64, true, true); 
+            add_option('rsl_jwt_secret', $secret); 
+        }
+        return $secret;
+    }
+    
+    private function get_jwt_ttl() {
+        return apply_filters('rsl_token_ttl', 3600); // seconds
+    }
+
+    // ===== JWT Encode/Decode (Firebase library preferred, fallback included) =====
+    
+    private function jwt_encode_payload(array $payload) {
+        if (class_exists('\Firebase\JWT\JWT')) {
+            return \Firebase\JWT\JWT::encode($payload, $this->get_jwt_secret(), 'HS256');
+        }
+        // Fallback HS256
+        $h = ['alg'=>'HS256','typ'=>'JWT'];
+        $b64 = fn($d)=> rtrim(strtr(base64_encode(is_string($d)?$d:wp_json_encode($d)), '+/', '-_'), '=');
+        $head = $b64($h); $body = $b64($payload);
+        $sig = hash_hmac('sha256', $head.'.'.$body, $this->get_jwt_secret(), true);
+        return $head.'.'.$body.'.'.$b64($sig);
+    }
+    
+    private function jwt_decode_token($jwt) {
+        if (class_exists('\Firebase\JWT\JWT') && class_exists('\Firebase\JWT\Key')) {
+            try {
+                $obj = \Firebase\JWT\JWT::decode($jwt, new \Firebase\JWT\Key($this->get_jwt_secret(), 'HS256'));
+                return json_decode(json_encode($obj), true);
+            } catch (\Throwable $e) {
+                return new \WP_Error('invalid_token', $e->getMessage());
+            }
+        }
+        // Fallback HS256
+        $parts = explode('.', $jwt);
+        if (count($parts) !== 3) return new \WP_Error('invalid_token', 'Malformed token');
+        [$h,$p,$s] = $parts;
+        $b64d = fn($x)=> base64_decode(strtr($x, '-_', '+/'));
+        $expected = hash_hmac('sha256', $h.'.'.$p, $this->get_jwt_secret(), true);
+        if (!hash_equals($expected, $b64d($s))) return new \WP_Error('invalid_token', 'Signature mismatch');
+        $payload = json_decode($b64d($p), true);
+        if (!is_array($payload)) return new \WP_Error('invalid_token', 'Bad payload');
+        return $payload;
+    }
+
     private function validate_license_token($token) {
-        // This is a simplified validation
-        // In a real implementation, you would validate against a license server
-        
-        // For demonstration, accept any non-empty token
-        return !empty($token) && strlen($token) > 10;
+        $payload = $this->jwt_decode_token($token);
+        if (is_wp_error($payload)) return false;
+        $now = time();
+        if (!empty($payload['nbf']) && $now < intval($payload['nbf'])) return false;
+        if (!empty($payload['exp']) && $now > intval($payload['exp'])) return false;
+
+        // Audience should be this host
+        $aud = isset($payload['aud']) ? $payload['aud'] : '';
+        $host = parse_url(home_url(), PHP_URL_HOST);
+        if ($aud && $aud !== $host) return false;
+
+        // Optional: ensure this URL is within the licensed pattern
+        $pattern = isset($payload['pattern']) ? $payload['pattern'] : '';
+        if ($pattern && !$this->url_matches_pattern(home_url($_SERVER['REQUEST_URI']), $pattern)) {
+            return false;
+        }
+        return true;
+    }
+    
+    // ===== Token Minting =====
+    
+    private function mint_token_for_license(array $license, $client = 'anonymous') {
+        $now = time();
+        $ttl = $this->get_jwt_ttl();
+        $payload = [
+            'iss'     => home_url(),
+            'aud'     => parse_url(home_url(), PHP_URL_HOST),
+            'sub'     => $client ?: 'anonymous',
+            'iat'     => $now,
+            'nbf'     => $now,
+            'exp'     => $now + $ttl,
+            'lic'     => intval($license['id']),
+            'scope'   => $license['permits_usage'] ?: 'all',
+            'pattern' => $license['content_url'],
+        ];
+        $token = $this->jwt_encode_payload($payload);
+        return [
+            'token'       => $token,
+            'expires_at'  => gmdate('c', $payload['exp']),
+            'license_url' => home_url('rsl-license/' . $license['id'] . '/'),
+        ];
+    }
+    
+    // ===== WooCommerce Product Creation =====
+    
+    private function ensure_wc_product_for_license(array $license) {
+        if (!$this->is_wc_active()) return new \WP_Error('wc_inactive', 'WooCommerce is not active');
+
+        $license_id = intval($license['id']);
+        // Reuse product by meta
+        $q = new \WP_Query([
+            'post_type'  => 'product',
+            'meta_key'   => '_rsl_license_id',
+            'meta_value' => $license_id,
+            'fields'     => 'ids',
+            'post_status'=> 'publish',
+            'posts_per_page' => 1
+        ]);
+        if ($q->have_posts()) {
+            return intval($q->posts[0]);
+        }
+
+        // Create simple virtual/hidden product
+        $product = new \WC_Product_Simple();
+        $product->set_name('RSL License #' . $license_id . ' — ' . ($license['name'] ?? ''));
+        $product->set_catalog_visibility('hidden');
+        $product->set_virtual(true);
+        $product->set_sold_individually(true);
+
+        // Price/currency
+        $amount = floatval($license['amount'] ?: 0);
+        $store_curr = function_exists('get_woocommerce_currency') ? get_woocommerce_currency() : 'USD';
+        if ($amount > 0 && strtoupper($license['currency'] ?: $store_curr) !== $store_curr) {
+            return new \WP_Error('currency_mismatch', 'Store currency does not match license currency');
+        }
+        if ($amount > 0) {
+            $product->set_regular_price($amount);
+            $product->set_price($amount);
+        } else {
+            // Use 0; your checkout still needs a billing method; alternatively block zero-price paid types.
+            $product->set_regular_price(0);
+            $product->set_price(0);
+        }
+
+        $product_id = $product->save();
+        if (!$product_id) return new \WP_Error('product_create_failed', 'Could not create product');
+        update_post_meta($product_id, '_rsl_license_id', $license_id);
+        return $product_id;
     }
     
     private function send_license_required_response() {
         status_header(401);
-        header('WWW-Authenticate: License error="invalid_request", ' .
-               'error_description="Access to this resource requires a valid license", ' .
-               'authorization_uri="' . home_url('.well-known/rsl/') . '"');
+
+        $authorization_uri = home_url('.well-known/rsl/');
+        $current = home_url($_SERVER['REQUEST_URI']);
+        $licenses = $this->license_handler->get_licenses(['active' => 1]);
+
+        foreach ($licenses as $lic) {
+            if ($this->url_matches_pattern($current, $lic['content_url'])) {
+                // Prefer external server if set and not this host
+                if (!empty($lic['server_url'])) {
+                    $srv = $lic['server_url'];
+                    $here = parse_url(home_url(), PHP_URL_HOST);
+                    $there = parse_url($srv, PHP_URL_HOST);
+                    if ($there && $there !== $here) {
+                        $authorization_uri = $srv;
+                    } else {
+                        // Built-in server token endpoint
+                        $authorization_uri = add_query_arg('license_id', $lic['id'], home_url('/wp-json/rsl-olp/v1/token'));
+                    }
+                } else {
+                    // Built-in by default
+                    $authorization_uri = add_query_arg('license_id', $lic['id'], home_url('/wp-json/rsl-olp/v1/token'));
+                }
+                break;
+            }
+        }
+
+        header('WWW-Authenticate: License error="invalid_request", error_description="Access to this resource requires a valid license", authorization_uri="' . esc_url_raw($authorization_uri) . '"');
         header('Content-Type: text/plain');
-        
-        echo "License required. Please obtain a license at " . home_url('.well-known/rsl/');
+        echo "License required. Obtain a token at $authorization_uri";
     }
     
     private function send_invalid_license_response() {

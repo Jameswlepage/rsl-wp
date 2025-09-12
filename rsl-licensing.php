@@ -42,6 +42,9 @@ class RSL_Licensing
         add_action("init", [$this, "init"]);
         register_activation_hook(__FILE__, [$this, "activate"]);
         register_deactivation_hook(__FILE__, [$this, "deactivate"]);
+        
+        // Add plugin action links
+        add_filter('plugin_action_links_' . RSL_PLUGIN_BASENAME, [$this, 'add_plugin_action_links']);
     }
 
     public function init()
@@ -62,6 +65,12 @@ class RSL_Licensing
 
     private function includes()
     {
+        // Optional composer autoload (JWT library)
+        $autoload = RSL_PLUGIN_PATH . 'vendor/autoload.php';
+        if (file_exists($autoload)) {
+            require_once $autoload;
+        }
+        
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-license.php";
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-admin.php";
         require_once RSL_PLUGIN_PATH . "includes/class-rsl-frontend.php";
@@ -109,6 +118,16 @@ class RSL_Licensing
     public function deactivate()
     {
         flush_rewrite_rules();
+    }
+    
+    public function add_plugin_action_links($links)
+    {
+        $action_links = array(
+            'dashboard' => '<a href="' . admin_url('admin.php?page=rsl-licensing') . '">' . __('Dashboard', 'rsl-licensing') . '</a>',
+            'settings' => '<a href="' . admin_url('admin.php?page=rsl-settings') . '">' . __('Settings', 'rsl-licensing') . '</a>',
+        );
+        
+        return array_merge($action_links, $links);
     }
 
     private function create_tables()
