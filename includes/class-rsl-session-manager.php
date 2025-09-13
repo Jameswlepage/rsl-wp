@@ -217,16 +217,27 @@ class RSL_Session_Manager {
         
         $expired_time = time() - $this->session_ttl;
         
-        // Find expired sessions
-        $expired_sessions = $wpdb->get_col($wpdb->prepare(
-            "SELECT option_name FROM {$wpdb->options} 
-             WHERE option_name LIKE %s 
-             AND option_value LIKE %s 
-             AND CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(option_value, '\"expires_at\":', -1), ',', 1) AS UNSIGNED) < %d",
-            'rsl_session_%',
-            '%expires_at%',
-            $expired_time
-        ));
+        // Try cache first to avoid expensive queries
+        $cache_key = 'rsl_expired_sessions_' . date('Y-m-d-H', $expired_time);
+        $expired_sessions = wp_cache_get($cache_key, 'rsl_sessions');
+
+        if ($expired_sessions === false) {
+            // Find expired sessions
+            $expired_sessions = $wpdb->get_col($wpdb->prepare(
+                "SELECT option_name FROM {$wpdb->options}
+                 WHERE option_name LIKE %s
+                 AND option_value LIKE %s
+                 AND CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(option_value, '\"expires_at\":', -1), ',', 1) AS UNSIGNED) < %d",
+                'rsl_session_%',
+                '%expires_at%',
+                $expired_time
+            ));
+
+            // Cache results for 30 minutes (only cache successful queries)
+            if ($expired_sessions !== null && !$wpdb->last_error) {
+                wp_cache_set($cache_key, $expired_sessions, 'rsl_sessions', 1800);
+            }
+        }
         
         // Delete expired sessions
         foreach ($expired_sessions as $option_name) {

@@ -53,7 +53,7 @@ class RSL_Frontend {
     public function handle_rsl_xml_requests() {
         global $wp_query;
         
-        if (isset($_GET['rsl_license']) && is_numeric($_GET['rsl_license'])) {
+        if (isset($_GET['rsl_license']) && is_numeric($_GET['rsl_license']) && wp_verify_nonce(wp_unslash($_GET['_wpnonce'] ?? ''), 'rsl_license_' . intval($_GET['rsl_license']))) {
             $license_id = intval($_GET['rsl_license']);
             $license_data = $this->license_handler->get_license($license_id);
             
@@ -67,7 +67,7 @@ class RSL_Frontend {
             }
         }
         
-        if (isset($_GET['rsl_feed'])) {
+        if (isset($_GET['rsl_feed']) && wp_verify_nonce(wp_unslash($_GET['_wpnonce'] ?? ''), 'rsl_feed')) {
             $this->output_rsl_feed();
             exit;
         }

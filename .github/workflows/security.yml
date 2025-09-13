@@ -178,7 +178,7 @@ EOF
         fi
         
         # Check for text domain consistency
-        EXPECTED_DOMAIN="rsl-licensing"
+        EXPECTED_DOMAIN="rsl-wp"
         if grep -r "__(" includes/ --include="*.php" | grep -v "$EXPECTED_DOMAIN"; then
           echo "⚠️ Inconsistent text domain usage"
         fi

@@ -112,7 +112,7 @@ class RSL_Rate_Limiter {
      */
     private function get_client_identifier() {
         $ip = $this->get_client_ip();
-        $ua = isset($_SERVER['HTTP_USER_AGENT']) ? $_SERVER['HTTP_USER_AGENT'] : '';
+        $ua = isset($_SERVER['HTTP_USER_AGENT']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT'])) : '';
         
         return $ip . '|' . md5($ua);
     }
@@ -124,17 +124,17 @@ class RSL_Rate_Limiter {
     private function get_client_ip() {
         // Check for IP from shared internet
         if (!empty($_SERVER['HTTP_CLIENT_IP'])) {
-            return $_SERVER['HTTP_CLIENT_IP'];
+            return sanitize_text_field(wp_unslash($_SERVER['HTTP_CLIENT_IP']));
         }
         // Check for IP passed from proxy
         elseif (!empty($_SERVER['HTTP_X_FORWARDED_FOR'])) {
             // Can contain multiple IPs, use the first
-            $ips = explode(',', $_SERVER['HTTP_X_FORWARDED_FOR']);
+            $ips = explode(',', sanitize_text_field(wp_unslash($_SERVER['HTTP_X_FORWARDED_FOR'])));
             return trim($ips[0]);
         }
         // Check for IP from remote address
         elseif (!empty($_SERVER['REMOTE_ADDR'])) {
-            return $_SERVER['REMOTE_ADDR'];
+            return sanitize_text_field(wp_unslash($_SERVER['REMOTE_ADDR']));
         }
         
         return 'unknown';

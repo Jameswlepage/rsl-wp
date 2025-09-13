@@ -79,13 +79,24 @@ class RSL_License {
             return null;
         }
         
-        $result = $wpdb->get_row(
-            $wpdb->prepare(
-                "SELECT * FROM `{$wpdb->prefix}rsl_licenses` WHERE id = %d",
-                $id
-            ),
-            ARRAY_A
-        );
+        // Check cache first
+        $cache_key = "rsl_license_{$id}";
+        $result = wp_cache_get($cache_key, 'rsl_licenses');
+
+        if (false === $result) {
+            $result = $wpdb->get_row(
+                $wpdb->prepare(
+                    "SELECT * FROM `{$wpdb->prefix}rsl_licenses` WHERE id = %d",
+                    $id
+                ),
+                ARRAY_A
+            );
+
+            // Cache the result for 1 hour
+            if ($result) {
+                wp_cache_set($cache_key, $result, 'rsl_licenses', 3600);
+            }
+        }
         
         if ($wpdb->last_error) {
             // error_log('RSL: Database error getting license: ' . $wpdb->last_error);
@@ -155,8 +166,19 @@ class RSL_License {
             $sql = $base_sql;
         }
         
-        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-        $results = $wpdb->get_results($sql, ARRAY_A);
+        // Check cache first for listings
+        $cache_key = 'rsl_licenses_' . md5($sql . serialize($values));
+        $results = wp_cache_get($cache_key, 'rsl_licenses');
+
+        if (false === $results) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $results = $wpdb->get_results($sql, ARRAY_A);
+
+            // Cache the results for 30 minutes
+            if (!$wpdb->last_error) {
+                wp_cache_set($cache_key, $results, 'rsl_licenses', 1800);
+            }
+        }
         
         // Add error handling
         if ($wpdb->last_error) {

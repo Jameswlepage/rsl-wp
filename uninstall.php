@@ -33,7 +33,7 @@ if ($remove_data) {
     $table_name = $wpdb->prefix . 'rsl_licenses';
     
     // Drop the licenses table
-    $wpdb->query("DROP TABLE IF EXISTS {$table_name}");
+    $wpdb->query($wpdb->prepare("DROP TABLE IF EXISTS %s", $table_name));
     
     // Remove the cleanup option itself
     delete_option('rsl_remove_data_on_uninstall');

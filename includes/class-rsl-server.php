@@ -550,7 +550,7 @@ class RSL_Server {
     }
     
     private function is_crawler_request() {
-        $ua = isset($_SERVER['HTTP_USER_AGENT']) ? strtolower($_SERVER['HTTP_USER_AGENT']) : '';
+        $ua = isset($_SERVER['HTTP_USER_AGENT']) ? strtolower(sanitize_text_field(wp_unslash($_SERVER['HTTP_USER_AGENT']))) : '';
         if ($ua === '') {
             return false;
         }
@@ -575,7 +575,7 @@ class RSL_Server {
         }
 
         // Skip core/asset paths
-        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '';
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_parse_url(wp_unslash($_SERVER['REQUEST_URI']), PHP_URL_PATH)) : '';
         $wp_core_paths = array('/wp-admin/','/wp-login.php','/wp-cron.php','/xmlrpc.php','/wp-json/','/wp-content/','/wp-includes/');
         foreach ($wp_core_paths as $core_path) {
             if (strpos($request_uri, $core_path) !== false) {
@@ -601,7 +601,7 @@ class RSL_Server {
     
     private function get_authorization_header() {
         if (isset($_SERVER['HTTP_AUTHORIZATION'])) {
-            return $_SERVER['HTTP_AUTHORIZATION'];
+            return sanitize_text_field(wp_unslash($_SERVER['HTTP_AUTHORIZATION']));
         }
         
         if (function_exists('apache_request_headers')) {
@@ -742,7 +742,7 @@ class RSL_Server {
 
         // Optional: ensure this URL is within the licensed pattern
         $pattern = isset($payload['pattern']) ? $payload['pattern'] : '';
-        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '';
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_parse_url(wp_unslash($_SERVER['REQUEST_URI']), PHP_URL_PATH)) : '';
         if ($pattern && !$this->url_matches_pattern(home_url($request_uri), $pattern)) {
             return false;
         }
@@ -797,6 +797,14 @@ class RSL_Server {
         if (!$this->is_wc_active()) return new \WP_Error('wc_inactive', 'WooCommerce is not active');
 
         $license_id = intval($license['id']);
+        // Try cache first for existing product
+        $cache_key = 'rsl_wc_product_' . $license_id;
+        $cached_product_id = wp_cache_get($cache_key, 'rsl_wc_products');
+
+        if ($cached_product_id !== false && get_post_status($cached_product_id) === 'publish') {
+            return intval($cached_product_id);
+        }
+
         // Reuse product by meta
         $q = new \WP_Query([
             'post_type'  => 'product',
@@ -807,7 +815,10 @@ class RSL_Server {
             'posts_per_page' => 1
         ]);
         if ($q->have_posts()) {
-            return intval($q->posts[0]);
+            $product_id = intval($q->posts[0]);
+            // Cache the product ID for 1 hour
+            wp_cache_set($cache_key, $product_id, 'rsl_wc_products', 3600);
+            return $product_id;
         }
 
         // Create simple virtual/hidden product
@@ -835,6 +846,11 @@ class RSL_Server {
         $product_id = $product->save();
         if (!$product_id) return new \WP_Error('product_create_failed', 'Could not create product');
         update_post_meta($product_id, '_rsl_license_id', $license_id);
+
+        // Cache the new product ID for 1 hour
+        $cache_key = 'rsl_wc_product_' . $license_id;
+        wp_cache_set($cache_key, $product_id, 'rsl_wc_products', 3600);
+
         return $product_id;
     }
     
@@ -842,7 +858,7 @@ class RSL_Server {
         status_header(401);
 
         $authorization_uri = home_url('.well-known/rsl/');
-        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '';
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_parse_url(wp_unslash($_SERVER['REQUEST_URI']), PHP_URL_PATH)) : '';
         $current = home_url($request_uri);
         $licenses = $this->license_handler->get_licenses(['active' => 1]);
 
@@ -891,7 +907,7 @@ class RSL_Server {
         ));
         
         if (isset($_SERVER['HTTP_ORIGIN'])) {
-            $origin = esc_url_raw($_SERVER['HTTP_ORIGIN']);
+            $origin = esc_url_raw(wp_unslash($_SERVER['HTTP_ORIGIN']));
             if (in_array($origin, $allowed_origins, true)) {
                 header('Access-Control-Allow-Origin: ' . $origin);
             }

@@ -176,7 +176,7 @@ class RSL_Admin {
         $license_data = array();
         $license_id = 0;
         
-        if (isset($_GET['edit']) && is_numeric($_GET['edit'])) {
+        if (isset($_GET['edit']) && is_numeric($_GET['edit']) && wp_verify_nonce(wp_unslash($_GET['_wpnonce'] ?? ''), 'edit_license')) {
             $license_id = intval($_GET['edit']);
             $license_data = $this->license_handler->get_license($license_id);
         }
@@ -206,7 +206,7 @@ class RSL_Admin {
         }
         
         // --- BEGIN: RSL-safe URL/path validation ---
-        $content_url_input = isset($_POST['content_url']) ? trim((string) wp_unslash($_POST['content_url'])) : '';
+        $content_url_input = isset($_POST['content_url']) ? sanitize_text_field(trim((string) wp_unslash($_POST['content_url']))) : '';
 
         // Allow either:
         // 1) Absolute URL (http/https), OR
@@ -494,7 +494,7 @@ class RSL_Admin {
         }
         
         // Classic editor nonce verification
-        if (!isset($_POST['rsl_meta_nonce']) || !wp_verify_nonce(wp_unslash($_POST['rsl_meta_nonce']), 'rsl_meta_box')) {
+        if (!isset($_POST['rsl_meta_nonce']) || !wp_verify_nonce(sanitize_text_field(wp_unslash($_POST['rsl_meta_nonce'])), 'rsl_meta_box')) {
             return;
         }
         

@@ -47,14 +47,20 @@ class RSL_OAuth_Client {
                 'client_id' => $client_id,
                 'client_secret_hash' => $client_secret_hash,
                 'client_name' => sanitize_text_field($client_name),
-                'redirect_uris' => isset($options['redirect_uris']) ? 
+                'redirect_uris' => isset($options['redirect_uris']) ?
                     implode(',', (array)$options['redirect_uris']) : '',
-                'grant_types' => isset($options['grant_types']) ? 
+                'grant_types' => isset($options['grant_types']) ?
                     sanitize_text_field($options['grant_types']) : 'client_credentials',
                 'active' => 1
             ],
             ['%s', '%s', '%s', '%s', '%s', '%d']
         );
+
+        // Clear client cache after successful insert
+        if ($result && !$wpdb->last_error) {
+            wp_cache_delete('rsl_oauth_clients', 'rsl_oauth');
+            wp_cache_delete('rsl_oauth_client_' . $client_id, 'rsl_oauth');
+        }
         
         if (!$result) {
             return new WP_Error('client_creation_failed', 'Failed to create OAuth client: ' . $wpdb->last_error);
@@ -83,10 +89,21 @@ class RSL_OAuth_Client {
         
         $table_name = $wpdb->prefix . 'rsl_oauth_clients';
         
-        $client = $wpdb->get_row($wpdb->prepare(
-            "SELECT client_secret_hash, active FROM `{$wpdb->prefix}rsl_oauth_clients` WHERE client_id = %s",
-            $client_id
-        ));
+        // Try cache first
+        $cache_key = 'rsl_oauth_client_validate_' . $client_id;
+        $client = wp_cache_get($cache_key, 'rsl_oauth');
+
+        if ($client === false) {
+            $client = $wpdb->get_row($wpdb->prepare(
+                "SELECT client_secret_hash, active FROM `{$wpdb->prefix}rsl_oauth_clients` WHERE client_id = %s",
+                $client_id
+            ));
+
+            // Cache successful results for 30 minutes
+            if ($client && !$wpdb->last_error) {
+                wp_cache_set($cache_key, $client, 'rsl_oauth', 1800);
+            }
+        }
         
         if (!$client) {
             return new WP_Error('invalid_client', 'Client not found');
@@ -113,11 +130,22 @@ class RSL_OAuth_Client {
         
         $table_name = $wpdb->prefix . 'rsl_oauth_clients';
         
-        $client = $wpdb->get_row($wpdb->prepare(
-            "SELECT id, client_id, client_name, redirect_uris, grant_types, active, created_at 
-             FROM `{$wpdb->prefix}rsl_oauth_clients` WHERE client_id = %s",
-            $client_id
-        ), ARRAY_A);
+        // Try cache first
+        $cache_key = 'rsl_oauth_client_' . $client_id;
+        $client = wp_cache_get($cache_key, 'rsl_oauth');
+
+        if ($client === false) {
+            $client = $wpdb->get_row($wpdb->prepare(
+                "SELECT id, client_id, client_name, redirect_uris, grant_types, active, created_at
+                 FROM `{$wpdb->prefix}rsl_oauth_clients` WHERE client_id = %s",
+                $client_id
+            ), ARRAY_A);
+
+            // Cache successful results for 30 minutes
+            if ($client && !$wpdb->last_error) {
+                wp_cache_set($cache_key, $client, 'rsl_oauth', 1800);
+            }
+        }
         
         if (!$client) {
             return null;
@@ -146,12 +174,23 @@ class RSL_OAuth_Client {
         $base_query = "SELECT id, client_id, client_name, grant_types, active, created_at 
                        FROM `{$wpdb->prefix}rsl_oauth_clients`" . $where . " ORDER BY created_at DESC";
         
-        if (!empty($params)) {
-            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-            $clients = $wpdb->get_results($wpdb->prepare($base_query, ...$params), ARRAY_A);
-        } else {
-            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
-            $clients = $wpdb->get_results($base_query, ARRAY_A);
+        // Try cache first
+        $cache_key = 'rsl_oauth_clients_' . md5(serialize($args));
+        $clients = wp_cache_get($cache_key, 'rsl_oauth');
+
+        if ($clients === false) {
+            if (!empty($params)) {
+                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+                $clients = $wpdb->get_results($wpdb->prepare($base_query, ...$params), ARRAY_A);
+            } else {
+                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+                $clients = $wpdb->get_results($base_query, ARRAY_A);
+            }
+
+            // Cache successful results for 30 minutes
+            if ($clients !== null && !$wpdb->last_error) {
+                wp_cache_set($cache_key, $clients, 'rsl_oauth', 1800);
+            }
         }
         
         return $clients ?: [];
@@ -205,6 +244,11 @@ class RSL_OAuth_Client {
             ],
             ['%s', '%s', '%d', '%d', '%d', '%s', '%d']
         );
+
+        // Clear token cache after successful insert
+        if ($result && !$wpdb->last_error) {
+            wp_cache_delete('rsl_token_' . $jti, 'rsl_tokens');
+        }
         
         return $result !== false;
     }
@@ -219,10 +263,21 @@ class RSL_OAuth_Client {
         
         $table_name = $wpdb->prefix . 'rsl_tokens';
         
-        $revoked = $wpdb->get_var($wpdb->prepare(
-            "SELECT revoked FROM `{$wpdb->prefix}rsl_tokens` WHERE jti = %s",
-            $jti
-        ));
+        // Try cache first
+        $cache_key = 'rsl_token_' . $jti;
+        $revoked = wp_cache_get($cache_key, 'rsl_tokens');
+
+        if ($revoked === false) {
+            $revoked = $wpdb->get_var($wpdb->prepare(
+                "SELECT revoked FROM `{$wpdb->prefix}rsl_tokens` WHERE jti = %s",
+                $jti
+            ));
+
+            // Cache successful results for 15 minutes (shorter TTL for token status)
+            if ($revoked !== null && !$wpdb->last_error) {
+                wp_cache_set($cache_key, $revoked, 'rsl_tokens', 900);
+            }
+        }
         
         return (bool)$revoked;
     }
@@ -302,6 +357,11 @@ class RSL_OAuth_Client {
             "DELETE FROM `{$wpdb->prefix}rsl_tokens` WHERE expires_at < %s",
             current_time('mysql', true)
         ));
+
+        // Clear token cache after cleanup
+        if ($deleted > 0) {
+            wp_cache_flush_group('rsl_tokens');
+        }
         
         if ($deleted > 0) {
             rsl_log(sprintf('RSL OAuth: Cleaned up %d expired tokens', $deleted));

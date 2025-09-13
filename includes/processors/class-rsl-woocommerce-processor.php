@@ -178,6 +178,14 @@ class RSL_WooCommerce_Processor implements RSL_Payment_Processor_Interface {
      * @return int|WP_Error Product ID or error
      */
     private function ensure_product_for_license($license) {
+        // Try cache first for existing product
+        $cache_key = 'rsl_wc_product_' . $license['id'];
+        $cached_product_id = wp_cache_get($cache_key, 'rsl_wc_products');
+
+        if ($cached_product_id !== false && get_post_status($cached_product_id) === 'publish') {
+            return intval($cached_product_id);
+        }
+
         // Check if product already exists
         $existing_query = new WP_Query([
             'post_type' => 'product',
@@ -189,7 +197,10 @@ class RSL_WooCommerce_Processor implements RSL_Payment_Processor_Interface {
         ]);
         
         if ($existing_query->have_posts()) {
-            return $existing_query->posts[0];
+            $product_id = intval($existing_query->posts[0]);
+            // Cache the product ID for 1 hour
+            wp_cache_set($cache_key, $product_id, 'rsl_wc_products', 3600);
+            return $product_id;
         }
         
         // Create new product
@@ -229,7 +240,11 @@ class RSL_WooCommerce_Processor implements RSL_Payment_Processor_Interface {
             update_post_meta($product_id, '_subscription_period_interval', '1');
             wp_set_object_terms($product_id, 'subscription', 'product_type');
         }
-        
+
+        // Cache the new product ID for 1 hour
+        $cache_key = 'rsl_wc_product_' . $license['id'];
+        wp_cache_set($cache_key, $product_id, 'rsl_wc_products', 3600);
+
         return $product_id;
     }
     

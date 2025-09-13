@@ -350,9 +350,16 @@ class RSL_Media {
             return false;
         }
         
-        // Check if directory is writable
-        if (!is_writable(dirname($file_path))) {
-            // error_log('RSL: Cannot write to directory: ' . dirname($file_path));
+        // Check if directory is writable using WP_Filesystem API
+        global $wp_filesystem;
+        if (empty($wp_filesystem)) {
+            require_once ABSPATH . 'wp-admin/includes/file.php';
+            WP_Filesystem();
+        }
+
+        $dir_path = dirname($file_path);
+        if (!$wp_filesystem->is_writable($dir_path)) {
+            // error_log('RSL: Cannot write to directory: ' . $dir_path);
             return false;
         }
         

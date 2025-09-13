@@ -67,6 +67,11 @@ class RSL_Licensing
 
     private function load_textdomain()
     {
+        load_plugin_textdomain(
+            'rsl-wp',
+            false,
+            dirname(plugin_basename(__FILE__)) . '/languages/'
+        );
     }
 
     private function includes()
@@ -198,7 +203,7 @@ class RSL_Licensing
         require_once ABSPATH . "wp-admin/includes/upgrade.php";
         $result = dbDelta($sql);
         
-        // Verify table was created successfully
+        // Verify table was created successfully (no caching needed for one-time setup)
         $table_exists = $wpdb->get_var($wpdb->prepare(
             "SHOW TABLES LIKE %s",
             $table_name
@@ -230,7 +235,7 @@ class RSL_Licensing
         
         $oauth_result = dbDelta($oauth_sql);
         
-        // Verify OAuth table was created
+        // Verify OAuth table was created (no caching needed for one-time setup)
         $oauth_table_exists = $wpdb->get_var($wpdb->prepare(
             "SHOW TABLES LIKE %s",
             $oauth_table
@@ -264,7 +269,7 @@ class RSL_Licensing
         
         $tokens_result = dbDelta($tokens_sql);
         
-        // Verify tokens table was created
+        // Verify tokens table was created (no caching needed for one-time setup)
         $tokens_table_exists = $wpdb->get_var($wpdb->prepare(
             "SHOW TABLES LIKE %s",
             $tokens_table
@@ -310,7 +315,18 @@ class RSL_Licensing
         
         $table_name = $wpdb->prefix . "rsl_licenses";
         
-        $existing_licenses = $wpdb->get_var("SELECT COUNT(*) FROM `{$wpdb->prefix}rsl_licenses`");
+        // Try cache first for license count check
+        $cache_key = 'rsl_license_count';
+        $existing_licenses = wp_cache_get($cache_key, 'rsl_licenses');
+
+        if ($existing_licenses === false) {
+            $existing_licenses = $wpdb->get_var("SELECT COUNT(*) FROM `{$wpdb->prefix}rsl_licenses`");
+
+            // Cache successful results for 1 hour
+            if ($existing_licenses !== null && !$wpdb->last_error) {
+                wp_cache_set($cache_key, $existing_licenses, 'rsl_licenses', 3600);
+            }
+        }
         
         if ($wpdb->last_error) {
             // error_log('RSL: Database error checking existing licenses: ' . $wpdb->last_error);
@@ -363,6 +379,12 @@ class RSL_Licensing
                     '%d', '%s', '%s'
                 ]
             );
+
+            // Clear license cache after successful insert
+            if ($license_inserted && !$wpdb->last_error) {
+                wp_cache_delete('rsl_license_count', 'rsl_licenses');
+                wp_cache_flush_group('rsl_licenses');
+            }
             
             if ($license_inserted) {
                 $license_id = $wpdb->insert_id;
@@ -396,7 +418,7 @@ class RSL_Licensing
         $success = true;
         
         foreach ($indexes as $index_name => $column) {
-            // Check if index already exists
+            // Check if index already exists (no caching needed for one-time setup)
             $index_exists = $wpdb->get_var($wpdb->prepare(
                 "SHOW INDEX FROM `{$wpdb->prefix}rsl_licenses` WHERE Key_name = %s",
                 $index_name
