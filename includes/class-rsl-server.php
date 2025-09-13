@@ -582,7 +582,7 @@ class RSL_Server {
 		// If pattern starts with '/', match against the URL path+query; otherwise match against the full URL.
 		$haystack = $url;
 		if ( strlen( $pattern ) > 0 && $pattern[0] === '/' ) {
-			$u        = wp_wp_parse_url( $url );
+			$u        = wp_parse_url( $url );
 			$path     = isset( $u['path'] ) ? $u['path'] : '/';
 			$query    = isset( $u['query'] ) ? '?' . $u['query'] : '';
 			$haystack = $path . $query;
@@ -874,7 +874,7 @@ class RSL_Server {
 			'access_token' => $token,
 			'token_type'   => 'Bearer',
 			'expires_in'   => $ttl,
-			'expires_at'   => gmgmdate( 'c', $payload['exp'] ),
+			'expires_at'   => gmdate( 'c', $payload['exp'] ),
 			'license_url'  => home_url( 'rsl-license/' . $license['id'] . '/' ),
 		);
 	}

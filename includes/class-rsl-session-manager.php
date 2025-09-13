@@ -61,7 +61,7 @@ class RSL_Session_Manager {
 			'session_id'  => $session_id,
 			'status'      => 'created',
 			'polling_url' => rest_url( 'rsl-olp/v1/session/' . $session_id ),
-			'expires_at'  => gmgmdate( 'c', $session_data['expires_at'] ),
+			'expires_at'  => gmdate( 'c', $session_data['expires_at'] ),
 		);
 	}
 
@@ -192,8 +192,8 @@ class RSL_Session_Manager {
 		$response = array(
 			'session_id' => $session_id,
 			'status'     => $session['status'],
-			'created_at' => gmgmdate( 'c', $session['created_at'] ),
-			'expires_at' => gmgmdate( 'c', $session['expires_at'] ),
+			'created_at' => gmdate( 'c', $session['created_at'] ),
+			'expires_at' => gmdate( 'c', $session['expires_at'] ),
 		);
 
 		// Add status-specific data

@@ -26,7 +26,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 if ( ! function_exists( 'rsl_log' ) ) {
 	function rsl_log( $message, $level = 'info' ) {
 		if ( defined( 'WP_DEBUG' ) && WP_DEBUG && defined( 'RSL_DEBUG' ) && RSL_DEBUG ) {
-			// error_log(sprintf('[RSL %s] %s', strtoupper($level), $message));
+			error_log(sprintf('[RSL %s] %s', strtoupper($level), $message));
 		}
 	}
 }

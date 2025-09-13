@@ -1,18 +1,49 @@
 <?php
+/**
+ * RSL License management class
+ *
+ * Handles CRUD operations for RSL licenses and provides
+ * methods for license validation and retrieval.
+ *
+ * @package RSL_WP
+ * @since 0.0.1
+ */
 
 if ( ! defined( 'ABSPATH' ) ) {
 	exit;
 }
 
+/**
+ * RSL License management class.
+ *
+ * Manages license creation, retrieval, updating, and deletion
+ * operations for the RSL WordPress plugin.
+ */
 class RSL_License {
 
+	/**
+	 * Database table name for storing licenses.
+	 *
+	 * @var string
+	 */
 	private $table_name;
 
+	/**
+	 * Constructor.
+	 *
+	 * Initializes the license class and sets up database table name.
+	 */
 	public function __construct() {
 		global $wpdb;
 		$this->table_name = $wpdb->prefix . 'rsl_licenses';
 	}
 
+	/**
+	 * Create a new license.
+	 *
+	 * @param array $data License data array containing fields like name, content_url, etc.
+	 * @return int|false License ID on success, false on failure.
+	 */
 	public function create_license( $data ) {
 		global $wpdb;
 
@@ -47,7 +78,7 @@ class RSL_License {
 
 		$data = wp_parse_args( $data, $defaults );
 
-		// Validate required fields
+		// Validate required fields.
 		if ( empty( $data['name'] ) || empty( $data['content_url'] ) ) {
 			// error_log('RSL: Cannot create license - name and content_url are required');
 			return false;
@@ -94,6 +125,12 @@ class RSL_License {
 		return $wpdb->insert_id;
 	}
 
+	/**
+	 * Get a license by ID.
+	 *
+	 * @param int $id License ID.
+	 * @return array|null License data array on success, null on failure.
+	 */
 	public function get_license( $id ) {
 		global $wpdb;
 
@@ -102,7 +139,7 @@ class RSL_License {
 			return null;
 		}
 
-		// Check cache first
+		// Check cache first.
 		$cache_key = "rsl_license_{$id}";
 		$result    = wp_cache_get( $cache_key, 'rsl_licenses' );
 
@@ -129,6 +166,12 @@ class RSL_License {
 		return $result;
 	}
 
+	/**
+	 * Get multiple licenses with optional filtering.
+	 *
+	 * @param array $args Optional arguments for filtering and sorting.
+	 * @return array|null Array of license data on success, null on failure.
+	 */
 	public function get_licenses( $args = array() ) {
 		global $wpdb;
 
@@ -189,7 +232,7 @@ class RSL_License {
 			$sql = $base_sql;
 		}
 
-		// Check cache first for listings
+		// Check cache first for listings.
 		$cache_key = 'rsl_licenses_' . md5( $sql . serialize( $values ) );
 		$results   = wp_cache_get( $cache_key, 'rsl_licenses' );
 
@@ -203,7 +246,7 @@ class RSL_License {
 			}
 		}
 
-		// Add error handling
+		// Add error handling.
 		if ( $wpdb->last_error ) {
 			// error_log('RSL License Query Error: ' . $wpdb->last_error);
 			return array();
@@ -212,6 +255,13 @@ class RSL_License {
 		return $results ? $results : array();
 	}
 
+	/**
+	 * Update an existing license.
+	 *
+	 * @param int   $id   License ID.
+	 * @param array $data Data to update.
+	 * @return bool True on success, false on failure.
+	 */
 	public function update_license( $id, $data ) {
 		global $wpdb;
 
@@ -254,7 +304,7 @@ class RSL_License {
 			'%s',
 		);
 
-		$result = $wpdb->upgmdate(
+		$result = $wpdb->update(
 			$this->table_name,
 			$data,
 			array( 'id' => $id ),
@@ -270,6 +320,12 @@ class RSL_License {
 		return $result !== false;
 	}
 
+	/**
+	 * Delete a license.
+	 *
+	 * @param int $id License ID.
+	 * @return bool True on success, false on failure.
+	 */
 	public function delete_license( $id ) {
 		global $wpdb;
 
@@ -293,6 +349,13 @@ class RSL_License {
 		return $result !== false;
 	}
 
+	/**
+	 * Generate RSL XML from license data.
+	 *
+	 * @param array $license_data License data array.
+	 * @param array $options      Optional settings for XML generation.
+	 * @return string Generated RSL XML string.
+	 */
 	public function generate_rsl_xml( $license_data, $options = array() ) {
 		$defaults = array(
 			'namespace'  => 'https://rslstandard.org/rsl',
@@ -408,6 +471,11 @@ class RSL_License {
 		return $xml;
 	}
 
+	/**
+	 * Get available usage options for license configuration.
+	 *
+	 * @return array Array of usage options with labels.
+	 */
 	public function get_usage_options() {
 		return array(
 			'all'          => __( 'All automated processing', 'rsl-wp' ),
@@ -419,6 +487,11 @@ class RSL_License {
 		);
 	}
 
+	/**
+	 * Get available user options for license configuration.
+	 *
+	 * @return array Array of user options with labels.
+	 */
 	public function get_user_options() {
 		return array(
 			'commercial'     => __( 'Commercial use', 'rsl-wp' ),
@@ -429,6 +502,11 @@ class RSL_License {
 		);
 	}
 
+	/**
+	 * Get available payment options for license configuration.
+	 *
+	 * @return array Array of payment options with labels.
+	 */
 	public function get_payment_options() {
 		return array(
 			'free'         => __( 'Free', 'rsl-wp' ),
@@ -442,6 +520,11 @@ class RSL_License {
 		);
 	}
 
+	/**
+	 * Get available warranty options for license configuration.
+	 *
+	 * @return array Array of warranty options with labels.
+	 */
 	public function get_warranty_options() {
 		return array(
 			'ownership'       => __( 'Ownership rights', 'rsl-wp' ),
@@ -452,6 +535,11 @@ class RSL_License {
 		);
 	}
 
+	/**
+	 * Get available disclaimer options for license configuration.
+	 *
+	 * @return array Array of disclaimer options with labels.
+	 */
 	public function get_disclaimer_options() {
 		return array(
 			'as-is'        => __( 'Provided "as is"', 'rsl-wp' ),
