@@ -200,7 +200,7 @@ CREATE TABLE wp_rsl_licenses (
 ## File Structure
 
 ```
-rsl-licensing.php                           # Main plugin file
+rsl-wp.php                           # Main plugin file
 ├── includes/
 │   ├── class-rsl-license.php               # Core license management
 │   ├── class-rsl-server.php                # License server and REST API
@@ -269,6 +269,94 @@ make security
 # Build and test ZIP file
 make zip
 ```
+
+## Version Release Process
+
+When releasing a new version, multiple files need to be updated in the correct order:
+
+### Step 1: Update Version Numbers
+```bash
+# 1. Update main plugin file
+# Edit rsl-wp.php:
+# * Version: X.Y.Z (line ~6)
+# define("RSL_PLUGIN_VERSION", "X.Y.Z"); (line ~35)
+
+# 2. Update readme.txt for WordPress.org
+# Edit readme.txt:
+# Stable tag: X.Y.Z (line ~8)
+
+# 3. Update README.md version badge
+# Edit README.md:
+# [![Version](https://img.shields.io/badge/Version-X.Y.Z-blue)]
+```
+
+### Step 2: Update Changelog Documentation
+```bash
+# 1. Update docs/CHANGELOG.md (follows Keep a Changelog format)
+# Add new version section with:
+# ## [X.Y.Z] - YYYY-MM-DD
+# ### Added / Changed / Fixed / Removed sections
+
+# 2. Update readme.txt changelog
+# Add new version section:
+# = X.Y.Z =
+# * Brief bullet points of changes
+
+# 3. Update upgrade notice in readme.txt
+# = X.Y.Z =
+# Brief description of why users should upgrade
+```
+
+### Step 3: Update Download Links (Manual)
+```bash
+# Edit README.md Quick Download section:
+# - Latest Release: vX.Y.Z link
+# - Download button URL
+# - curl/wget commands with new version
+# - File size information
+# - Alpha notice version number
+```
+
+### Step 4: Create Release
+```bash
+# Commit version updates
+git add rsl-wp.php readme.txt README.md docs/CHANGELOG.md
+git commit -m "Release version X.Y.Z"
+
+# Create and push tag (triggers automation)
+git tag vX.Y.Z
+git push origin main
+git push origin vX.Y.Z
+
+# GitHub Actions will automatically:
+# - Run tests (28 tests, 136 assertions)
+# - Build production ZIP (~700KB)
+# - Create GitHub release
+# - Upload assets with checksums
+```
+
+### Step 5: WordPress.org Deployment (if configured)
+```bash
+# Automatic deployment happens via GitHub Actions if:
+# - WP_ORG_USERNAME and WP_ORG_PASSWORD secrets are set
+# - Version follows semantic versioning (X.Y.Z)
+# - All tests pass
+
+# Manual deployment alternative:
+# Use 10up/action-wordpress-plugin-deploy action
+```
+
+### Files Updated During Version Release:
+- `rsl-wp.php` - Plugin header and version constant
+- `readme.txt` - Stable tag, changelog, upgrade notice
+- `README.md` - Version badge, download links, alpha notice
+- `docs/CHANGELOG.md` - Detailed change documentation
+
+### Version Numbering:
+- **0.0.x** - Alpha releases (current)
+- **0.x.y** - Beta releases
+- **x.y.z** - Stable releases
+- Follow semantic versioning for breaking changes
 
 ## Resources
 

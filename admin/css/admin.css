@@ -1,192 +1,109 @@
-/* RSL Licensing Admin Styles */
+/* RSL for WordPress - Minimal Admin Styles */
+/* Let WordPress handle ALL postbox styling naturally */
 
-/* Core RSL Status Indicators */
-.rsl-enabled {
+/* At a Glance: Side-by-side layout */
+.rsl-at-glance-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
+}
+
+.rsl-at-glance-row .main {
+    flex: 1 1 auto;
+}
+
+.rsl-quick-actions {
+    flex: 0 0 auto;
+    text-align: right;
+}
+
+.rsl-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+/* WordPress "At a Glance" style stats */
+.main ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
+}
+
+.main ul li {
+    font-size: 14px;
+    line-height: 1.4;
+    white-space: nowrap;
+}
+
+.main ul li + li {
+    position: relative;
+    padding-left: 16px;
+}
+
+.main ul li + li:before {
+    content: "|";
+    color: #c3c4c7;
+    font-weight: 400;
+    position: absolute;
+    left: 0;
+    top: 0;
+}
+
+.main ul li a {
+    text-decoration: none;
+}
+
+.main ul li a:hover strong {
+    color: #2271b1;
+}
+
+/* Button icon alignment */
+.button .dashicons {
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-top: -2px;
+}
+
+.button-primary .dashicons {
+    margin-top: -1px;
+}
+
+/* WordPress Admin Status Colors */
+.yes {
     color: #00a32a;
     font-weight: 600;
 }
 
-.rsl-disabled {
+.no {
     color: #d63638;
     font-weight: 600;
 }
 
-/* Dashboard Layout - Native WordPress Grid */
-.rsl-dashboard-wrap {
-    display: block;
-    width: 100%;
-    max-width: none;
-    margin-top: 20px;
+.approved {
+    color: #00a32a;
 }
 
-.rsl-dashboard-wrap .postbox-container.rsl-full-width {
-    width: 100%;
-    margin-bottom: 20px;
+.pending {
+    color: #d63638;
 }
 
-/* Dashboard Rows */
-.rsl-dashboard-row {
-    display: block;
-    width: 100%;
-    margin-bottom: 20px;
-    overflow: hidden;
-}
-
-.rsl-dashboard-row .postbox-container {
-    float: left;
-    margin-bottom: 20px;
-    min-height: 1px;
-    box-sizing: border-box;
-}
-
-.rsl-dashboard-row .postbox-container.rsl-half-width {
-    width: calc(50% - 10px);
-    margin-right: 20px;
-}
-
-.rsl-dashboard-row .postbox-container.rsl-half-width:last-child {
-    margin-right: 0;
-}
-
-/* Clearfix for dashboard rows */
-.rsl-dashboard-row::after {
-    content: "";
-    display: table;
-    clear: both;
-}
-
-/* WordPress Native Postbox Styling */
-.rsl-dashboard-wrap .postbox {
-    background: #fff;
-    border: 1px solid #c3c4c7;
-    box-shadow: 0 1px 1px rgba(0,0,0,.04);
-    min-width: 255px;
-    position: relative;
-}
-
-.rsl-dashboard-wrap .postbox .postbox-header {
-    border-bottom: 1px solid #c3c4c7;
-    position: relative;
-}
-
-.rsl-dashboard-wrap .postbox .postbox-header .hndle {
-    border: none;
-    box-shadow: none;
-    color: #1d2327;
-    font-size: 14px;
-    font-weight: 600;
-    line-height: 1.4;
-    margin: 0;
-    padding: 12px;
-    position: relative;
-}
-
-.rsl-dashboard-wrap .postbox .inside {
-    margin: 12px;
-    position: relative;
-}
-
-/* At a Glance with Quick Actions Layout */
-.rsl-at-glance-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.rsl-stats-section {
-    flex: 1;
-}
-
-.rsl-quick-actions-section {
-    flex-shrink: 0;
-}
-
-/* At a Glance Widget Styling */
-.rsl-dashboard-wrap .main ul {
-    list-style: none;
-    margin: 0;
-    overflow: hidden;
-    padding: 0;
-}
-
-.rsl-dashboard-wrap .main ul li {
-    float: left;
-    font-size: 14px;
-    margin: 0 15px 0 0;
-    line-height: 1.4;
-    list-style: none;
-    white-space: nowrap;
+/* RSL-specific elements only */
+.rsl-admin-icon {
+    height: 32px;
+    margin-right: 10px;
+    vertical-align: middle;
     width: auto;
+    max-width: 120px;
+    object-fit: contain;
 }
 
-.rsl-dashboard-wrap .main ul li:after {
-    content: "|";
-    color: #c3c4c7;
-    font-weight: 400;
-    margin-left: 15px;
-}
-
-.rsl-dashboard-wrap .main ul li:last-child:after {
-    content: "";
-}
-
-.rsl-dashboard-wrap .main ul li strong {
-    color: #1d2327;
-    font-weight: 600;
-    margin-right: 5px;
-}
-
-.rsl-dashboard-wrap .main ul li span:last-child {
-    color: #646970;
-}
-
-/* Quick Actions Inline */
-.rsl-actions-inline {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.rsl-actions-inline .button {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    white-space: nowrap;
-}
-
-/* Action Buttons */
-.rsl-actions .button {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 8px;
-    min-width: 180px;
-}
-
-.rsl-actions .button .dashicons {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-}
-
-/* Table Styling for Integration Status */
-.rsl-dashboard-wrap .widefat {
-    border: 1px solid #c3c4c7;
-    box-shadow: none;
-}
-
-.rsl-dashboard-wrap .widefat td,
-.rsl-dashboard-wrap .widefat th {
-    border: none;
-    padding: 8px 12px;
-}
-
-.rsl-dashboard-wrap .widefat tbody tr:nth-child(odd) {
-    background-color: #f6f7f7;
-}
-
-/* Payment Type Tags */
 .rsl-payment-tag {
     background: #f0f0f1;
     border-radius: 3px;
@@ -195,14 +112,6 @@
     font-size: 11px;
     font-weight: 500;
     padding: 3px 8px;
-    text-transform: uppercase;
-}
-
-.rsl-payment-type {
-    border-radius: 3px;
-    font-size: 11px;
-    font-weight: bold;
-    padding: 2px 8px;
     text-transform: uppercase;
 }
 
@@ -225,7 +134,6 @@
     color: #155724;
 }
 
-/* Status Indicators */
 .rsl-status-active {
     color: #00a32a;
     font-weight: 600;
@@ -239,14 +147,72 @@
 /* Recent License Items */
 .rsl-recent-license {
     border-bottom: 1px solid #f0f0f1;
-    padding: 8px 0;
+    padding: 0;
 }
 
 .rsl-recent-license:last-child {
     border-bottom: none;
 }
 
-/* Modal Styles */
+.rsl-license-link {
+    display: block;
+    padding: 8px 0;
+    text-decoration: none;
+    color: inherit;
+}
+
+.rsl-license-link:hover {
+    background-color: #f6f7f7;
+    color: #2271b1;
+}
+
+.rsl-license-link:focus {
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
+}
+
+.rsl-license-content-url {
+    color: #646970;
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+.rsl-view-all-link {
+    margin-top: 16px;
+}
+
+/* Header Links */
+.rsl-header-link {
+    color: #2271b1;
+    font-size: 13px;
+    font-weight: 400;
+    text-decoration: none;
+    margin-left: 10px;
+}
+
+.rsl-header-link:hover,
+.rsl-header-link:focus {
+    color: #135e96;
+    text-decoration: underline;
+}
+
+/* Form elements */
+.rsl-multiselect {
+    height: 120px !important;
+    width: 100% !important;
+    max-width: 400px;
+}
+
+.rsl-button-gap {
+    margin-left: 8px;
+}
+
+/* Footer overlap prevention */
+.wrap {
+    padding-bottom: 80px;
+}
+
+/* Modal styles */
 .rsl-modal {
     background-color: rgba(0,0,0,0.5);
     height: 100%;
@@ -316,139 +282,48 @@
     width: 100%;
 }
 
-/* Form Styling */
-.form-table th {
-    width: 200px;
-    vertical-align: top;
-}
-
-.form-table .description {
-    color: #646970;
-    font-style: normal;
-    margin-top: 5px;
-}
-
-.rsl-multiselect {
-    height: 120px !important;
-    width: 100% !important;
-    max-width: 400px;
-}
-
-/* License Info Cards */
-.rsl-license-info {
-    background: #f6f7f7;
-    border: 1px solid #c3c4c7;
-    border-radius: 4px;
-    margin: 10px 0;
-    padding: 15px;
-}
-
-.rsl-license-info h4 {
-    color: #1d2327;
-    font-size: 14px;
-    font-weight: 600;
-    margin-bottom: 10px;
-    margin-top: 0;
-}
-
-.rsl-license-info ul {
-    margin: 10px 0;
-    padding-left: 20px;
-}
-
-.rsl-license-info li {
-    margin-bottom: 5px;
-}
-
-.rsl-license-link {
-    background-color: #2271b1;
-    border-radius: 3px;
-    color: #fff;
-    display: inline-block;
-    font-size: 13px;
-    padding: 6px 12px;
-    text-decoration: none;
-}
-
-.rsl-license-link:hover,
-.rsl-license-link:focus {
-    background-color: #135e96;
-    color: #fff;
-}
-
-/* WordPress List Table Enhancements */
-.wp-list-table .rsl-payment-type {
-    margin-left: 8px;
-}
-
-/* Admin Page Icons */
-.rsl-admin-icon {
-    height: 32px;
-    margin-right: 10px;
-    vertical-align: middle;
-    width: auto;
-    max-width: 120px;
-    object-fit: contain;
-}
-
-/* License Content URL */
-.rsl-license-content-url {
-    color: #646970;
-    font-size: 12px;
-    margin-top: 4px;
-}
-
-/* View All Links */
-.rsl-view-all-link {
-    margin-top: 16px;
-}
-
-/* Button Spacing */
-.rsl-button-gap {
-    margin-left: 8px;
-}
-
-/* Header Links */
-.rsl-header-link {
-    color: #2271b1;
-    font-size: 13px;
-    font-weight: 400;
-    text-decoration: none;
-    margin-left: 10px;
-}
-
-.rsl-header-link:hover,
-.rsl-header-link:focus {
-    color: #135e96;
-    text-decoration: underline;
-}
-
-/* Page Headers - Fix margin bottom */
-.wrap h1.wp-heading-inline {
-    margin-bottom: 20px;
-}
-
-/* Utility Classes */
 .rsl-hidden {
     display: none !important;
 }
 
-/* Responsive Design */
+/* Responsive */
+@media screen and (max-width: 1100px) {
+    .rsl-at-glance-row {
+        align-items: flex-start;
+    }
+    
+    .rsl-quick-actions {
+        text-align: left;
+    }
+    
+    .rsl-action-buttons {
+        justify-content: flex-start;
+    }
+}
+
 @media screen and (max-width: 782px) {
-    .rsl-dashboard-row .postbox-container {
-        float: none;
-        margin-right: 0;
-        width: 100% !important;
+    .main ul {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
     }
     
-    .rsl-dashboard-row .postbox-container.rsl-half-width {
-        width: 100% !important;
-        margin-right: 0;
+    .main ul li + li {
+        padding-left: 0;
     }
     
-    .rsl-modal-content {
-        margin: 10% auto;
-        width: 95%;
+    .main ul li + li:before {
+        display: none;
+    }
+    
+    .rsl-action-buttons {
+        flex-direction: column;
+        width: 100%;
+    }
+    
+    .rsl-action-buttons .button {
+        width: 100%;
+        text-align: center;
     }
     
     .rsl-multiselect {
@@ -464,48 +339,5 @@
     .form-table th {
         border-bottom: none;
         padding-bottom: 0;
-    }
-    
-    .rsl-actions .button {
-        margin-bottom: 12px;
-        min-width: auto;
-        width: 100%;
-    }
-    
-    .rsl-dashboard-wrap .main ul li {
-        float: none;
-        display: block;
-        margin-bottom: 8px;
-        width: auto;
-    }
-    
-    .rsl-dashboard-wrap .main ul li:after {
-        display: none;
-    }
-    
-    .rsl-at-glance-wrapper {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 15px;
-    }
-    
-    .rsl-actions-inline {
-        width: 100%;
-    }
-    
-    .rsl-actions-inline .button {
-        flex: 1;
-        justify-content: center;
-        min-width: auto;
-    }
-}
-
-@media screen and (max-width: 600px) {
-    .rsl-dashboard-wrap .postbox .inside {
-        margin: 8px;
-    }
-    
-    .rsl-dashboard-wrap .postbox .postbox-header .hndle {
-        padding: 8px 12px;
     }
 }

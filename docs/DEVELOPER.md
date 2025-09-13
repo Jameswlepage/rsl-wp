@@ -432,7 +432,7 @@ RSL server discovery endpoint.
 **Response:**
 ```json
 {
-  "server": "RSL Licensing for WordPress v1.0.0",
+  "server": "RSL for WordPress v1.0.0",
   "site": "https://example.com",
   "endpoints": {
     "licenses": "https://example.com/wp-json/rsl/v1/licenses",

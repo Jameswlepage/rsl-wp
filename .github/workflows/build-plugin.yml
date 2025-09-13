@@ -54,8 +54,8 @@ jobs:
       run: |
         VERSION="${{ steps.version.outputs.version }}"
         # Update version in main plugin file
-        sed -i "s/Version: .*/Version: $VERSION/" rsl-licensing.php
-        sed -i "s/RSL_PLUGIN_VERSION\", \".*\"/RSL_PLUGIN_VERSION\", \"$VERSION\"/" rsl-licensing.php
+        sed -i "s/Version: .*/Version: $VERSION/" rsl-wp.php
+        sed -i "s/RSL_PLUGIN_VERSION\", \".*\"/RSL_PLUGIN_VERSION\", \"$VERSION\"/" rsl-wp.php
         
         # Update version in README.md if it has a version badge
         if grep -q "Version:" README.md; then

@@ -1,4 +1,4 @@
-# RSL Licensing Plugin - Development Makefile
+# RSL for WordPress Plugin - Development Makefile
 
 .PHONY: help install test test-unit test-integration lint clean build zip release dev
 
@@ -41,7 +41,7 @@ lint: ## Run code linting
 
 validate: ## Validate plugin structure and composer
 	@echo "Validating plugin structure..."
-	@test -f rsl-licensing.php || { echo "❌ Main plugin file missing"; exit 1; }
+	@test -f rsl-wp.php || { echo "❌ Main plugin file missing"; exit 1; }
 	@test -d includes/ || { echo "❌ Includes directory missing"; exit 1; }
 	@echo "✅ Plugin structure valid"
 	@echo "Validating composer..."
@@ -60,14 +60,14 @@ build: clean install lint test ## Full build process
 
 zip: ## Create distribution ZIP
 	@echo "Creating distribution ZIP..."
-	$(eval VERSION := $(shell grep "Version:" rsl-licensing.php | head -1 | sed 's/.*Version: *//' | tr -d ' '))
+	$(eval VERSION := $(shell grep "Version:" rsl-wp.php | head -1 | sed 's/.*Version: *//' | tr -d ' '))
 	$(eval ZIP_NAME := rsl-licensing-$(VERSION).zip)
-	
+
 	@echo "Installing production dependencies only..."
 	@composer install --no-dev --optimize-autoloader --quiet
-	
+
 	@mkdir -p /tmp/rsl-licensing-build
-	
+
 	@rsync -av \
 		--exclude='.git*' \
 		--exclude='tests/' \
@@ -91,11 +91,11 @@ zip: ## Create distribution ZIP
 		--exclude='.DS_Store' \
 		--exclude='*.log' \
 		./ /tmp/rsl-licensing-build/rsl-licensing/
-	
+
 	@cd /tmp/rsl-licensing-build && zip -r "$(ZIP_NAME)" rsl-licensing/
 	@mv "/tmp/rsl-licensing-build/$(ZIP_NAME)" ./
 	@rm -rf /tmp/rsl-licensing-build
-	
+
 	@echo "✅ Created $(ZIP_NAME)"
 	@ls -lh $(ZIP_NAME)
 
@@ -130,7 +130,7 @@ security: ## Run security checks
 
 release: build zip ## Prepare for release
 	@echo "Preparing release..."
-	$(eval VERSION := $(shell grep "Version:" rsl-licensing.php | head -1 | awk '{print $$2}'))
+	$(eval VERSION := $(shell grep "Version:" rsl-wp.php | head -1 | awk '{print $$2}'))
 	@echo "Release version: $(VERSION)"
 	@echo "ZIP file: rsl-licensing-$(VERSION).zip"
 	@echo ""
@@ -158,12 +158,12 @@ install-prod: ## Production dependency setup
 
 # Utility targets
 version: ## Show current version
-	@grep "Version:" rsl-licensing.php | head -1 | awk '{print "Current version:", $$2}'
+	@grep "Version:" rsl-wp.php | head -1 | awk '{print "Current version:", $$2}'
 
 status: ## Show project status
 	@echo "RSL Licensing Plugin Status"
 	@echo "=========================="
-	@echo "Version: $(shell grep "Version:" rsl-licensing.php | head -1 | awk '{print $$2}')"
+	@echo "Version: $(shell grep "Version:" rsl-wp.php | head -1 | awk '{print $$2}')"
 	@echo "PHP Files: $(shell find includes/ -name "*.php" | wc -l)"
 	@echo "Test Files: $(shell find tests/ -name "*.php" | wc -l)"
 	@echo "Dependencies: $(shell composer show | wc -l) packages"

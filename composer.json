@@ -10,12 +10,17 @@
     "phpunit/phpunit": "^9.6",
     "yoast/phpunit-polyfills": "^1.0",
     "brain/monkey": "^2.6",
-    "mockery/mockery": "^1.5"
+    "mockery/mockery": "^1.5",
+    "squizlabs/php_codesniffer": "*",
+    "wp-coding-standards/wpcs": "*"
   },
   "config": {
     "optimize-autoloader": true,
     "platform": { 
       "php": "7.4.0" 
+    },
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
     }
   },
   "autoload": {

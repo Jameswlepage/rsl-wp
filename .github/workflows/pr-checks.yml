@@ -86,13 +86,13 @@ jobs:
         echo "Validating plugin structure..."
         
         # Required files
-        test -f rsl-licensing.php || { echo "❌ Main plugin file missing"; exit 1; }
+        test -f rsl-wp.php || { echo "❌ Main plugin file missing"; exit 1; }
         test -d includes/ || { echo "❌ Includes directory missing"; exit 1; }
         test -f README.md || { echo "❌ README.md missing"; exit 1; }
         
         # Check plugin header
-        grep -q "Plugin Name:" rsl-licensing.php || { echo "❌ Plugin header missing"; exit 1; }
-        grep -q "Version:" rsl-licensing.php || { echo "❌ Version header missing"; exit 1; }
+        grep -q "Plugin Name:" rsl-wp.php || { echo "❌ Plugin header missing"; exit 1; }
+        grep -q "Version:" rsl-wp.php || { echo "❌ Version header missing"; exit 1; }
         
         echo "✅ Plugin structure valid"
 

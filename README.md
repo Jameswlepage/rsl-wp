@@ -1,4 +1,4 @@
-# RSL Licensing for WordPress
+# RSL for WordPress
 
 [![Version](https://img.shields.io/badge/Version-0.0.3-blue)](https://github.com/jameswlepage/rsl-wp/releases/latest) [![Downloads](https://img.shields.io/github/downloads/jameswlepage/rsl-wp/total)](https://github.com/jameswlepage/rsl-wp/releases) [![License](https://img.shields.io/badge/License-GPL%20v2-blue)](https://www.gnu.org/licenses/gpl-2.0.html)
 

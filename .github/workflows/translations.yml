@@ -1,0 +1,275 @@
+name: Translation Quality & Coverage
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+    paths:
+      - 'languages/**'
+      - '**/*.php'
+      - '.github/workflows/translations.yml'
+
+jobs:
+  translation-validation:
+    name: Translation File Validation
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: gettext
+
+    - name: Install gettext tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gettext
+
+    - name: Validate translation files
+      run: |
+        echo "🔍 Validating translation files..."
+
+        # Check for required translation files
+        if [ ! -f "languages/rsl-wp.pot" ]; then
+          echo "❌ Missing POT template file"
+          exit 1
+        fi
+
+        # Validate POT file
+        msgfmt --check languages/rsl-wp.pot -o /dev/null || {
+          echo "❌ POT file has syntax errors"
+          exit 1
+        }
+
+        # Validate all PO files
+        for po_file in languages/*.po; do
+          if [ -f "$po_file" ]; then
+            echo "Checking $po_file..."
+            msgfmt --check "$po_file" -o /dev/null || {
+              echo "❌ $po_file has syntax errors"
+              exit 1
+            }
+
+            # Check for required headers
+            if ! grep -q "Content-Type: text/plain; charset=UTF-8" "$po_file"; then
+              echo "❌ $po_file missing UTF-8 charset declaration"
+              exit 1
+            fi
+
+            # Check for project version consistency
+            PROJECT_VERSION=$(grep "Project-Id-Version:" "$po_file" | head -1)
+            echo "Found version: $PROJECT_VERSION"
+          fi
+        done
+
+        echo "✅ Translation file validation passed"
+
+    - name: Check MO file generation
+      run: |
+        echo "🔍 Testing MO file generation..."
+
+        for po_file in languages/*.po; do
+          if [ -f "$po_file" ]; then
+            mo_file="${po_file%.po}.mo"
+            echo "Generating $mo_file from $po_file..."
+            msgfmt "$po_file" -o "$mo_file" || {
+              echo "❌ Failed to generate $mo_file"
+              exit 1
+            }
+
+            # Verify MO file is not empty
+            if [ ! -s "$mo_file" ]; then
+              echo "❌ Generated $mo_file is empty"
+              exit 1
+            fi
+
+            echo "✅ Successfully generated $mo_file"
+          fi
+        done
+
+  translation-coverage:
+    name: Translation Coverage Analysis
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: gettext
+
+    - name: Install gettext tools
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y gettext
+
+    - name: Extract translatable strings
+      run: |
+        echo "🔍 Extracting translatable strings..."
+
+        # Generate current POT file
+        xgettext --language=PHP \
+          --add-comments=translators \
+          --keyword=__ \
+          --keyword=_e \
+          --keyword=_n:1,2 \
+          --keyword=_x:1,2c \
+          --keyword=_ex:1,2c \
+          --keyword=_nx:4c,1,2 \
+          --keyword=esc_attr__ \
+          --keyword=esc_attr_e \
+          --keyword=esc_html__ \
+          --keyword=esc_html_e \
+          --keyword=_n_noop:1,2 \
+          --keyword=_nx_noop:3c,1,2 \
+          --keyword=__ngettext_noop:1,2 \
+          --from-code=UTF-8 \
+          --output=languages/rsl-wp-current.pot \
+          rsl-wp.php includes/*.php admin/templates/*.php || {
+          echo "❌ Failed to extract strings"
+          exit 1
+        }
+
+        echo "✅ String extraction completed"
+
+    - name: Analyze translation coverage
+      run: |
+        echo "🔍 Analyzing translation coverage..."
+
+        # Count total translatable strings
+        TOTAL_STRINGS=$(grep -c "^msgid" languages/rsl-wp-current.pot || echo "0")
+        echo "Total translatable strings: $TOTAL_STRINGS"
+
+        # Analyze each language
+        for po_file in languages/*.po; do
+          if [ -f "$po_file" ]; then
+            LANG=$(basename "$po_file" .po | sed 's/rsl-wp-//')
+            echo "Analyzing $LANG translation..."
+
+            # Count translated strings (non-empty msgstr)
+            TRANSLATED=$(grep -A1 "^msgid" "$po_file" | grep "^msgstr" | grep -v '^msgstr ""$' | wc -l)
+            FUZZY=$(grep -c "#, fuzzy" "$po_file" || echo "0")
+
+            if [ "$TOTAL_STRINGS" -gt 0 ]; then
+              COVERAGE=$((TRANSLATED * 100 / TOTAL_STRINGS))
+              echo "  📊 $LANG: $TRANSLATED/$TOTAL_STRINGS strings ($COVERAGE% coverage)"
+              echo "  🔄 Fuzzy translations: $FUZZY"
+
+              # Set coverage thresholds
+              if [ "$COVERAGE" -lt 80 ]; then
+                echo "  ⚠️ Translation coverage below 80% for $LANG"
+              elif [ "$COVERAGE" -ge 95 ]; then
+                echo "  ✅ Excellent translation coverage for $LANG"
+              fi
+            fi
+          fi
+        done
+
+    - name: Check for outdated translations
+      run: |
+        echo "🔍 Checking for outdated translations..."
+
+        for po_file in languages/*.po; do
+          if [ -f "$po_file" ]; then
+            LANG=$(basename "$po_file" .po | sed 's/rsl-wp-//')
+
+            # Check if PO file needs updating
+            if [ -f "languages/rsl-wp.pot" ]; then
+              echo "Checking if $LANG needs updates..."
+              msgmerge --quiet --output-file=/tmp/merged.po "$po_file" languages/rsl-wp.pot
+
+              # Count new fuzzy entries (indicates outdated translations)
+              NEW_FUZZY=$(grep -c "#, fuzzy" /tmp/merged.po || echo "0")
+              OLD_FUZZY=$(grep -c "#, fuzzy" "$po_file" || echo "0")
+
+              if [ "$NEW_FUZZY" -gt "$OLD_FUZZY" ]; then
+                OUTDATED=$((NEW_FUZZY - OLD_FUZZY))
+                echo "  ⚠️ $LANG has $OUTDATED potentially outdated translations"
+              else
+                echo "  ✅ $LANG translations are up to date"
+              fi
+
+              rm -f /tmp/merged.po
+            fi
+          fi
+        done
+
+  wordpress-i18n-compliance:
+    name: WordPress i18n Compliance
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Check WordPress i18n best practices
+      run: |
+        echo "🔍 Checking WordPress i18n compliance..."
+
+        # Check for proper text domain usage
+        EXPECTED_DOMAIN="rsl-wp"
+        echo "Expected text domain: $EXPECTED_DOMAIN"
+
+        # Find all translation function calls
+        TRANSLATION_ISSUES=0
+
+        # Check for missing text domain in translation calls
+        # Look for __( patterns that are clearly missing text domain (single line calls)
+        MISSING_DOMAIN_CALLS=$(grep -r "__(" --include="*.php" . | grep -v vendor/ | grep -v ".git/" | grep -v "rsl-wp" | grep -v "wordpress" | head -5)
+
+        if [ -n "$MISSING_DOMAIN_CALLS" ]; then
+          echo "❌ Potential translation calls missing text domain:"
+          echo "$MISSING_DOMAIN_CALLS"
+          echo "Note: Multi-line calls may appear here - verify manually"
+          # Don't fail for this since multi-line calls create false positives
+        fi
+
+        # Check for inconsistent text domain (informational only)
+        INCONSISTENT_CALLS=$(grep -r "__(" --include="*.php" . | grep -v "$EXPECTED_DOMAIN" | grep -v vendor/ | grep -v ".git/" | grep -v "wordpress" | head -3)
+
+        if [ -n "$INCONSISTENT_CALLS" ]; then
+          echo "⚠️ Potential inconsistent text domain usage (check manually):"
+          echo "$INCONSISTENT_CALLS"
+        fi
+
+        # Note: load_plugin_textdomain is not required since WordPress 4.6
+        # WordPress automatically loads translations when Text Domain header is present
+
+        # Check plugin header for text domain
+        if ! grep -q "Text Domain: $EXPECTED_DOMAIN" rsl-wp.php; then
+          echo "❌ Plugin header missing or incorrect text domain"
+          TRANSLATION_ISSUES=$((TRANSLATION_ISSUES + 1))
+        fi
+
+        # Check for WordPress.org readme text domain
+        if [ -f "readme.txt" ]; then
+          if ! grep -q "Text Domain: $EXPECTED_DOMAIN" readme.txt; then
+            echo "⚠️ readme.txt missing text domain declaration"
+          fi
+        fi
+
+        if [ "$TRANSLATION_ISSUES" -eq 0 ]; then
+          echo "✅ WordPress i18n compliance checks passed"
+        else
+          echo "❌ Found $TRANSLATION_ISSUES i18n compliance issues"
+          exit 1
+        fi
+
+    - name: Upload translation analysis
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: translation-analysis
+        path: |
+          languages/rsl-wp-current.pot
+          languages/*.po
+          languages/*.mo
+        retention-days: 30
