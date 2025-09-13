@@ -63,6 +63,9 @@ zip: ## Create distribution ZIP
 	$(eval VERSION := $(shell grep "Version:" rsl-licensing.php | head -1 | awk '{print $$2}'))
 	$(eval ZIP_NAME := rsl-licensing-$(VERSION).zip)
 	
+	@echo "Installing production dependencies only..."
+	@composer install --no-dev --optimize-autoloader --quiet
+	
 	@mkdir -p /tmp/rsl-licensing-build
 	
 	@rsync -av \
@@ -78,6 +81,12 @@ zip: ## Create distribution ZIP
 		--exclude='composer.lock' \
 		--exclude='Makefile' \
 		--exclude='AGENTS.md' \
+		--exclude='IDEAS.md' \
+		--exclude='SECURITY.md' \
+		--exclude='agents.md' \
+		--exclude='rsl-*.md' \
+		--exclude='scripts/' \
+		--exclude='.github/' \
 		--exclude='node_modules/' \
 		--exclude='.DS_Store' \
 		--exclude='*.log' \

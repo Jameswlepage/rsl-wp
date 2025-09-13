@@ -70,7 +70,7 @@ jobs:
         # Create temporary directory for plugin
         mkdir -p /tmp/rsl-licensing
         
-        # Copy plugin files (exclude dev files)
+        # Copy plugin files (exclude dev files and docs)
         rsync -av \
           --exclude='.git*' \
           --exclude='tests/' \
@@ -82,9 +82,17 @@ jobs:
           --exclude='phpunit.xml' \
           --exclude='composer.json' \
           --exclude='composer.lock' \
+          --exclude='Makefile' \
           --exclude='AGENTS.md' \
+          --exclude='IDEAS.md' \
+          --exclude='SECURITY.md' \
+          --exclude='agents.md' \
+          --exclude='rsl-*.md' \
+          --exclude='scripts/' \
+          --exclude='.github/' \
           --exclude='node_modules/' \
           --exclude='.DS_Store' \
+          --exclude='*.log' \
           ./ /tmp/rsl-licensing/
         
         # Create ZIP
