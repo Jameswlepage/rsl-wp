@@ -24,7 +24,7 @@
       "step": "installPlugin",
       "pluginData": {
         "resource": "url",
-        "url": "https://github.com/jameswlepage/rsl-wp/releases/latest/download/rsl-licensing.zip"
+        "url": "https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.4-alpha/rsl-licensing-0.0.4.zip"
       },
       "options": {
         "activate": true
