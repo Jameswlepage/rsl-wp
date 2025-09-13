@@ -134,6 +134,7 @@ class RSL_Admin {
                     'saving' => __('Saving...', 'rsl-wp'),
                     'error_occurred' => __('An error occurred while saving the license.', 'rsl-wp'),
                     'error_generating_xml' => __('Error generating XML', 'rsl-wp'),
+                    /* translators: %s: license name */
                     'delete_confirm' => __('Are you sure you want to delete the license "%s"? This action cannot be undone.', 'rsl-wp'),
                     'error_deleting' => __('Error deleting license', 'rsl-wp'),
                     'xml_copied' => __('XML copied to clipboard!', 'rsl-wp'),
@@ -192,7 +193,7 @@ class RSL_Admin {
         check_ajax_referer('rsl_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permission denied', 'rsl-wp'));
+            wp_die(esc_html__('Permission denied', 'rsl-wp'));
         }
         
         // Validate required fields
@@ -278,8 +279,9 @@ class RSL_Admin {
                         $message .= __('Please install and activate WooCommerce to enable payment processing.', 'rsl-wp');
                     }
                 } else {
+                    /* translators: %1$s: payment type, %2$s: supported payment types */
                     $message = sprintf(
-                        __('The %s payment method is not supported. WooCommerce supports %s payment types. ', 'rsl-wp'),
+                        __('The %1$s payment method is not supported. WooCommerce supports %2$s payment types. ', 'rsl-wp'),
                         $payment_type,
                         implode(', ', $wc_processor->get_supported_payment_types())
                     );
@@ -365,7 +367,7 @@ class RSL_Admin {
         check_ajax_referer('rsl_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permission denied', 'rsl-wp'));
+            wp_die(esc_html__('Permission denied', 'rsl-wp'));
         }
         
         $license_id = intval($_POST['license_id']);
@@ -385,7 +387,7 @@ class RSL_Admin {
         check_ajax_referer('rsl_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permission denied', 'rsl-wp'));
+            wp_die(esc_html__('Permission denied', 'rsl-wp'));
         }
         
         $license_id = intval($_POST['license_id']);
@@ -452,7 +454,7 @@ class RSL_Admin {
         
         foreach ($licenses as $license) {
             $selected = selected($selected_license, $license['id'], false);
-            echo '<option value="' . esc_attr($license['id']) . '" ' . $selected . '>';
+            echo '<option value="' . esc_attr($license['id']) . '" ' . esc_attr($selected) . '>';
             echo esc_html($license['name']) . ' (' . esc_html($license['payment_type']) . ')';
             echo '</option>';
         }

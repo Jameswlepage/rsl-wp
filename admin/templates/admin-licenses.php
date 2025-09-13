@@ -6,11 +6,11 @@ if (!defined('ABSPATH')) {
 
 <div class="wrap">
     <h1 class="wp-heading-inline">
-        <img src="<?php echo esc_url(RSL_PLUGIN_URL . 'admin/images/rsl-logo.png'; ?>" 
+        <img src="<?php echo esc_url(RSL_PLUGIN_URL . 'admin/images/rsl-logo.png') ?>" 
              alt="RSL" class="rsl-admin-icon">
         <?php esc_html_e('RSL Licenses', 'rsl-wp'); ?>
     </h1>
-    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license'); ?>" class="page-title-action">
+    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license')); ?>" class="page-title-action">
         <?php esc_html_e('Add New License', 'rsl-wp'); ?>
     </a>
     <hr class="wp-header-end">
@@ -29,7 +29,7 @@ if (!defined('ABSPATH')) {
         <div class="notice notice-info">
             <p>
                 <?php esc_html_e('No licenses found.', 'rsl-wp'); ?>
-                <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license'); ?>">
+                <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license')); ?>">
                     <?php esc_html_e('Create your first license', 'rsl-wp'); ?>
                 </a>
             </p>
@@ -92,7 +92,7 @@ if (!defined('ABSPATH')) {
                             if (!empty($permits)) {
                                 echo '<small>' . esc_html(implode('; ', $permits)) . '</small>';
                             } else {
-                                echo '<em>' . __('All permitted', 'rsl-wp') . '</em>';
+                                echo '<em>' . esc_html__('All permitted', 'rsl-wp') . '</em>';
                             }
                             ?>
                         </td>
@@ -104,7 +104,7 @@ if (!defined('ABSPATH')) {
                             <?php endif; ?>
                         </td>
                         <td>
-                            <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license&edit=' . $license['id']); ?>" 
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license&edit=' . $license['id'])); ?>" 
                                class="button button-small">
                                 <?php esc_html_e('Edit', 'rsl-wp'); ?>
                             </a>

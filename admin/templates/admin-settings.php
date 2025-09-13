@@ -6,7 +6,7 @@ if (!defined('ABSPATH')) {
 
 <div class="wrap">
     <h1 class="wp-heading-inline">
-        <img src="<?php echo esc_url(RSL_PLUGIN_URL . 'admin/images/rsl-logo.png'; ?>" 
+        <img src="<?php echo esc_url(RSL_PLUGIN_URL . 'admin/images/rsl-logo.png') ?>" 
              alt="RSL" class="rsl-admin-icon">
         <?php esc_html_e('RSL Licensing Settings', 'rsl-wp'); ?>
     </h1>
@@ -20,11 +20,6 @@ if (!defined('ABSPATH')) {
     do_action('admin_notices');
     ?>
     
-    <?php if (isset($_GET['settings-updated'])) : ?>
-        <div class="notice notice-success is-dismissible">
-            <p><?php esc_html_e('Settings saved successfully.', 'rsl-wp'); ?></p>
-        </div>
-    <?php endif; ?>
     
     <form method="post" action="options.php">
         <?php

@@ -6,11 +6,11 @@ if (!defined('ABSPATH')) {
 
 <div class="wrap">
     <h1 class="wp-heading-inline">
-        <img src="<?php echo esc_url(RSL_PLUGIN_URL . 'admin/images/rsl-logo.png'; ?>" 
+        <img src="<?php echo esc_url(RSL_PLUGIN_URL . 'admin/images/rsl-logo.png') ?>" 
              alt="RSL" class="rsl-admin-icon">
         <?php esc_html_e('RSL Licensing', 'rsl-wp'); ?>
     </h1>
-    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license'); ?>" class="page-title-action">
+    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license')); ?>" class="page-title-action">
         <?php esc_html_e('Add New License', 'rsl-wp'); ?>
     </a>
     <hr class="wp-header-end">
@@ -43,11 +43,11 @@ if (!defined('ABSPATH')) {
                                 <div class="main">
                                     <ul>
                                         <li>
-                                            <strong><?php echo $total_licenses; ?></strong> 
+                                            <strong><?php echo esc_html($total_licenses); ?></strong> 
                                             <span><?php esc_html_e('Total Licenses', 'rsl-wp'); ?></span>
                                         </li>
                                         <li>
-                                            <strong><?php echo $active_licenses; ?></strong> 
+                                            <strong><?php echo esc_html($active_licenses); ?></strong> 
                                             <span><?php esc_html_e('Active Licenses', 'rsl-wp'); ?></span>
                                         </li>
                                         <li>
@@ -62,17 +62,17 @@ if (!defined('ABSPATH')) {
                             
                             <div class="rsl-quick-actions-section">
                                 <div class="rsl-actions-inline">
-                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license'); ?>" 
+                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license')); ?>" 
                                        class="button button-primary">
                                         <span class="dashicons dashicons-plus"></span>
                                         <?php esc_html_e('Create License', 'rsl-wp'); ?>
                                     </a>
-                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-licenses'); ?>" 
+                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-licenses')); ?>" 
                                        class="button button-secondary">
                                         <span class="dashicons dashicons-list-view"></span>
                                         <?php esc_html_e('Manage Licenses', 'rsl-wp'); ?>
                                     </a>
-                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-settings'); ?>" 
+                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-settings')); ?>" 
                                        class="button button-secondary">
                                         <span class="dashicons dashicons-admin-settings"></span>
                                         <?php esc_html_e('Settings', 'rsl-wp'); ?>
@@ -96,7 +96,7 @@ if (!defined('ABSPATH')) {
                     <div class="postbox-header">
                         <h2 class="hndle">
                             <?php esc_html_e('Integration Status', 'rsl-wp'); ?>
-                            <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-settings'); ?>" class="rsl-header-link">
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-settings')); ?>" class="rsl-header-link">
                                 <?php esc_html_e('Go to Settings', 'rsl-wp'); ?>
                             </a>
                         </h2>
@@ -108,7 +108,7 @@ if (!defined('ABSPATH')) {
                                     <td><?php esc_html_e('HTML Head Injection', 'rsl-wp'); ?></td>
                                     <td>
                                         <span class="<?php echo get_option('rsl_enable_html_injection', 1) ? 'rsl-enabled' : 'rsl-disabled'; ?>">
-                                            <?php echo get_option('rsl_enable_html_injection', 1) ? __('Enabled', 'rsl-wp') : __('Disabled', 'rsl-wp'); ?>
+                                            <?php echo get_option('rsl_enable_html_injection', 1) ? esc_html__('Enabled', 'rsl-wp') : esc_html__('Disabled', 'rsl-wp'); ?>
                                         </span>
                                     </td>
                                 </tr>
@@ -116,7 +116,7 @@ if (!defined('ABSPATH')) {
                                     <td><?php esc_html_e('HTTP Link Headers', 'rsl-wp'); ?></td>
                                     <td>
                                         <span class="<?php echo get_option('rsl_enable_http_headers', 1) ? 'rsl-enabled' : 'rsl-disabled'; ?>">
-                                            <?php echo get_option('rsl_enable_http_headers', 1) ? __('Enabled', 'rsl-wp') : __('Disabled', 'rsl-wp'); ?>
+                                            <?php echo get_option('rsl_enable_http_headers', 1) ? esc_html__('Enabled', 'rsl-wp') : esc_html__('Disabled', 'rsl-wp'); ?>
                                         </span>
                                     </td>
                                 </tr>
@@ -124,7 +124,7 @@ if (!defined('ABSPATH')) {
                                     <td><?php esc_html_e('robots.txt Integration', 'rsl-wp'); ?></td>
                                     <td>
                                         <span class="<?php echo get_option('rsl_enable_robots_txt', 1) ? 'rsl-enabled' : 'rsl-disabled'; ?>">
-                                            <?php echo get_option('rsl_enable_robots_txt', 1) ? __('Enabled', 'rsl-wp') : __('Disabled', 'rsl-wp'); ?>
+                                            <?php echo get_option('rsl_enable_robots_txt', 1) ? esc_html__('Enabled', 'rsl-wp') : esc_html__('Disabled', 'rsl-wp'); ?>
                                         </span>
                                     </td>
                                 </tr>
@@ -132,7 +132,7 @@ if (!defined('ABSPATH')) {
                                     <td><?php esc_html_e('RSS Feed Enhancement', 'rsl-wp'); ?></td>
                                     <td>
                                         <span class="<?php echo get_option('rsl_enable_rss_feed', 1) ? 'rsl-enabled' : 'rsl-disabled'; ?>">
-                                            <?php echo get_option('rsl_enable_rss_feed', 1) ? __('Enabled', 'rsl-wp') : __('Disabled', 'rsl-wp'); ?>
+                                            <?php echo get_option('rsl_enable_rss_feed', 1) ? esc_html__('Enabled', 'rsl-wp') : esc_html__('Disabled', 'rsl-wp'); ?>
                                         </span>
                                     </td>
                                 </tr>
@@ -140,7 +140,7 @@ if (!defined('ABSPATH')) {
                                     <td><?php esc_html_e('Media Metadata', 'rsl-wp'); ?></td>
                                     <td>
                                         <span class="<?php echo get_option('rsl_enable_media_metadata', 1) ? 'rsl-enabled' : 'rsl-disabled'; ?>">
-                                            <?php echo get_option('rsl_enable_media_metadata', 1) ? __('Enabled', 'rsl-wp') : __('Disabled', 'rsl-wp'); ?>
+                                            <?php echo get_option('rsl_enable_media_metadata', 1) ? esc_html__('Enabled', 'rsl-wp') : esc_html__('Disabled', 'rsl-wp'); ?>
                                         </span>
                                     </td>
                                 </tr>
@@ -196,14 +196,14 @@ if (!defined('ABSPATH')) {
                                     </div>
                                 <?php endforeach; ?>
                                 <p class="rsl-view-all-link">
-                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-licenses'); ?>">
+                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-licenses')); ?>">
                                         <?php esc_html_e('View all licenses →', 'rsl-wp'); ?>
                                     </a>
                                 </p>
                             <?php else : ?>
                                 <p>
                                     <?php esc_html_e('No licenses created yet.', 'rsl-wp'); ?>
-                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license'); ?>">
+                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license')); ?>">
                                         <?php esc_html_e('Create your first license', 'rsl-wp'); ?>
                                     </a>
                                 </p>
@@ -246,15 +246,15 @@ if (!defined('ABSPATH')) {
                                 <tbody>
                                     <tr>
                                         <td><?php esc_html_e('WordPress', 'rsl-wp'); ?></td>
-                                        <td><?php echo esc_html(get_bloginfo('version'); ?></td>
+                                        <td><?php echo esc_html(get_bloginfo('version')); ?></td>
                                     </tr>
                                     <tr>
                                         <td><?php esc_html_e('PHP', 'rsl-wp'); ?></td>
-                                        <td><?php echo PHP_VERSION; ?></td>
+                                        <td><?php echo esc_html(PHP_VERSION); ?></td>
                                     </tr>
                                     <tr>
                                         <td><?php esc_html_e('RSL Plugin', 'rsl-wp'); ?></td>
-                                        <td><?php echo esc_html(RSL_PLUGIN_VERSION; ?></td>
+                                        <td><?php echo esc_html(RSL_PLUGIN_VERSION); ?></td>
                                     </tr>
                                     <?php if (function_exists('curl_version')) : ?>
                                     <tr>

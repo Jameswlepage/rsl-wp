@@ -194,7 +194,9 @@ class RSL_WooCommerce_Processor implements RSL_Payment_Processor_Interface {
         
         // Create new product
         $product_data = [
+            /* translators: %s: license name */
             'post_title' => sprintf(__('RSL License: %s', 'rsl-wp'), $license['name']),
+            /* translators: %s: license content URL */
             'post_content' => sprintf(__('Digital content license for %s', 'rsl-wp'), $license['content_url']),
             'post_status' => 'publish',
             'post_type' => 'product',
