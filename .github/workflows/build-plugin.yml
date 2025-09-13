@@ -108,7 +108,7 @@ jobs:
         unzip -l "$GITHUB_WORKSPACE/$ZIP_NAME" | head -20
 
     - name: Upload plugin ZIP as artifact
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: rsl-licensing-plugin-${{ steps.version.outputs.version }}
         path: rsl-licensing-*.zip

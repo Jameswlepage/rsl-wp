@@ -2,6 +2,7 @@
   "name": "jameswlepage/rsl-licensing",
   "type": "wordpress-plugin",
   "description": "Really Simple Licensing (RSL) for WordPress with built-in license server",
+  "license": "GPL-2.0-or-later",
   "require": {
     "firebase/php-jwt": "^6.9"
   },
