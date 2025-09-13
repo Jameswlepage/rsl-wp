@@ -112,16 +112,24 @@ jobs:
         
         # Verify ZIP integrity
         unzip -t "$GITHUB_WORKSPACE/$ZIP_NAME"
-        
+
         # Calculate size
         SIZE=$(stat -c%s "$GITHUB_WORKSPACE/$ZIP_NAME")
         SIZE_MB=$(( SIZE / 1024 / 1024 ))
-        
+
+        # Generate checksums
+        cd "$GITHUB_WORKSPACE"
+        sha256sum "$ZIP_NAME" > "$ZIP_NAME.sha256"
+        md5sum "$ZIP_NAME" > "$ZIP_NAME.md5"
+
         echo "zip_name=$ZIP_NAME" >> $GITHUB_OUTPUT
         echo "zip_size=$SIZE" >> $GITHUB_OUTPUT
         echo "zip_size_mb=$SIZE_MB" >> $GITHUB_OUTPUT
-        
+
         echo "Created $ZIP_NAME (${SIZE_MB}MB)"
+        echo "Generated checksums:"
+        cat "$ZIP_NAME.sha256"
+        cat "$ZIP_NAME.md5"
 
     - name: Generate release notes
       id: release_notes
@@ -140,7 +148,7 @@ jobs:
             echo "" >> release_notes.md
             git log --pretty=format:"* %s (%h)" $LAST_TAG..HEAD >> release_notes.md
           else
-            echo "## RSL Licensing $VERSION" > release_notes.md
+            echo "## RSL for WordPress $VERSION" > release_notes.md
             echo "" >> release_notes.md
             echo "Complete Really Simple Licensing implementation for WordPress." >> release_notes.md
           fi
@@ -173,7 +181,7 @@ jobs:
     - name: Create GitHub Release
       uses: softprops/action-gh-release@v1
       with:
-        name: "RSL Licensing v${{ steps.version.outputs.version }}"
+        name: "RSL for WordPress v${{ steps.version.outputs.version }}"
         files: |
           ${{ steps.create_zip.outputs.zip_name }}
           ${{ steps.create_zip.outputs.zip_name }}.sha256
