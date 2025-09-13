@@ -1,31 +1,36 @@
-/* RSL for WordPress - WordPress-Native Admin Styles */
+/* RSL for WordPress - Minimal Admin Styles */
+/* Let WordPress handle all postbox styling naturally */
 
-/* WordPress Admin Page Layout */
-.metabox-holder .postbox-container {
-    float: left;
-    min-height: 1px;
-    box-sizing: border-box;
-    margin-bottom: 20px;
+/* Layout: Grid for consistent spacing */
+.rsl-grid {
+    display: grid;
+    grid-template-columns: repeat(12, minmax(0, 1fr));
+    gap: 16px;
+    margin-top: 16px;
 }
 
-/* Equal spacing between dashboard widgets */
-.metabox-holder .postbox {
-    margin-bottom: 20px;
+.rsl-col-12 {
+    grid-column: 1 / -1;
 }
 
-/* At a Glance Single Row Layout */
+.rsl-col-6 {
+    grid-column: span 6;
+}
+
+/* At a Glance: Side-by-side layout */
 .rsl-at-glance-row {
     display: flex;
-    align-items: flex-start;
-    gap: 30px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 24px;
 }
 
 .rsl-at-glance-row .main {
-    flex: 1;
+    flex: 1 1 auto;
 }
 
 .rsl-quick-actions {
-    flex-shrink: 0;
+    flex: 0 0 auto;
     text-align: right;
 }
 
@@ -36,48 +41,46 @@
     justify-content: flex-end;
 }
 
-/* WordPress "At a Glance" Widget Styling */
+/* WordPress "At a Glance" style stats - use WordPress defaults */
 .main ul {
     list-style: none;
     margin: 0;
-    overflow: hidden;
     padding: 0;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    flex-wrap: wrap;
 }
 
 .main ul li {
-    float: left;
     font-size: 14px;
-    margin: 0 15px 0 0;
     line-height: 1.4;
-    list-style: none;
     white-space: nowrap;
-    width: auto;
 }
 
-.main ul li:after {
+.main ul li + li {
+    position: relative;
+    padding-left: 16px;
+}
+
+.main ul li + li:before {
     content: "|";
     color: #c3c4c7;
     font-weight: 400;
-    margin-left: 15px;
-}
-
-.main ul li:last-child:after {
-    content: "";
+    position: absolute;
+    left: 0;
+    top: 0;
 }
 
 .main ul li a {
-    color: #2271b1;
     text-decoration: none;
 }
 
-.main ul li a:hover {
-    color: #135e96;
-    text-decoration: underline;
+.main ul li a:hover strong {
+    color: #2271b1;
 }
 
-/* Remove activity block since we're using side-by-side layout */
-
-/* Button Icon Alignment Fix */
+/* Button icon alignment */
 .button .dashicons {
     vertical-align: middle;
     margin-right: 5px;
@@ -107,7 +110,7 @@
     color: #d63638;
 }
 
-/* RSL Admin Icon */
+/* RSL-specific elements only */
 .rsl-admin-icon {
     height: 32px;
     margin-right: 10px;
@@ -117,7 +120,6 @@
     object-fit: contain;
 }
 
-/* Payment Type Tags */
 .rsl-payment-tag {
     background: #f0f0f1;
     border-radius: 3px;
@@ -148,7 +150,6 @@
     color: #155724;
 }
 
-/* Status Indicators */
 .rsl-status-active {
     color: #00a32a;
     font-weight: 600;
@@ -211,24 +212,23 @@
     text-decoration: underline;
 }
 
-/* Form Styling */
-.form-table th {
-    width: 200px;
-    vertical-align: top;
-}
-
+/* Form elements */
 .rsl-multiselect {
     height: 120px !important;
     width: 100% !important;
     max-width: 400px;
 }
 
-/* Button Spacing */
 .rsl-button-gap {
     margin-left: 8px;
 }
 
-/* Modal Styles */
+/* Footer overlap prevention */
+.wrap {
+    padding-bottom: 80px;
+}
+
+/* Modal styles */
 .rsl-modal {
     background-color: rgba(0,0,0,0.5);
     height: 100%;
@@ -298,40 +298,51 @@
     width: 100%;
 }
 
-/* Fix footer overlap issue */
-.wrap {
-    margin-bottom: 50px;
-    padding-bottom: 20px;
-}
-
-/* Utility Classes */
 .rsl-hidden {
     display: none !important;
 }
 
-/* Responsive Design */
+/* Responsive */
+@media screen and (max-width: 1100px) {
+    .rsl-col-6 {
+        grid-column: 1 / -1;
+    }
+    
+    .rsl-at-glance-row {
+        align-items: flex-start;
+    }
+    
+    .rsl-quick-actions {
+        text-align: left;
+    }
+    
+    .rsl-action-buttons {
+        justify-content: flex-start;
+    }
+}
+
 @media screen and (max-width: 782px) {
-    .metabox-holder .postbox-container {
-        float: none;
-        width: 100% !important;
-        margin-right: 0 !important;
+    .main ul {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
     }
     
-    .main ul li {
-        float: none;
-        display: block;
-        margin-bottom: 8px;
-        width: auto;
+    .main ul li + li {
+        padding-left: 0;
     }
     
-    .main ul li:after {
+    .main ul li + li:before {
         display: none;
     }
     
-    .activity-block .button {
-        display: block;
+    .rsl-action-buttons {
+        flex-direction: column;
         width: 100%;
-        margin-bottom: 8px;
+    }
+    
+    .rsl-action-buttons .button {
+        width: 100%;
         text-align: center;
     }
     
