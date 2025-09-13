@@ -5,7 +5,7 @@ All notable changes to the RSL Licensing for WordPress plugin will be documented
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.0.2] - 2024-09-12
+## [0.0.2] - 2025-09-12
 
 ### Added
 - **OAuth 2.0 Authentication System**
@@ -49,7 +49,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Form data duplication in admin interface
 - Various security vulnerabilities identified by AI review
 
-## [0.0.1] - 2024-09-11
+## [0.0.1] - 2025-09-11
 
 ### Added
 - **Core RSL Implementation**
@@ -194,5 +194,5 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ---
 
-**For detailed installation instructions, see [INSTALL.md](INSTALL.md)**  
+**For detailed installation instructions, see [INSTALL.md](INSTALL.md)**
 **For usage examples and API documentation, see [README.md](README.md)**
