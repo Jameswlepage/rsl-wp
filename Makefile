@@ -95,6 +95,7 @@ zip: ## Create distribution ZIP
 		--exclude='node_modules/' \
 		--exclude='.DS_Store' \
 		--exclude='*.log' \
+		--exclude='*.zip' \
 		./ /tmp/rsl-licensing-build/rsl-licensing/
 
 	@cd /tmp/rsl-licensing-build && zip -r "$(ZIP_NAME)" rsl-licensing/
