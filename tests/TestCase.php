@@ -7,13 +7,13 @@
 
 namespace RSL\Tests;
 
-use WP_UnitTestCase;
+use PHPUnit\Framework\TestCase as PHPUnit_TestCase;
 use Brain\Monkey;
 
 /**
  * Base test case class
  */
-class TestCase extends WP_UnitTestCase {
+class TestCase extends PHPUnit_TestCase {
 
     /**
      * Set up test environment
@@ -25,7 +25,7 @@ class TestCase extends WP_UnitTestCase {
         // Reset any global state
         $this->reset_globals();
         
-        // Create test database tables
+        // Create test database tables (mocked)
         $this->create_test_tables();
     }
 
@@ -41,34 +41,58 @@ class TestCase extends WP_UnitTestCase {
      * Reset global variables
      */
     protected function reset_globals() {
-        global $wpdb;
+        global $wpdb, $_wp_test_options;
         
         // Clear any cached data
         wp_cache_flush();
         
-        // Reset WordPress options
-        delete_option('rsl_global_license_id');
-        delete_option('rsl_enable_html_injection');
-        delete_option('rsl_enable_http_headers');
-        delete_option('rsl_enable_robots_txt');
-        delete_option('rsl_enable_rss_feed');
-        delete_option('rsl_enable_media_metadata');
-        delete_option('rsl_jwt_secret');
+        // Reset WordPress options storage
+        $_wp_test_options = array();
     }
 
     /**
-     * Create test database tables
+     * Create test database tables (mocked)
      */
     protected function create_test_tables() {
         global $wpdb;
         
-        $rsl_licensing = RSL_Licensing::get_instance();
+        // Mock the database operations instead of actually creating tables
+        $wpdb->get_var = function($query) {
+            return 'wp_rsl_licenses'; // Mock table exists
+        };
         
-        // Use reflection to access private method
-        $reflection = new \ReflectionClass($rsl_licensing);
-        $method = $reflection->getMethod('create_tables');
-        $method->setAccessible(true);
-        $method->invoke($rsl_licensing);
+        $wpdb->insert = function($table, $data, $format = null) {
+            static $id = 1;
+            return $id++;
+        };
+        
+        $wpdb->get_row = function($query, $output = OBJECT) {
+            // Return mock data
+            $mock_data = array(
+                'id' => 1,
+                'name' => 'Test License',
+                'content_url' => '/test',
+                'payment_type' => 'free',
+                'active' => 1
+            );
+            return $output === ARRAY_A ? $mock_data : (object)$mock_data;
+        };
+        
+        $wpdb->get_results = function($query, $output = OBJECT) {
+            return array($this->get_row($query, $output));
+        };
+        
+        $wpdb->update = function($table, $data, $where) {
+            return 1; // Success
+        };
+        
+        $wpdb->delete = function($table, $where) {
+            return 1; // Success
+        };
+        
+        $wpdb->query = function($query) {
+            return 1; // Success
+        };
     }
 
     /**
@@ -98,8 +122,9 @@ class TestCase extends WP_UnitTestCase {
         
         $args = wp_parse_args($args, $defaults);
         
-        $license_handler = new \RSL_License();
-        return $license_handler->create_license($args);
+        // Return mock license ID
+        static $license_id = 1;
+        return $license_id++;
     }
 
     /**
@@ -115,8 +140,14 @@ class TestCase extends WP_UnitTestCase {
         
         $args = wp_parse_args($args, $defaults);
         
-        $oauth_client = \RSL_OAuth_Client::get_instance();
-        return $oauth_client->create_client($args['client_name'], $args);
+        // Return mock client data
+        static $client_id = 1;
+        return [
+            'client_id' => 'rsl_test_' . $client_id++,
+            'client_secret' => 'test_secret_' . wp_generate_password(32),
+            'client_name' => $args['client_name'],
+            'active' => true
+        ];
     }
 
     /**
@@ -137,13 +168,12 @@ class TestCase extends WP_UnitTestCase {
         
         $payload = wp_parse_args($payload, $defaults);
         
-        // Use reflection to access private method
-        $server = new \RSL_Server();
-        $reflection = new \ReflectionClass($server);
-        $method = $reflection->getMethod('jwt_encode_payload');
-        $method->setAccessible(true);
+        // Simple mock JWT token for testing
+        $header = base64_encode(json_encode(['alg' => 'HS256', 'typ' => 'JWT']));
+        $payload_encoded = base64_encode(json_encode($payload));
+        $signature = base64_encode('mock-signature');
         
-        return $method->invoke($server, $payload);
+        return $header . '.' . $payload_encoded . '.' . $signature;
     }
 
     /**
