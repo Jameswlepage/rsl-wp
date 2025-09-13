@@ -5,6 +5,64 @@ All notable changes to the RSL for WordPress plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.4] - 2025-09-13
+
+### Added
+- **Comprehensive Translation Infrastructure**
+  - GitHub Actions workflow for translation testing and validation
+  - Translation coverage analysis with detailed reporting
+  - Multi-line translation string detection and validation
+  - WordPress i18n compliance checking for proper text domains
+  - Automated PO/MO file validation using GNU gettext tools
+
+- **Translation Files Improvements**
+  - Updated Spanish (es_ES) translation files with proper headers
+  - Fixed translation string formatting and removed fuzzy flags
+  - Regenerated MO files for proper WordPress translation loading
+  - Cleaned up duplicate and malformed translation entries
+
+### Changed
+- **WordPress Coding Standards Compliance**
+  - Achieved 0 ERRORS in WordPress Coding Standards (WPCS) compliance
+  - Fixed 23,714+ code formatting violations across 33 files using phpcbf
+  - Implemented proper Yoda conditions throughout codebase
+  - Added comprehensive PHPDoc documentation to all classes and methods
+  - Standardized code formatting with consistent spacing and indentation
+
+- **Text Domain Migration**
+  - Updated text domain from 'rsl-licensing' to 'rsl-wp' for consistency
+  - Applied text domain changes across all PHP files and templates
+  - Updated translation files to match new text domain
+
+- **Modern WordPress Translation Loading**
+  - Removed unnecessary `load_plugin_textdomain()` calls (WordPress 4.6+ handles automatically)
+  - Simplified translation initialization for better performance
+  - Updated translation workflow to reflect modern WordPress practices
+
+### Fixed
+- **Critical Function Name Typos**
+  - Fixed `gmgmdate()` → `gmdate()` in session manager (would cause fatal errors)
+  - Fixed `upgmdate()` → `update()` in OAuth client class
+  - Fixed `wp_wp_parse_url()` → `wp_parse_url()` in server class
+  - Fixed incorrect WordPress table name handling in uninstall.php
+
+- **Code Quality Improvements**
+  - Fixed strict comparison operators (`===`, `!==`) throughout codebase
+  - Implemented proper array search with strict type checking
+  - Fixed inline comment punctuation and formatting
+  - Resolved all WordPress.DB.PreparedSQL violations
+
+- **Translation System Fixes**
+  - Fixed msgmerge creating duplicate concatenated strings in PO files
+  - Resolved translation file corruption issues during automated processing
+  - Fixed backup file cleanup (.po~ files) in translation workflows
+
+### Security
+- **Enhanced Input Validation**
+  - Improved prepared statement usage across all database queries
+  - Fixed potential SQL injection vectors in table name handling
+  - Enhanced sanitization for all user inputs
+
 ## [0.0.3] - 2025-09-13
 
 ### Added
