@@ -29,63 +29,57 @@ if (!defined('ABSPATH')) {
         </div>
     <?php endif; ?>
     
-    <!-- WordPress Dashboard Layout -->
-    <div id="dashboard-widgets-wrap">
-        <div id="dashboard-widgets" class="metabox-holder">
-            <!-- At A Glance Section -->
-            <div class="postbox-container" style="width: 100%;">
-                <div class="meta-box-sortables">
-                    <div class="postbox">
-                        <div class="postbox-header">
-                            <h2 class="hndle"><?php esc_html_e('At a Glance', 'rsl-wp'); ?></h2>
+    <!-- WordPress Admin Page Layout -->
+    <div class="metabox-holder">
+        
+        <!-- At A Glance Widget - WordPress Native Pattern -->
+        <div class="postbox-container" style="width: 100%; margin-bottom: 20px;">
+            <div class="meta-box-sortables">
+                <div class="postbox">
+                    <div class="postbox-header">
+                        <h2 class="hndle ui-sortable-handle"><?php esc_html_e('At a Glance', 'rsl-wp'); ?></h2>
+                    </div>
+                    <div class="inside">
+                        <div class="main">
+                            <ul>
+                                <li class="page-count">
+                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-licenses')); ?>">
+                                        <?php echo esc_html($total_licenses); ?>
+                                    </a>
+                                    <?php echo esc_html(_n('License', 'Licenses', $total_licenses, 'rsl-wp')); ?>
+                                </li>
+                                <li class="post-count">
+                                    <?php echo esc_html($active_licenses); ?> <?php esc_html_e('Active', 'rsl-wp'); ?>
+                                </li>
+                                <li class="comment-count">
+                                    <span class="<?php echo $global_license_id > 0 ? 'approved' : 'pending'; ?>">
+                                        <?php echo $global_license_id > 0 ? '✓' : '×'; ?>
+                                    </span>
+                                    <?php esc_html_e('Global License', 'rsl-wp'); ?>
+                                </li>
+                            </ul>
                         </div>
-                        <div class="inside">
-                            <!-- WordPress Dashboard-style Stats -->
-                            <div class="main">
-                                <ul>
-                                    <li class="page-count">
-                                        <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-licenses')); ?>">
-                                            <strong><?php echo esc_html($total_licenses); ?></strong>
-                                        </a>
-                                        <?php esc_html_e('Total Licenses', 'rsl-wp'); ?>
-                                    </li>
-                                    <li class="post-count">
-                                        <strong><?php echo esc_html($active_licenses); ?></strong>
-                                        <?php esc_html_e('Active Licenses', 'rsl-wp'); ?>
-                                    </li>
-                                    <li class="<?php echo $global_license_id > 0 ? 'page-count' : 'comment-count'; ?>">
-                                        <span class="<?php echo $global_license_id > 0 ? 'approved' : 'pending'; ?>">
-                                            <?php echo $global_license_id > 0 ? '✓' : '×'; ?>
-                                        </span>
-                                        <?php esc_html_e('Global License Configured', 'rsl-wp'); ?>
-                                    </li>
-                                </ul>
-                                </div>
-                            
-                            <!-- Quick Actions -->
-                            <div class="activity-block">
-                                <h3><?php esc_html_e('Quick Actions', 'rsl-wp'); ?></h3>
-                                <p class="sub">
-                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license')); ?>" 
-                                       class="button button-primary">
-                                        <span class="dashicons dashicons-plus"></span>
-                                        <?php esc_html_e('Create License', 'rsl-wp'); ?>
-                                    </a>
-                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-licenses')); ?>" 
-                                       class="button button-secondary">
-                                        <span class="dashicons dashicons-list-view"></span>
-                                        <?php esc_html_e('Manage Licenses', 'rsl-wp'); ?>
-                                    </a>
-                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-settings')); ?>" 
-                                       class="button button-secondary">
-                                        <span class="dashicons dashicons-admin-settings"></span>
-                                        <?php esc_html_e('Settings', 'rsl-wp'); ?>
-                                    </a>
-                                    <a href="https://rslstandard.org" target="_blank" class="button button-secondary">
-                                        <span class="dashicons dashicons-external"></span>
-                                        <?php esc_html_e('RSL Standard', 'rsl-wp'); ?>
-                                    </a>
-                                </p>
+                        
+                        <!-- Quick Actions -->
+                        <div class="activity-block">
+                            <h3><?php esc_html_e('Quick Actions', 'rsl-wp'); ?></h3>
+                            <div>
+                                <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license')); ?>" class="button button-primary">
+                                    <span class="dashicons dashicons-plus-alt"></span>
+                                    <?php esc_html_e('Create License', 'rsl-wp'); ?>
+                                </a>
+                                <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-licenses')); ?>" class="button">
+                                    <span class="dashicons dashicons-list-view"></span>
+                                    <?php esc_html_e('Manage Licenses', 'rsl-wp'); ?>
+                                </a>
+                                <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-settings')); ?>" class="button">
+                                    <span class="dashicons dashicons-admin-settings"></span>
+                                    <?php esc_html_e('Settings', 'rsl-wp'); ?>
+                                </a>
+                                <a href="https://rslstandard.org" target="_blank" class="button">
+                                    <span class="dashicons dashicons-external"></span>
+                                    <?php esc_html_e('RSL Standard', 'rsl-wp'); ?>
+                                </a>
                             </div>
                         </div>
                     </div>

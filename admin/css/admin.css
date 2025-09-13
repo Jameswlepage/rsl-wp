@@ -1,14 +1,77 @@
-/* RSL for WordPress - Admin Styles */
+/* RSL for WordPress - WordPress-Native Admin Styles */
 
-/* WordPress Admin Integration */
-#dashboard-widgets .postbox-container {
+/* WordPress Admin Integration - Proper Meta Box Styling */
+.metabox-holder .postbox-container {
     float: left;
-    margin-bottom: 20px;
     min-height: 1px;
     box-sizing: border-box;
 }
 
-/* WordPress-native status indicators */
+/* WordPress "At a Glance" Widget Styling */
+.main ul {
+    list-style: none;
+    margin: 0;
+    overflow: hidden;
+    padding: 0;
+}
+
+.main ul li {
+    float: left;
+    font-size: 14px;
+    margin: 0 15px 0 0;
+    line-height: 1.4;
+    list-style: none;
+    white-space: nowrap;
+    width: auto;
+}
+
+.main ul li:after {
+    content: "|";
+    color: #c3c4c7;
+    font-weight: 400;
+    margin-left: 15px;
+}
+
+.main ul li:last-child:after {
+    content: "";
+}
+
+.main ul li a {
+    color: #2271b1;
+    text-decoration: none;
+}
+
+.main ul li a:hover {
+    color: #135e96;
+    text-decoration: underline;
+}
+
+/* Activity Block Styling */
+.activity-block {
+    margin-top: 20px;
+    padding-top: 20px;
+    border-top: 1px solid #f0f0f1;
+}
+
+.activity-block h3 {
+    margin: 0 0 12px 0;
+    font-size: 14px;
+    font-weight: 600;
+    color: #1d2327;
+}
+
+/* Button Icon Alignment Fix */
+.button .dashicons {
+    vertical-align: middle;
+    margin-right: 5px;
+    margin-top: -2px;
+}
+
+.button-primary .dashicons {
+    margin-top: -1px;
+}
+
+/* WordPress Admin Status Colors */
 .yes {
     color: #00a32a;
     font-weight: 600;
@@ -19,78 +82,15 @@
     font-weight: 600;
 }
 
-/* WordPress Dashboard "At a Glance" style stats */
-#dashboard-widgets .main ul {
-    list-style: none;
-    margin: 0;
-    overflow: hidden;
-    padding: 0;
+.approved {
+    color: #00a32a;
 }
 
-#dashboard-widgets .main ul li {
-    float: left;
-    font-size: 14px;
-    margin: 0 15px 0 0;
-    line-height: 1.4;
-    list-style: none;
-    white-space: nowrap;
-    width: auto;
+.pending {
+    color: #d63638;
 }
 
-#dashboard-widgets .main ul li:after {
-    content: "|";
-    color: #c3c4c7;
-    font-weight: 400;
-    margin-left: 15px;
-}
-
-#dashboard-widgets .main ul li:last-child:after {
-    content: "";
-}
-
-#dashboard-widgets .main ul li strong {
-    color: #1d2327;
-    font-weight: 600;
-    margin-right: 5px;
-}
-
-#dashboard-widgets .main ul li a {
-    text-decoration: none;
-}
-
-#dashboard-widgets .main ul li a:hover strong {
-    color: #2271b1;
-}
-
-/* Quick Actions Section */
-.activity-block {
-    margin-top: 20px;
-}
-
-.activity-block h3 {
-    margin: 0 0 12px 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #1d2327;
-}
-
-.activity-block .sub {
-    margin: 0;
-}
-
-.activity-block .button {
-    margin-right: 8px;
-    margin-bottom: 8px;
-}
-
-.button .dashicons {
-    font-size: 16px;
-    width: 16px;
-    height: 16px;
-    margin-right: 5px;
-}
-
-/* RSL-specific styling */
+/* RSL Admin Icon */
 .rsl-admin-icon {
     height: 32px;
     margin-right: 10px;
@@ -194,11 +194,6 @@
     margin-left: 8px;
 }
 
-/* Utility Classes */
-.rsl-hidden {
-    display: none !important;
-}
-
 /* Modal Styles */
 .rsl-modal {
     background-color: rgba(0,0,0,0.5);
@@ -269,12 +264,28 @@
     width: 100%;
 }
 
+/* Utility Classes */
+.rsl-hidden {
+    display: none !important;
+}
+
 /* Responsive Design */
 @media screen and (max-width: 782px) {
-    #dashboard-widgets .postbox-container {
+    .metabox-holder .postbox-container {
         float: none;
         width: 100% !important;
         margin-right: 0 !important;
+    }
+    
+    .main ul li {
+        float: none;
+        display: block;
+        margin-bottom: 8px;
+        width: auto;
+    }
+    
+    .main ul li:after {
+        display: none;
     }
     
     .activity-block .button {
@@ -282,17 +293,6 @@
         width: 100%;
         margin-bottom: 8px;
         text-align: center;
-    }
-    
-    #dashboard-widgets .main ul li {
-        float: none;
-        display: block;
-        margin-bottom: 8px;
-        width: auto;
-    }
-    
-    #dashboard-widgets .main ul li:after {
-        display: none;
     }
     
     .rsl-multiselect {

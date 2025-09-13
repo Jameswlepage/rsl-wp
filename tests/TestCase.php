@@ -16,11 +16,25 @@ use Brain\Monkey;
 class TestCase extends PHPUnit_TestCase {
 
     /**
+     * Mock WordPress factory for tests
+     */
+    protected $factory;
+
+    /**
      * Set up test environment
      */
     public function setUp(): void {
         parent::setUp();
         Monkey\setUp();
+        
+        // Initialize mock factory
+        $this->factory = new \stdClass();
+        $user_factory = new class {
+            public function create($args = []) {
+                return rand(1, 1000);
+            }
+        };
+        $this->factory->user = $user_factory;
         
         // Reset any global state
         $this->reset_globals();
