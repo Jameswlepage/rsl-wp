@@ -1,0 +1,144 @@
+name: Build Plugin ZIP
+
+on:
+  push:
+    tags:
+      - 'v*'
+  release:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version number (e.g., 1.0.1)'
+        required: false
+        default: 'dev'
+
+jobs:
+  build:
+    name: Build Plugin ZIP
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: dom, curl, libxml, mbstring, zip
+
+    - name: Cache Composer packages
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-8.1-${{ hashFiles('**/composer.lock') }}
+
+    - name: Install production dependencies
+      run: composer install --no-dev --optimize-autoloader --no-progress
+
+    - name: Determine version
+      id: version
+      run: |
+        if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ github.event.inputs.version }}" != "dev" ]]; then
+          VERSION="${{ github.event.inputs.version }}"
+        elif [[ "${{ github.ref_type }}" == "tag" ]]; then
+          VERSION=${GITHUB_REF#refs/tags/v}
+        else
+          VERSION="dev-$(git rev-parse --short HEAD)"
+        fi
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "Building version: $VERSION"
+
+    - name: Update plugin version
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        # Update version in main plugin file
+        sed -i "s/Version: .*/Version: $VERSION/" rsl-licensing.php
+        sed -i "s/RSL_PLUGIN_VERSION\", \".*\"/RSL_PLUGIN_VERSION\", \"$VERSION\"/" rsl-licensing.php
+        
+        # Update version in README.md if it has a version badge
+        if grep -q "Version:" README.md; then
+          sed -i "s/Version: .*/Version: $VERSION/" README.md
+        fi
+
+    - name: Create plugin ZIP
+      run: |
+        VERSION="${{ steps.version.outputs.version }}"
+        ZIP_NAME="rsl-licensing-$VERSION.zip"
+        
+        # Create temporary directory for plugin
+        mkdir -p /tmp/rsl-licensing
+        
+        # Copy plugin files (exclude dev files and docs)
+        rsync -av \
+          --exclude='.git*' \
+          --exclude='tests/' \
+          --exclude='docs/' \
+          --exclude='coverage/' \
+          --exclude='test-logs/' \
+          --exclude='test-report.html' \
+          --exclude='.phpunit*' \
+          --exclude='phpunit.xml' \
+          --exclude='composer.json' \
+          --exclude='composer.lock' \
+          --exclude='Makefile' \
+          --exclude='AGENTS.md' \
+          --exclude='IDEAS.md' \
+          --exclude='SECURITY.md' \
+          --exclude='agents.md' \
+          --exclude='rsl-*.md' \
+          --exclude='scripts/' \
+          --exclude='.github/' \
+          --exclude='node_modules/' \
+          --exclude='.DS_Store' \
+          --exclude='*.log' \
+          ./ /tmp/rsl-licensing/
+        
+        # Create ZIP
+        cd /tmp
+        zip -r "$ZIP_NAME" rsl-licensing/
+        mv "$ZIP_NAME" "$GITHUB_WORKSPACE/"
+        
+        echo "zip_name=$ZIP_NAME" >> $GITHUB_OUTPUT
+        echo "zip_path=$GITHUB_WORKSPACE/$ZIP_NAME" >> $GITHUB_OUTPUT
+        
+        # Verify ZIP contents
+        echo "ZIP contents:"
+        unzip -l "$GITHUB_WORKSPACE/$ZIP_NAME" | head -20
+
+    - name: Upload plugin ZIP as artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: rsl-licensing-plugin-${{ steps.version.outputs.version }}
+        path: rsl-licensing-*.zip
+        retention-days: 30
+
+    - name: Create checksums
+      run: |
+        ZIP_NAME="rsl-licensing-${{ steps.version.outputs.version }}.zip"
+        
+        # Create checksums
+        sha256sum "$ZIP_NAME" > "${ZIP_NAME}.sha256"
+        md5sum "$ZIP_NAME" > "${ZIP_NAME}.md5"
+        
+        echo "## Checksums" >> checksums.txt
+        echo "" >> checksums.txt
+        echo "**SHA256:** \`$(cat ${ZIP_NAME}.sha256)\`" >> checksums.txt
+        echo "**MD5:** \`$(cat ${ZIP_NAME}.md5)\`" >> checksums.txt
+
+    - name: Upload to GitHub Release
+      if: github.event_name == 'release'
+      uses: softprops/action-gh-release@v1
+      with:
+        files: |
+          rsl-licensing-*.zip
+          rsl-licensing-*.sha256
+          rsl-licensing-*.md5
+        body_path: checksums.txt
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      zip_name: rsl-licensing-${{ steps.version.outputs.version }}.zip

@@ -1,8 +1,30 @@
 # RSL Licensing for WordPress
 
-**Version:** 0.0.2 Alpha (Early Development)
+[![Version](https://img.shields.io/badge/Version-0.0.2-blue)](https://github.com/jameswlepage/rsl-wp/releases/latest) [![Downloads](https://img.shields.io/github/downloads/jameswlepage/rsl-wp/total)](https://github.com/jameswlepage/rsl-wp/releases) [![License](https://img.shields.io/badge/License-GPL%20v2-blue)](https://www.gnu.org/licenses/gpl-2.0.html)
 
 Complete Really Simple Licensing (RSL) support for WordPress sites. Define machine-readable licensing terms for your content, enabling AI companies, crawlers, and other automated systems to properly license your digital assets.
+
+## 📥 Quick Download
+
+**Latest Release:** [v0.0.2](https://github.com/jameswlepage/rsl-wp/releases/tag/v0.0.2) • **Size:** 354KB
+
+[![Download Plugin](https://img.shields.io/badge/Download-Plugin%20ZIP-blue?style=for-the-badge&logo=download)](https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.2/rsl-licensing-0.0.2.zip)
+
+```bash
+# Direct download via curl/wget
+curl -L -o rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.2/rsl-licensing-0.0.2.zip"
+wget -O rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.2/rsl-licensing-0.0.2.zip"
+
+# Or build from source
+git clone https://github.com/jameswlepage/rsl-wp.git
+cd rsl-wp  
+make zip  # Creates production-ready ZIP file
+```
+
+**Installation:** 
+1. Download ZIP using the button above or from [Releases](https://github.com/jameswlepage/rsl-wp/releases)
+2. Upload via WordPress Admin → Plugins → Add New → Upload Plugin
+3. Activate and configure at Settings → RSL Licensing
 
 > **Alpha Notice:** This is an early alpha release (v0.0.2) of the RSL Licensing plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
 

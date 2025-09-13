@@ -1,0 +1,186 @@
+name: Security Analysis
+
+on:
+  push:
+    branches: [ main, develop ]
+  pull_request:
+    branches: [ main, develop ]
+  schedule:
+    - cron: '0 2 * * 1' # Weekly on Monday at 2 AM UTC
+
+jobs:
+  security-scan:
+    name: Security Vulnerability Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
+    - name: Cache Composer packages
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-8.1-${{ hashFiles('**/composer.lock') }}
+
+    - name: Install dependencies
+      run: composer install --dev
+
+    - name: Run Composer security audit
+      run: composer audit
+
+    - name: Run security tests
+      run: |
+        if vendor/bin/phpunit --list-groups | grep -q security; then
+          vendor/bin/phpunit --group=security --log-junit security-results.xml
+        else
+          echo "No security test group found - skipping"
+        fi
+
+    - name: Upload security test results
+      uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: security-test-results
+        path: security-results.xml
+
+  dependency-scan:
+    name: Dependency Security Scan
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Run Snyk to check for vulnerabilities
+      uses: snyk/actions/php@master
+      continue-on-error: true
+      env:
+        SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+      with:
+        args: --severity-threshold=high
+
+    - name: Upload Snyk results to GitHub
+      uses: github/codeql-action/upload-sarif@v2
+      if: always()
+      with:
+        sarif_file: snyk.sarif
+
+  code-analysis:
+    name: Static Code Analysis
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        tools: psalm, phpstan
+
+    - name: Cache analysis tools
+      uses: actions/cache@v3
+      with:
+        path: |
+          ~/.composer/cache
+          .psalm
+        key: ${{ runner.os }}-analysis-${{ hashFiles('**/composer.lock') }}
+
+    - name: Install dependencies
+      run: composer install --dev
+
+    - name: Run PHPStan
+      run: |
+        if [ -f phpstan.neon ] || [ -f phpstan.neon.dist ]; then
+          vendor/bin/phpstan analyse --error-format=github
+        else
+          echo "PHPStan config not found - creating basic config"
+          cat > phpstan.neon << 'EOF'
+parameters:
+    level: 1
+    paths:
+        - includes/
+    ignoreErrors:
+        - '#Call to an undefined method#'
+        - '#Access to an undefined property#'
+EOF
+          vendor/bin/phpstan analyse --error-format=github || echo "PHPStan analysis completed with warnings"
+        fi
+
+    - name: Run Psalm
+      run: |
+        if [ -f psalm.xml ] || [ -f psalm.xml.dist ]; then
+          vendor/bin/psalm --output-format=github --shepherd
+        else
+          echo "Psalm config not found - skipping static analysis"
+        fi
+
+  wordpress-security:
+    name: WordPress Security Best Practices
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Check for common security issues
+      run: |
+        echo "🔍 Checking for common WordPress security issues..."
+        
+        # Check for SQL injection vulnerabilities
+        if grep -r "SELECT.*\$" includes/ --include="*.php" | grep -v "wpdb->prepare"; then
+          echo "⚠️ Potential SQL injection found (non-prepared statements)"
+          exit 1
+        fi
+        
+        # Check for XSS vulnerabilities
+        if grep -r "echo.*\$_" includes/ --include="*.php" | grep -v "esc_\|sanitize_"; then
+          echo "⚠️ Potential XSS vulnerability found (unescaped output)"
+          exit 1
+        fi
+        
+        # Check for direct file access protection
+        if ! grep -r "defined.*ABSPATH" includes/ --include="*.php" | head -1; then
+          echo "⚠️ Files missing ABSPATH protection"
+          exit 1
+        fi
+        
+        # Check for proper nonce verification in AJAX
+        if grep -r "wp_ajax" includes/ --include="*.php" | grep -v "wp_verify_nonce\|check_ajax_referer"; then
+          echo "⚠️ AJAX handlers may be missing nonce verification"
+          # Don't fail - this might be handled differently
+        fi
+        
+        # Check for hardcoded credentials
+        if grep -ri "password\|secret\|key.*=" includes/ --include="*.php" | grep -v "wp_generate_password\|get_option\|define"; then
+          echo "⚠️ Potential hardcoded credentials found"
+          exit 1
+        fi
+        
+        echo "✅ Basic security checks passed"
+
+    - name: Check WordPress coding standards compliance
+      run: |
+        # Basic checks for WordPress conventions
+        echo "Checking WordPress coding standards..."
+        
+        # Check for proper plugin header
+        if ! head -20 rsl-licensing.php | grep -q "Plugin Name:"; then
+          echo "❌ Missing plugin header"
+          exit 1
+        fi
+        
+        # Check for text domain consistency
+        EXPECTED_DOMAIN="rsl-licensing"
+        if grep -r "__(" includes/ --include="*.php" | grep -v "$EXPECTED_DOMAIN"; then
+          echo "⚠️ Inconsistent text domain usage"
+        fi
+        
+        echo "✅ WordPress standards checks completed"

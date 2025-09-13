@@ -1,0 +1,73 @@
+{
+  "token_success": {
+    "access_token": "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...",
+    "token_type": "Bearer",
+    "expires_in": 3600,
+    "expires_at": "2025-09-12T22:30:00+00:00",
+    "license_url": "http://example.org/rsl-license/1/"
+  },
+  "token_payment_required": {
+    "checkout_url": "http://example.org/checkout/?add-to-cart=123",
+    "amount": 99.99,
+    "currency": "USD",
+    "payment_type": "purchase"
+  },
+  "token_external_server": {
+    "error": "external_server",
+    "server_url": "https://rslcollective.org/api/v1",
+    "message": "License managed by external server"
+  },
+  "introspect_active": {
+    "active": true,
+    "client_id": "rsl_test123456789",
+    "exp": 1726096200,
+    "iat": 1726092600,
+    "license_id": 1,
+    "scope": "search,ai-summarize"
+  },
+  "introspect_inactive": {
+    "active": false
+  },
+  "rate_limit_exceeded": {
+    "code": "rate_limit_exceeded",
+    "message": "Rate limit exceeded. Maximum 30 requests per minute allowed.",
+    "data": {
+      "status": 429,
+      "headers": {
+        "Retry-After": "60"
+      }
+    }
+  },
+  "oauth_invalid_client": {
+    "error": "invalid_client",
+    "error_description": "Client authentication failed"
+  },
+  "oauth_invalid_license": {
+    "error": "invalid_license",
+    "error_description": "The license is invalid or not available"
+  },
+  "license_xml_sample": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<rsl xmlns=\"https://rslstandard.org/rsl\">\n  <content url=\"/test-content\">\n    <license>\n      <permits type=\"usage\">search</permits>\n      <prohibits type=\"usage\">train-ai,train-genai</prohibits>\n      <payment type=\"free\"/>\n    </license>\n  </content>\n</rsl>",
+  "wellknown_rsl": {
+    "site_name": "Test Site",
+    "site_url": "http://example.org",
+    "rsl_version": "1.0",
+    "plugin_version": "1.0.0",
+    "licenses": [
+      {
+        "id": 1,
+        "name": "Test License",
+        "content_url": "/",
+        "payment_type": "free",
+        "xml_url": "http://example.org/rsl-license/1/"
+      }
+    ],
+    "feeds": {
+      "rsl_feed": "http://example.org/feed/rsl-licenses/",
+      "rss_feed": "http://example.org/feed/"
+    },
+    "endpoints": {
+      "license_xml": "http://example.org/rsl-license/{id}/",
+      "wellknown": "http://example.org/.well-known/rsl/"
+    }
+  }
+}
