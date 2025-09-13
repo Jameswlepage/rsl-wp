@@ -195,10 +195,20 @@ if (!$wpdb) {
     $wpdb->num_queries = 0;
 }
 
-// Simple autoloader for RSL classes
+// Load mock classes for testing
+require_once __DIR__ . '/mocks/MockRSLLicense.php';
+
+// Simple autoloader for RSL classes - prefer mocks over real classes for testing
 spl_autoload_register(function ($class_name) {
-    // Handle RSL classes
+    // Handle RSL classes - try mocks first
     if (strpos($class_name, 'RSL_') === 0) {
+        $mock_file = __DIR__ . '/mocks/Mock' . $class_name . '.php';
+        if (file_exists($mock_file)) {
+            require_once $mock_file;
+            return;
+        }
+        
+        // Fallback to real classes if available
         $file_name = 'class-' . str_replace('_', '-', strtolower($class_name)) . '.php';
         $file_path = dirname(__DIR__) . '/includes/' . $file_name;
         

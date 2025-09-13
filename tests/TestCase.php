@@ -122,7 +122,13 @@ class TestCase extends PHPUnit_TestCase {
         
         $args = wp_parse_args($args, $defaults);
         
-        // Return mock license ID
+        // Use the actual mock license handler
+        if (class_exists('RSL_License')) {
+            $license_handler = new \RSL_License();
+            return $license_handler->create_license($args);
+        }
+        
+        // Fallback to simple counter
         static $license_id = 1;
         return $license_id++;
     }
@@ -227,7 +233,8 @@ class TestCase extends PHPUnit_TestCase {
      */
     protected function assertValidRslXml($xml, $message = '') {
         $dom = new \DOMDocument();
-        $dom->loadXML($xml);
+        $result = $dom->loadXML($xml);
+        $this->assertTrue($result, $message ?: 'XML should be valid');
         
         // Check for RSL namespace
         $this->assertStringContains('https://rslstandard.org/rsl', $xml, $message);
@@ -236,5 +243,27 @@ class TestCase extends PHPUnit_TestCase {
         $this->assertStringContains('<rsl', $xml, $message);
         $this->assertStringContains('<content', $xml, $message);
         $this->assertStringContains('<license', $xml, $message);
+    }
+    
+    /**
+     * Custom string contains assertion for compatibility
+     */
+    protected function assertStringContains($needle, $haystack, $message = '') {
+        $this->assertThat(
+            $haystack,
+            $this->stringContains($needle),
+            $message
+        );
+    }
+    
+    /**
+     * Custom string not contains assertion for compatibility
+     */
+    protected function assertStringNotContains($needle, $haystack, $message = '') {
+        $this->assertThat(
+            $haystack,
+            $this->logicalNot($this->stringContains($needle)),
+            $message
+        );
     }
 }

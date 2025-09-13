@@ -31,6 +31,9 @@ class TestRSLLicense extends TestCase {
     public function setUp(): void {
         parent::setUp();
         $this->license_handler = new RSL_License();
+        
+        // Reset mock license storage
+        RSL_License::reset();
     }
 
     /**
