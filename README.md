@@ -10,7 +10,7 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
 
 ## Installation
 
-**Latest Release:** [v0.0.5-alpha](https://github.com/jameswlepage/rsl-wp/releases/tag/v0.0.5-alpha) • **Size:** ~750KB
+**Latest Release:** [v0.0.5-alpha](https://github.com/jameswlepage/rsl-wp/releases/tag/v0.0.5-alpha) • **Size:** ~375KB
 
 ```bash
 # Direct download via curl/wget

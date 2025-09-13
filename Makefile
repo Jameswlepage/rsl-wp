@@ -85,6 +85,11 @@ zip: ## Create distribution ZIP
 		--exclude='SECURITY.md' \
 		--exclude='agents.md' \
 		--exclude='rsl-*.md' \
+		--exclude='README.md' \
+		--exclude='blueprint.json' \
+		--exclude='releases/' \
+		--exclude='messages.mo' \
+		--exclude='.claude/' \
 		--exclude='scripts/' \
 		--exclude='.github/' \
 		--exclude='node_modules/' \
