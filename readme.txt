@@ -1,11 +1,11 @@
 === RSL Licensing for WordPress ===
 Contributors: jameswlepage
-Donate link: https://rslstandard.org/donate
-Tags: licensing, rsl, ai, content, copyright, machine-readable, crawlers, search, training
+Donate link: https://github.com/sponsors/jameswlepage
+Tags: licensing, rsl, ai, content, copyright, machine-readable, crawlers, search, training, oauth, jwt
 Requires at least: 5.0
 Tested up to: 6.4
 Requires PHP: 7.4
-Stable tag: 0.0.2
+Stable tag: 0.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -15,7 +15,7 @@ Complete Really Simple Licensing (RSL) support for WordPress. Define machine-rea
 
 **RSL Licensing for WordPress** brings complete support for the Really Simple Licensing (RSL) 1.0 standard to your WordPress site. RSL is a machine-readable format that allows content owners to clearly specify how their digital content can be used by AI systems, search engines, crawlers, and other automated tools.
 
-### 🚀 Why RSL Matters
+### Why RSL Matters
 
 As AI training and automated content processing become more prevalent, content creators need a standardized way to:
 * Define clear usage rights for their content
@@ -23,7 +23,7 @@ As AI training and automated content processing become more prevalent, content c
 * Control how their content is crawled and indexed
 * Provide machine-readable licensing that systems can automatically respect
 
-### ✨ Key Features
+### Key Features
 
 **Complete RSL Implementation**
 * Full RSL 1.0 specification support
@@ -59,7 +59,7 @@ As AI training and automated content processing become more prevalent, content c
 * Hook-based architecture for extensibility
 * Multisite network compatibility
 
-### 🎯 Common Use Cases
+### Common Use Cases
 
 **Block AI Training**
 Prevent your content from being used for AI training while allowing search indexing:
@@ -92,7 +92,7 @@ Permits User Types: education, non-commercial
 Prohibits User Types: commercial
 ```
 
-### 🔧 Quick Start
+### Quick Start
 
 1. Install and activate the plugin
 2. Go to Settings > RSL Licensing
@@ -101,7 +101,7 @@ Prohibits User Types: commercial
 5. Enable integration methods (HTML, HTTP headers, robots.txt)
 6. Your site now broadcasts machine-readable licensing terms!
 
-### 📋 Integration Methods
+### Integration Methods
 
 **HTML Head Injection**
 Automatically embeds RSL licenses in your page headers for crawler discovery.
@@ -118,7 +118,7 @@ Enhances your RSS feeds with RSL licensing information for each item.
 **Media Metadata Embedding**
 Embeds RSL licensing directly into uploaded images, PDFs, and EPUB files.
 
-### 🌐 Standards Compliant
+### Standards Compliant
 
 * Full RSL 1.0 specification implementation
 * Proper XML namespacing (https://rslstandard.org/rsl)
@@ -127,7 +127,7 @@ Embeds RSL licensing directly into uploaded images, PDFs, and EPUB files.
 * Robots Exclusion Protocol compatibility
 * RSS 2.0 module specification
 
-### 🔒 Privacy & Security
+### Privacy & Security
 
 * No external data transmission (unless using license servers)
 * Secure input validation and sanitization
@@ -135,11 +135,12 @@ Embeds RSL licensing directly into uploaded images, PDFs, and EPUB files.
 * Capability-based access control
 * No tracking or analytics
 
-### 🔗 Learn More
+### Learn More
 
-* [RSL Standard Documentation](https://rslstandard.org)
+* [RSL Specification](https://rslstandard.org/rsl)
+* [RSL API Documentation](https://rslstandard.org/api)
+* [License Servers Guide](https://rslstandard.org/guide/license-servers)
 * [Plugin Documentation](https://github.com/jameswlepage/rsl-wp)
-* [RSL Collective](https://rslcollective.org) - License server for publishers
 
 == Installation ==
 
@@ -219,21 +220,39 @@ License data is stored in your WordPress database and included in standard WordP
 
 == Changelog ==
 
-= 1.0.0 =
-* Initial release
+= 0.0.3 =
+* Complete testing infrastructure and CI/CD automation
+* 28 comprehensive unit tests with 136 assertions
+* GitHub Actions workflows for automated testing and releases
+* Security scanning and code quality automation
+* Professional development tools and documentation
+* Clean production builds and release automation
+
+= 0.0.2 =
+* Add comprehensive OAuth 2.0 client credentials authentication system
+* WordPress help tabs on all RSL admin pages
+* Currency field fixes and validation improvements
+* WooCommerce processor enhancements for all payment types
+* Modular payment processor architecture
+* Session-based payment flows
+* Enhanced documentation and admin interface
+
+= 0.0.1 =
+* Initial alpha release
 * Complete RSL 1.0 specification implementation
 * WordPress admin interface for license management
 * Multiple integration methods (HTML, HTTP headers, robots.txt, RSS, media)
 * License server support with authentication
 * REST API endpoints
 * Media file metadata embedding
-* Multisite compatibility
-* Comprehensive documentation
 
 == Upgrade Notice ==
 
-= 1.0.0 =
-Initial release of RSL Licensing for WordPress. Provides complete support for the RSL 1.0 standard with multiple integration methods and a professional admin interface.
+= 0.0.3 =
+Major update with comprehensive testing infrastructure, automated CI/CD pipeline, and professional development tools. Includes 28 passing tests and enterprise-grade quality assurance.
+
+= 0.0.2 =
+Significant enhancements including OAuth 2.0 authentication, WooCommerce integration improvements, and modular payment architecture.
 
 == Technical Details ==
 
@@ -264,7 +283,9 @@ For support, documentation, and feature requests:
 
 * [Plugin Documentation](https://github.com/jameswlepage/rsl-wp)
 * [WordPress.org Support Forum](https://wordpress.org/support/plugin/rsl-licensing/)
-* [RSL Standard Documentation](https://rslstandard.org)
+* [RSL Specification](https://rslstandard.org/rsl)
+* [RSL API Documentation](https://rslstandard.org/api)
+* [License Servers Guide](https://rslstandard.org/guide/license-servers)
 
 == Contributing ==
 
