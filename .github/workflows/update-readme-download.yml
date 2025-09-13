@@ -1,0 +1,145 @@
+name: Update README Download Links
+
+on:
+  release:
+    types: [published]
+  workflow_dispatch:
+
+jobs:
+  update-readme:
+    name: Update README with Latest Download
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+        fetch-depth: 0
+
+    - name: Get latest release info
+      id: release
+      run: |
+        # Get the latest release data
+        LATEST=$(curl -s "https://api.github.com/repos/${{ github.repository }}/releases/latest")
+        
+        VERSION=$(echo "$LATEST" | jq -r '.tag_name' | sed 's/^v//')
+        DOWNLOAD_URL=$(echo "$LATEST" | jq -r '.assets[] | select(.name | test("rsl-licensing.*\\.zip$")) | .browser_download_url')
+        RELEASE_URL=$(echo "$LATEST" | jq -r '.html_url')
+        FILE_SIZE=$(echo "$LATEST" | jq -r '.assets[] | select(.name | test("rsl-licensing.*\\.zip$")) | .size')
+        
+        # Convert file size to human readable
+        if [ "$FILE_SIZE" -gt 1048576 ]; then
+          SIZE_MB=$(( FILE_SIZE / 1048576 ))
+          HUMAN_SIZE="${SIZE_MB}MB"
+        else
+          SIZE_KB=$(( FILE_SIZE / 1024 ))
+          HUMAN_SIZE="${SIZE_KB}KB"
+        fi
+        
+        echo "version=$VERSION" >> $GITHUB_OUTPUT
+        echo "download_url=$DOWNLOAD_URL" >> $GITHUB_OUTPUT
+        echo "release_url=$RELEASE_URL" >> $GITHUB_OUTPUT
+        echo "file_size=$HUMAN_SIZE" >> $GITHUB_OUTPUT
+        
+        echo "Latest release: $VERSION"
+        echo "Download URL: $DOWNLOAD_URL"
+        echo "File size: $HUMAN_SIZE"
+
+    - name: Update README.md with download links
+      run: |
+        VERSION="${{ steps.release.outputs.version }}"
+        DOWNLOAD_URL="${{ steps.release.outputs.download_url }}"
+        RELEASE_URL="${{ steps.release.outputs.release_url }}"
+        FILE_SIZE="${{ steps.release.outputs.file_size }}"
+        
+        # Create the download section
+        cat > download_section.md << EOF
+        ## 📥 Quick Download
+        
+        **Latest Release:** [v$VERSION]($RELEASE_URL) • **Size:** $FILE_SIZE
+        
+        [![Download Plugin](https://img.shields.io/badge/Download-Plugin%20ZIP-blue?style=for-the-badge&logo=download)]($DOWNLOAD_URL)
+        
+        \`\`\`bash
+        # Direct download via curl/wget
+        curl -L -o rsl-licensing.zip "$DOWNLOAD_URL"
+        wget -O rsl-licensing.zip "$DOWNLOAD_URL"
+        \`\`\`
+        
+        **Installation:** Upload the ZIP file via WordPress Admin → Plugins → Add New → Upload Plugin
+        
+        EOF
+        
+        # Check if download section already exists
+        if grep -q "## 📥 Quick Download" README.md; then
+          # Replace existing download section
+          awk '
+            /## 📥 Quick Download/ { skip=1 }
+            /^## [^📥]/ && skip { skip=0 }
+            !skip { print }
+          ' README.md > README_temp.md
+          
+          # Find where to insert (after the description, before Installation)
+          if grep -q "## Installation" README_temp.md; then
+            sed '/## Installation/i\
+        '"$(cat download_section.md)"'' README_temp.md > README.md
+          else
+            # Insert after the first section
+            sed '/^## /i\
+        '"$(cat download_section.md)"'' README_temp.md | head -50 > README.md
+            tail -n +51 README_temp.md >> README.md
+          fi
+          
+          rm README_temp.md
+        else
+          # Insert after the main description (before first ## section after intro)
+          awk '
+            BEGIN { inserted=0 }
+            /^## / && !inserted && NR > 10 { 
+              system("cat download_section.md")
+              inserted=1
+            }
+            { print }
+          ' README.md > README_temp.md
+          mv README_temp.md README.md
+        fi
+        
+        rm download_section.md
+        
+        echo "✅ README.md updated with download links"
+
+    - name: Update version badges
+      run: |
+        VERSION="${{ steps.release.outputs.version }}"
+        
+        # Update version badge if it exists
+        if grep -q "https://img.shields.io/badge/Version-" README.md; then
+          sed -i "s|https://img.shields.io/badge/Version-[^-]*-|https://img.shields.io/badge/Version-$VERSION-|g" README.md
+        else
+          # Add version badge after title if not exists
+          if ! grep -q "shields.io.*Version" README.md; then
+            sed -i '1a\\n[![Version](https://img.shields.io/badge/Version-'$VERSION'-blue)](https://github.com/jameswlepage/rsl-wp/releases/latest) [![Downloads](https://img.shields.io/github/downloads/jameswlepage/rsl-wp/total)](https://github.com/jameswlepage/rsl-wp/releases) [![License](https://img.shields.io/badge/License-GPL%20v2-blue)](https://www.gnu.org/licenses/gpl-2.0.html)\n' README.md
+          fi
+        fi
+
+    - name: Commit README updates
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        if git diff --quiet README.md; then
+          echo "No changes to README.md"
+        else
+          git add README.md
+          git commit -m "📥 Update download links for v${{ steps.release.outputs.version }}
+          
+          - Updated direct download URL in README
+          - Added file size information  
+          - Updated version badges
+          
+          🤖 Auto-generated by release workflow"
+          
+          git push origin main
+          echo "✅ README.md updated and pushed"
+        fi
