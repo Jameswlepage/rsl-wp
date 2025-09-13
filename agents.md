@@ -1,17 +1,17 @@
-# AGENTS.md - RSL Licensing for WordPress
+# AGENTS.md
 
-Instructions and context for AI coding agents working on the RSL (Really Simple Licensing) WordPress plugin.
+Instructions for AI coding agents working on the RSL Licensing WordPress plugin.
 
 ## Project Overview
 
-RSL Licensing for WordPress is a complete implementation of the RSL 1.0 specification that enables WordPress site owners to define machine-readable licensing terms for their content. The plugin provides licensing infrastructure for AI companies, crawlers, and automated systems to properly license content.
+This is a WordPress plugin implementing Really Simple Licensing (RSL) 1.0 specification for machine-readable content licensing. The plugin enables WordPress site owners to define licensing terms for AI companies, crawlers, and automated systems.
 
-**Key Features:**
-- Complete RSL 1.0 specification support
-- Modular payment processor architecture with WooCommerce integration
-- MCP-inspired session management for AI agents
-- Multiple integration methods (HTML, HTTP headers, robots.txt, RSS, media metadata)
-- Professional WordPress admin interface
+Core functionality:
+- Complete RSL 1.0 specification implementation
+- OAuth 2.0 license server with JWT authentication
+- WooCommerce payment integration
+- REST API endpoints for license validation
+- Multiple integration methods (HTML, robots.txt, RSS, media)
 
 ## Architecture
 
@@ -36,26 +36,36 @@ RSL Licensing for WordPress is a complete implementation of the RSL 1.0 specific
 4. **Security Focus**: JWT tokens, signed payment proofs, CORS restrictions
 5. **WordPress Standards**: Follows WordPress coding standards and best practices
 
-## Development Setup
-
-### Local Development
+## Setup Commands
 
 ```bash
-# WordPress Playground (recommended)
-npm install -g @wp-playground/cli
-npx @wp-playground/cli server --auto-mount
+# Install dependencies
+composer install --dev
 
-# Or use included .wp-playground.json
-npx @wp-playground/cli server
+# Start development environment
+make playground
+# OR manually: npx @wp-playground/cli server --auto-mount
+
+# Run tests
+make test
+
+# Build production ZIP
+make zip
+
+# Run security checks
+make security
 ```
 
-### Testing
+## Testing Instructions
 
 ```bash
-# Run automated tests (if available)
-./tests/rsl-server-test.sh http://127.0.0.1:9400
+# Run working test suite (28 tests, 136 assertions)
+vendor/bin/phpunit tests/unit/TestBasicFunctionality.php tests/unit/TestRSLLicense.php
 
-# Manual testing endpoints
+# Quick smoke tests
+./tests/run-tests.sh --quick
+
+# Manual API testing
 curl http://127.0.0.1:9400/.well-known/rsl/
 curl http://127.0.0.1:9400/wp-json/rsl/v1/licenses
 curl http://127.0.0.1:9400/robots.txt
@@ -234,18 +244,37 @@ curl http://127.0.0.1:9400/wp-json/rsl/v1/licenses
 curl http://127.0.0.1:9400/robots.txt
 ```
 
-## Contributing Guidelines
+## PR Guidelines
 
 1. **Follow WordPress coding standards**
-2. **Maintain security best practices**
-3. **Add proper documentation** for new features
+2. **Maintain security best practices** 
+3. **Add tests for new features** (use existing test framework)
 4. **Test thoroughly** before submitting
 5. **Ensure backwards compatibility** with existing licenses
 6. **Update relevant documentation** files
+7. **No emojis** in commit messages or documentation
+8. **No AI co-authorship** in commits
+
+### Before submitting PR:
+```bash
+# Run tests to ensure they pass
+make test
+
+# Check code quality
+make lint
+
+# Run security analysis
+make security
+
+# Build and test ZIP file
+make zip
+```
 
 ## Resources
 
 - **WordPress Coding Standards**: https://developer.wordpress.org/coding-standards/
-- **RSL 1.0 Specification**: https://rslstandard.org
+- **RSL 1.0 Specification**: https://rslstandard.org/rsl
+- **RSL API Documentation**: https://rslstandard.org/api
+- **RSL License Servers Guide**: https://rslstandard.org/guide/license-servers
 - **WordPress REST API**: https://developer.wordpress.org/rest-api/
 - **WooCommerce Documentation**: https://woocommerce.com/documentation/
