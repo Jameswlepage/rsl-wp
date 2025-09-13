@@ -5,7 +5,7 @@ All notable changes to the RSL for WordPress plugin will be documented in this f
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.0.4] - 2025-09-13
+## [0.0.4-alpha] - 2025-09-13
 
 ### Added
 - **Comprehensive Translation Infrastructure**
@@ -63,7 +63,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   - Fixed potential SQL injection vectors in table name handling
   - Enhanced sanitization for all user inputs
 
-## [0.0.3] - 2025-09-13
+## [0.0.3-alpha] - 2025-09-13
 
 ### Added
 - **Comprehensive Testing Infrastructure**
@@ -111,7 +111,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - XSS protection validation and JWT token manipulation resistance
 - Rate limiting enforcement testing and authorization bypass prevention
 
-## [0.0.2] - 2025-09-12
+## [0.0.2-alpha] - 2025-09-12
 
 ### Added
 - **OAuth 2.0 Authentication System**
@@ -155,7 +155,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Form data duplication in admin interface
 - Various security vulnerabilities identified by AI review
 
-## [0.0.1] - 2025-09-11
+## [0.0.1-alpha] - 2025-09-11
 
 ### Added
 - **Core RSL Implementation**

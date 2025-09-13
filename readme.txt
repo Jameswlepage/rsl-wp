@@ -5,7 +5,7 @@ Tags: licensing, rsl, ai, content, copyright
 Requires at least: 5.0
 Tested up to: 6.8
 Requires PHP: 7.4
-Stable tag: 0.0.3
+Stable tag: 0.0.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
@@ -146,7 +146,7 @@ Embeds RSL licensing directly into uploaded images, PDFs, and EPUB files.
 
 = Automatic Installation =
 1. Go to Plugins > Add New in your WordPress admin
-2. Search for "RSL Licensing"
+2. Search for "RSL for WordPress"
 3. Click Install Now and then Activate
 
 = Manual Installation =
