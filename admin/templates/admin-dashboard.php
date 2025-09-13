@@ -40,30 +40,31 @@ if (!defined('ABSPATH')) {
                         <h2 class="hndle ui-sortable-handle"><?php esc_html_e('At a Glance', 'rsl-wp'); ?></h2>
                     </div>
                     <div class="inside">
-                        <div class="main">
-                            <ul>
-                                <li class="page-count">
-                                    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-licenses')); ?>">
-                                        <?php echo esc_html($total_licenses); ?>
-                                    </a>
-                                    <?php echo esc_html(_n('License', 'Licenses', $total_licenses, 'rsl-wp')); ?>
-                                </li>
-                                <li class="post-count">
-                                    <?php echo esc_html($active_licenses); ?> <?php esc_html_e('Active', 'rsl-wp'); ?>
-                                </li>
-                                <li class="comment-count">
-                                    <span class="<?php echo $global_license_id > 0 ? 'approved' : 'pending'; ?>">
-                                        <?php echo $global_license_id > 0 ? '✓' : '×'; ?>
-                                    </span>
-                                    <?php esc_html_e('Global License', 'rsl-wp'); ?>
-                                </li>
-                            </ul>
-                        </div>
-                        
-                        <!-- Quick Actions -->
-                        <div class="activity-block">
-                            <h3><?php esc_html_e('Quick Actions', 'rsl-wp'); ?></h3>
-                            <div>
+                        <div class="rsl-at-glance-row">
+                            <!-- Left: Stats -->
+                            <div class="main">
+                                <ul>
+                                    <li class="page-count">
+                                        <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-licenses')); ?>">
+                                            <?php echo esc_html($total_licenses); ?>
+                                        </a>
+                                        <?php echo esc_html(_n('License', 'Licenses', $total_licenses, 'rsl-wp')); ?>
+                                    </li>
+                                    <li class="post-count">
+                                        <?php echo esc_html($active_licenses); ?> <?php esc_html_e('Active', 'rsl-wp'); ?>
+                                    </li>
+                                    <li class="comment-count">
+                                        <span class="<?php echo $global_license_id > 0 ? 'approved' : 'pending'; ?>">
+                                            <?php echo $global_license_id > 0 ? '✓' : '×'; ?>
+                                        </span>
+                                        <?php esc_html_e('Global License', 'rsl-wp'); ?>
+                                    </li>
+                                </ul>
+                            </div>
+                            
+                            <!-- Right: Quick Actions -->
+                            <div class="rsl-quick-actions">
+                                <div class="rsl-action-buttons">
                                 <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license')); ?>" class="button button-primary">
                                     <span class="dashicons dashicons-plus-alt"></span>
                                     <?php esc_html_e('Create License', 'rsl-wp'); ?>
@@ -80,6 +81,7 @@ if (!defined('ABSPATH')) {
                                     <span class="dashicons dashicons-external"></span>
                                     <?php esc_html_e('RSL Standard', 'rsl-wp'); ?>
                                 </a>
+                                </div>
                             </div>
                         </div>
                     </div>
@@ -92,7 +94,7 @@ if (!defined('ABSPATH')) {
                 <div class="meta-box-sortables">
                 <div class="postbox">
                     <div class="postbox-header">
-                        <h2 class="hndle">
+                        <h2 class="hndle ui-sortable-handle">
                             <?php esc_html_e('Integration Status', 'rsl-wp'); ?>
                             <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-settings')); ?>" class="rsl-header-link">
                                 <?php esc_html_e('Go to Settings', 'rsl-wp'); ?>
@@ -170,7 +172,7 @@ if (!defined('ABSPATH')) {
                 <div class="meta-box-sortables">
                     <div class="postbox">
                         <div class="postbox-header">
-                            <h2 class="hndle"><?php esc_html_e('Recent Licenses', 'rsl-wp'); ?></h2>
+                            <h2 class="hndle ui-sortable-handle"><?php esc_html_e('Recent Licenses', 'rsl-wp'); ?></h2>
                         </div>
                         <div class="inside">
                             <?php if (!empty($licenses)) : ?>
@@ -179,15 +181,17 @@ if (!defined('ABSPATH')) {
                                 foreach ($recent_licenses as $license) : 
                                 ?>
                                     <div class="rsl-recent-license">
-                                        <div>
-                                            <strong><?php echo esc_html($license['name']); ?></strong>
-                                            <span class="rsl-payment-tag">
-                                                <?php echo esc_html(ucfirst(str_replace('-', ' ', $license['payment_type']))); ?>
-                                            </span>
-                                        </div>
-                                        <div class="rsl-license-content-url">
-                                            <?php echo esc_html($license['content_url']); ?>
-                                        </div>
+                                        <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license&edit=' . $license['id'])); ?>" class="rsl-license-link">
+                                            <div>
+                                                <strong><?php echo esc_html($license['name']); ?></strong>
+                                                <span class="rsl-payment-tag">
+                                                    <?php echo esc_html(ucfirst(str_replace('-', ' ', $license['payment_type']))); ?>
+                                                </span>
+                                            </div>
+                                            <div class="rsl-license-content-url">
+                                                <?php echo esc_html($license['content_url']); ?>
+                                            </div>
+                                        </a>
                                     </div>
                                 <?php endforeach; ?>
                                 <p class="rsl-view-all-link">
@@ -212,7 +216,7 @@ if (!defined('ABSPATH')) {
                 <div class="meta-box-sortables">
                     <div class="postbox">
                         <div class="postbox-header">
-                            <h2 class="hndle"><?php esc_html_e('About RSL', 'rsl-wp'); ?></h2>
+                            <h2 class="hndle ui-sortable-handle"><?php esc_html_e('About RSL', 'rsl-wp'); ?></h2>
                         </div>
                         <div class="inside">
                             <p>
@@ -234,7 +238,7 @@ if (!defined('ABSPATH')) {
                     
                     <div class="postbox">
                         <div class="postbox-header">
-                            <h2 class="hndle"><?php esc_html_e('System Status', 'rsl-wp'); ?></h2>
+                            <h2 class="hndle ui-sortable-handle"><?php esc_html_e('System Status', 'rsl-wp'); ?></h2>
                         </div>
                         <div class="inside">
                             <table class="widefat">

@@ -115,7 +115,8 @@ class RSL_Admin {
     public function enqueue_admin_scripts($hook) {
         if (strpos($hook, 'rsl') !== false) {
             wp_enqueue_script('jquery');
-            wp_enqueue_script('rsl-admin', RSL_PLUGIN_URL . 'admin/js/admin.js', array('jquery'), RSL_PLUGIN_VERSION, true);
+            wp_enqueue_script('postbox'); // WordPress meta box collapse functionality
+            wp_enqueue_script('rsl-admin', RSL_PLUGIN_URL . 'admin/js/admin.js', array('jquery', 'postbox'), RSL_PLUGIN_VERSION, true);
             wp_enqueue_style('rsl-admin', RSL_PLUGIN_URL . 'admin/css/admin.css', array(), RSL_PLUGIN_VERSION);
             
             // Get payment processor info for UI

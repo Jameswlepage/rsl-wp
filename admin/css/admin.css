@@ -1,10 +1,39 @@
 /* RSL for WordPress - WordPress-Native Admin Styles */
 
-/* WordPress Admin Integration - Proper Meta Box Styling */
+/* WordPress Admin Page Layout */
 .metabox-holder .postbox-container {
     float: left;
     min-height: 1px;
     box-sizing: border-box;
+    margin-bottom: 20px;
+}
+
+/* Equal spacing between dashboard widgets */
+.metabox-holder .postbox {
+    margin-bottom: 20px;
+}
+
+/* At a Glance Single Row Layout */
+.rsl-at-glance-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 30px;
+}
+
+.rsl-at-glance-row .main {
+    flex: 1;
+}
+
+.rsl-quick-actions {
+    flex-shrink: 0;
+    text-align: right;
+}
+
+.rsl-action-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: flex-end;
 }
 
 /* WordPress "At a Glance" Widget Styling */
@@ -46,19 +75,7 @@
     text-decoration: underline;
 }
 
-/* Activity Block Styling */
-.activity-block {
-    margin-top: 20px;
-    padding-top: 20px;
-    border-top: 1px solid #f0f0f1;
-}
-
-.activity-block h3 {
-    margin: 0 0 12px 0;
-    font-size: 14px;
-    font-weight: 600;
-    color: #1d2327;
-}
+/* Remove activity block since we're using side-by-side layout */
 
 /* Button Icon Alignment Fix */
 .button .dashicons {
@@ -145,11 +162,28 @@
 /* Recent License Items */
 .rsl-recent-license {
     border-bottom: 1px solid #f0f0f1;
-    padding: 8px 0;
+    padding: 0;
 }
 
 .rsl-recent-license:last-child {
     border-bottom: none;
+}
+
+.rsl-license-link {
+    display: block;
+    padding: 8px 0;
+    text-decoration: none;
+    color: inherit;
+}
+
+.rsl-license-link:hover {
+    background-color: #f6f7f7;
+    color: #2271b1;
+}
+
+.rsl-license-link:focus {
+    box-shadow: 0 0 0 1px #2271b1;
+    outline: none;
 }
 
 .rsl-license-content-url {
@@ -262,6 +296,12 @@
     padding: 10px;
     resize: vertical;
     width: 100%;
+}
+
+/* Fix footer overlap issue */
+.wrap {
+    margin-bottom: 50px;
+    padding-bottom: 20px;
 }
 
 /* Utility Classes */

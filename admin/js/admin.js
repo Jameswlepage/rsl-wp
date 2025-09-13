@@ -5,6 +5,7 @@ jQuery(document).ready(function($) {
         init: function() {
             this.bindEvents();
             this.initializeFields();
+            this.initializePostboxes();
         },
         
         bindEvents: function() {
@@ -311,6 +312,13 @@ jQuery(document).ready(function($) {
                     $(this).remove();
                 });
             }, 2000);
+        },
+        
+        initializePostboxes: function() {
+            // Initialize WordPress meta box collapse functionality
+            if (typeof postboxes !== 'undefined') {
+                postboxes.add_postbox_toggles('rsl-dashboard');
+            }
         }
     };
     
