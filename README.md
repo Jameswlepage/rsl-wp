@@ -2,20 +2,21 @@
 
 ![RSL for WordPress Banner](https://github.com/jameswlepage/rsl-wp/assets/banner-1544x500.png)
 
-[![Version](https://img.shields.io/badge/Version-0.0.4-blue)](https://github.com/jameswlepage/rsl-wp/releases/latest) [![Downloads](https://img.shields.io/github/downloads/jameswlepage/rsl-wp/total)](https://github.com/jameswlepage/rsl-wp/releases) [![License](https://img.shields.io/badge/License-GPL%20v2-blue)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![Version](https://img.shields.io/badge/Version-0.0.4-blue)](https://github.com/jameswlepage/rsl-wp/releases/latest) [![Downloads](https://img.shields.io/github/downloads/jameswlepage/rsl-wp/total)](https://github.com/jameswlepage/rsl-wp/releases) [![License](https://img.shields.io/badge/License-GPL%20v2-blue)](https://www.gnu.org/licenses/gpl-2.0.html) [![WordPress Playground](https://img.shields.io/badge/Try%20Live-WordPress%20Playground-blue?logo=wordpress)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FJameswlepage%2Frsl-wp%2Fmain%2Fblueprint.json)
 
 Complete Really Simple Licensing (RSL) support for WordPress sites. Define machine-readable licensing terms for your content, enabling AI companies, crawlers, and other automated systems to properly license your digital assets.
 
-## 📥 Quick Download
+## Try Live Demo & Download
 
-**Latest Release:** [v0.0.4](https://github.com/jameswlepage/rsl-wp/releases/tag/v0.0.4) • **Size:** ~750KB
+**Latest Release:** [v0.0.4-alpha](https://github.com/jameswlepage/rsl-wp/releases/tag/v0.0.4-alpha) • **Size:** ~750KB
 
-[![Download Plugin](https://img.shields.io/badge/Download-Plugin%20ZIP-blue?style=for-the-badge&logo=download)](https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.4/rsl-licensing-0.0.4.zip)
+[![Try Live Demo](https://img.shields.io/badge/Try%20Live%20Demo-WordPress%20Playground-blue?style=for-the-badge&logo=wordpress)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FJameswlepage%2Frsl-wp%2Fmain%2Fblueprint.json)
+[![Download Plugin](https://img.shields.io/badge/Download-Plugin%20ZIP-green?style=for-the-badge&logo=download)](https://github.com/jameswlepage/rsl-wp/releases/latest/download/rsl-licensing-0.0.4.zip)
 
 ```bash
 # Direct download via curl/wget
-curl -L -o rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.4/rsl-licensing-0.0.4.zip"
-wget -O rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.4/rsl-licensing-0.0.4.zip"
+curl -L -o rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/latest/download/rsl-licensing-0.0.4.zip"
+wget -O rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/latest/download/rsl-licensing-0.0.4.zip"
 
 # Or build from source
 git clone https://github.com/jameswlepage/rsl-wp.git
@@ -28,7 +29,7 @@ make zip  # Creates production-ready ZIP file
 2. Upload via WordPress Admin → Plugins → Add New → Upload Plugin
 3. Activate and configure at Settings → RSL Licensing
 
-> **Alpha Notice:** This is an early alpha release (v0.0.4) of the RSL Licensing plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
+> **Alpha Notice:** This is an early alpha release (v0.0.4) of the RSL for WordPress plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
 
 ## What is RSL (Really Simple Licensing)?
 
@@ -204,7 +205,7 @@ The system supports additional payment processors through a plugin interface:
 - **Custom Processors**: Third-party plugins can add new payment methods
 - **Enterprise Processors**: Direct integrations for large-scale licensing
 
-📖 **For detailed setup, pricing models, and business use cases, see [Payment Integration Guide](docs/PAYMENTS.md)**
+**For detailed setup, pricing models, and business use cases, see [Payment Integration Guide](docs/PAYMENTS.md)**
 
 ## OAuth Client Management & Security
 

@@ -1,0 +1,81 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "meta": {
+    "title": "RSL for WordPress Demo",
+    "description": "Demo of RSL for WordPress plugin with sample licenses and content to showcase Really Simple Licensing (RSL) functionality for AI content licensing.",
+    "author": "James W. LePage",
+    "categories": [
+      "Content",
+      "SEO",
+      "Developer Tools"
+    ]
+  },
+  "features": {
+    "networking": true
+  },
+  "landingPage": "/wp-admin/admin.php?page=rsl-licensing",
+  "login": true,
+  "preferredVersions": {
+    "php": "8.2",
+    "wp": "latest"
+  },
+  "steps": [
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "url",
+        "url": "https://github.com/jameswlepage/rsl-wp/releases/latest/download/rsl-licensing.zip"
+      },
+      "options": {
+        "activate": true
+      }
+    },
+    {
+      "step": "defineWpConfigConsts",
+      "consts": {
+        "RSL_DEBUG": true,
+        "WP_DEBUG": true,
+        "WP_DEBUG_LOG": true
+      }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php\n// Create sample blog posts with different licensing scenarios\n$posts = [\n    [\n        'title' => 'Welcome to RSL Licensing Demo',\n        'content' => '<p>This site demonstrates <strong>Really Simple Licensing (RSL)</strong> - a machine-readable format for content licensing that helps AI companies and crawlers understand how they can legally use your content.</p><p>Visit the <a href=\"/wp-admin/admin.php?page=rsl-licensing\">RSL Dashboard</a> to see the plugin in action, or check out the different licensing examples on this site:</p><ul><li><a href=\"/free-content/\">Free Content</a> - No restrictions</li><li><a href=\"/ai-training-blocked/\">AI Training Blocked</a> - Search allowed, AI training prohibited</li><li><a href=\"/commercial-license/\">Commercial License</a> - Paid licensing for AI training</li></ul><p>You can also check the <code>robots.txt</code> file and RSS feeds to see how RSL integrates across your WordPress site.</p>',\n        'status' => 'publish',\n        'slug' => 'welcome-rsl-demo'\n    ],\n    [\n        'title' => 'Free Content Example',\n        'content' => '<p>This content is completely free to use with no restrictions. AI companies can train on this content, search engines can index it, and anyone can access it freely.</p><p>The RSL license for this content specifies:</p><ul><li><strong>Payment Type:</strong> Free</li><li><strong>Permits:</strong> All usage types</li><li><strong>Restrictions:</strong> None</li></ul><p>Check the page source to see the RSL license embedded in the HTML head.</p>',\n        'status' => 'publish',\n        'slug' => 'free-content'\n    ],\n    [\n        'title' => 'AI Training Blocked Content',\n        'content' => '<p>This content allows search indexing and summarization but <strong>prohibits AI training</strong>. This is a common licensing preference for content creators who want discoverability but dont want their work used to train AI models.</p><p>The RSL license for this content specifies:</p><ul><li><strong>Payment Type:</strong> Free</li><li><strong>Permits:</strong> Search, AI summarization</li><li><strong>Prohibits:</strong> AI training (train-ai, train-genai)</li></ul><p>Notice how this appears in your sites robots.txt file with the AI Preferences format for maximum compatibility.</p>',\n        'status' => 'publish',\n        'slug' => 'ai-training-blocked'\n    ],\n    [\n        'title' => 'Commercial License Example',\n        'content' => '<p>This premium content requires payment for AI training usage. While search indexing remains free, AI companies must purchase a license to use this content for training purposes.</p><p>The RSL license for this content specifies:</p><ul><li><strong>Payment Type:</strong> Subscription ($99/month)</li><li><strong>Permits:</strong> AI training (with payment)</li><li><strong>Server URL:</strong> OAuth endpoint for authentication</li></ul><p>In a real implementation, this would integrate with WooCommerce or other payment processors to handle transactions automatically.</p>',\n        'status' => 'publish',\n        'slug' => 'commercial-license'\n    ]\n];\n\nforeach ($posts as $post_data) {\n    wp_insert_post($post_data);\n}"
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "blogname": "RSL for WordPress Demo",
+        "blogdescription": "Demonstrating Really Simple Licensing (RSL) for AI content licensing",
+        "show_on_front": "posts",
+        "rsl_enable_html_injection": 1,
+        "rsl_enable_http_headers": 1,
+        "rsl_enable_robots_txt": 1,
+        "rsl_enable_rss_feed": 1,
+        "rsl_enable_media_metadata": 1
+      }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php\n// Create sample RSL licenses in the database\nglobal $wpdb;\n\n$table_name = $wpdb->prefix . 'rsl_licenses';\n\n// Free content license\n$free_license = [\n    'name' => 'Free Content License',\n    'description' => 'Completely free content with no restrictions',\n    'content_url' => '/free-content/',\n    'permits_usage' => 'all',\n    'permits_user' => 'all',\n    'permits_geo' => '',\n    'prohibits_usage' => '',\n    'prohibits_user' => '',\n    'prohibits_geo' => '',\n    'payment_type' => 'free',\n    'amount' => 0,\n    'currency' => 'USD',\n    'warranty' => 'ownership,authority',\n    'disclaimer' => 'as-is',\n    'schema_url' => 'https://rslstandard.org/schema',\n    'copyright_holder' => 'Demo Site',\n    'copyright_type' => 'organization',\n    'contact_email' => 'demo@example.com',\n    'active' => 1,\n    'created_at' => current_time('mysql'),\n    'updated_at' => current_time('mysql')\n];\n\n// AI Training Blocked license\n$blocked_license = [\n    'name' => 'Search OK, AI Training Blocked',\n    'description' => 'Allows search and summarization but blocks AI training',\n    'content_url' => '/ai-training-blocked/',\n    'permits_usage' => 'search,ai-summarize',\n    'permits_user' => 'all',\n    'permits_geo' => '',\n    'prohibits_usage' => 'train-ai,train-genai',\n    'prohibits_user' => '',\n    'prohibits_geo' => '',\n    'payment_type' => 'free',\n    'amount' => 0,\n    'currency' => 'USD',\n    'warranty' => 'ownership,authority',\n    'disclaimer' => 'as-is',\n    'schema_url' => 'https://rslstandard.org/schema',\n    'copyright_holder' => 'Demo Site',\n    'copyright_type' => 'organization',\n    'contact_email' => 'demo@example.com',\n    'active' => 1,\n    'created_at' => current_time('mysql'),\n    'updated_at' => current_time('mysql')\n];\n\n// Commercial license\n$commercial_license = [\n    'name' => 'Commercial AI Training License',\n    'description' => 'Paid subscription for AI training usage',\n    'content_url' => '/commercial-license/',\n    'permits_usage' => 'search,train-ai',\n    'permits_user' => 'commercial',\n    'permits_geo' => '',\n    'prohibits_usage' => '',\n    'prohibits_user' => '',\n    'prohibits_geo' => '',\n    'payment_type' => 'subscription',\n    'amount' => 99.00,\n    'currency' => 'USD',\n    'server_url' => home_url('/wp-json/rsl-olp/v1'),\n    'warranty' => 'ownership,authority',\n    'disclaimer' => 'as-is',\n    'schema_url' => 'https://rslstandard.org/schema',\n    'copyright_holder' => 'Demo Site',\n    'copyright_type' => 'organization',\n    'contact_email' => 'demo@example.com',\n    'active' => 1,\n    'created_at' => current_time('mysql'),\n    'updated_at' => current_time('mysql')\n];\n\n// Default site license (AI training blocked)\n$default_license = [\n    'name' => 'Default Site License',\n    'description' => 'Default licensing for all site content - search OK, AI training requires permission',\n    'content_url' => '/',\n    'permits_usage' => 'search,ai-summarize',\n    'permits_user' => 'all',\n    'permits_geo' => '',\n    'prohibits_usage' => 'train-ai,train-genai',\n    'prohibits_user' => '',\n    'prohibits_geo' => '',\n    'payment_type' => 'free',\n    'amount' => 0,\n    'currency' => 'USD',\n    'warranty' => 'ownership,authority',\n    'disclaimer' => 'as-is',\n    'schema_url' => 'https://rslstandard.org/schema',\n    'copyright_holder' => 'Demo Site',\n    'copyright_type' => 'organization',\n    'contact_email' => 'demo@example.com',\n    'active' => 1,\n    'created_at' => current_time('mysql'),\n    'updated_at' => current_time('mysql')\n];\n\n// Insert licenses\n$licenses = [$default_license, $free_license, $blocked_license, $commercial_license];\nforeach ($licenses as $license) {\n    $wpdb->insert($table_name, $license);\n}\n\n// Set the default license as global\n$default_id = $wpdb->insert_id - 3; // Should be the first inserted license\nupdate_option('rsl_global_license_id', $default_id);"
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php\n// Create sample OAuth client for demo\nglobal $wpdb;\n\n$oauth_table = $wpdb->prefix . 'rsl_oauth_clients';\n\n$demo_client = [\n    'client_id' => 'demo_ai_company_12345',\n    'client_secret_hash' => wp_hash_password('demo_secret_key_67890'),\n    'client_name' => 'Demo AI Company',\n    'redirect_uris' => 'https://demo-ai-company.com/callback',\n    'grant_types' => 'client_credentials',\n    'active' => 1,\n    'created_at' => current_time('mysql'),\n    'updated_at' => current_time('mysql')\n];\n\n$wpdb->insert($oauth_table, $demo_client);"
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php\n// Create sample pages for navigation\n$pages = [\n    [\n        'post_title' => 'About RSL',\n        'post_content' => '<p>Really Simple Licensing (RSL) is an XML-based standard for defining machine-readable licensing terms for digital content.</p><p>Key benefits:</p><ul><li><strong>Machine-readable:</strong> AI systems can automatically understand your licensing terms</li><li><strong>Standardized:</strong> Uses a common format recognized across the industry</li><li><strong>Flexible:</strong> Supports various payment models and usage restrictions</li><li><strong>WordPress native:</strong> Integrates seamlessly with your existing WordPress workflow</li></ul><p><a href=\"https://rslstandard.org\" target=\"_blank\">Learn more about the RSL standard →</a></p>',\n        'post_status' => 'publish',\n        'post_type' => 'page',\n        'post_name' => 'about-rsl'\n    ],\n    [\n        'post_title' => 'Plugin Features',\n        'post_content' => '<p>RSL for WordPress includes:</p><h3>Core Features</h3><ul><li>Complete RSL 1.0 specification support</li><li>Visual license management interface</li><li>Multiple integration methods (HTML, HTTP headers, robots.txt, RSS)</li><li>Per-post and global licensing options</li></ul><h3>Advanced Features</h3><ul><li>OAuth 2.0 authentication for paid licenses</li><li>WooCommerce integration for payment processing</li><li>License server protocol support</li><li>Media file metadata embedding</li><li>REST API endpoints</li></ul><h3>Developer Tools</h3><ul><li>WordPress Abilities API integration</li><li>Shortcodes for license display</li><li>Hooks and filters for customization</li><li>Comprehensive documentation</li></ul>',\n        'post_status' => 'publish',\n        'post_type' => 'page',\n        'post_name' => 'plugin-features'\n    ]\n];\n\nforeach ($pages as $page_data) {\n    wp_insert_post($page_data);\n}"
+    },
+    {
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "wordpress.org/plugins",
+        "slug": "classic-editor"
+      },
+      "options": {
+        "activate": true
+      }
+    }
+  ]
+}
