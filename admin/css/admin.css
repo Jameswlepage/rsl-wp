@@ -1,21 +1,5 @@
 /* RSL for WordPress - Minimal Admin Styles */
-/* Let WordPress handle all postbox styling naturally */
-
-/* Layout: Grid for consistent spacing */
-.rsl-grid {
-    display: grid;
-    grid-template-columns: repeat(12, minmax(0, 1fr));
-    gap: 16px;
-    margin-top: 16px;
-}
-
-.rsl-col-12 {
-    grid-column: 1 / -1;
-}
-
-.rsl-col-6 {
-    grid-column: span 6;
-}
+/* Let WordPress handle ALL postbox styling naturally */
 
 /* At a Glance: Side-by-side layout */
 .rsl-at-glance-row {
@@ -41,7 +25,7 @@
     justify-content: flex-end;
 }
 
-/* WordPress "At a Glance" style stats - use WordPress defaults */
+/* WordPress "At a Glance" style stats */
 .main ul {
     list-style: none;
     margin: 0;
@@ -304,10 +288,6 @@
 
 /* Responsive */
 @media screen and (max-width: 1100px) {
-    .rsl-col-6 {
-        grid-column: 1 / -1;
-    }
-    
     .rsl-at-glance-row {
         align-items: flex-start;
     }

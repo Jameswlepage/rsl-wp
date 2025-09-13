@@ -38,10 +38,15 @@ if (!defined('ABSPATH')) {
         <div class="postbox-container" style="width: 100%; margin-bottom: 20px;">
             <div class="meta-box-sortables">
                 <div id="rsl-at-a-glance" class="postbox">
-                    <button type="button" class="handlediv" aria-expanded="true">
-                        <span class="screen-reader-text"><?php esc_html_e('Toggle panel: At a Glance', 'rsl-wp'); ?></span>
-                    </button>
-                    <h2 class="hndle ui-sortable-handle"><?php esc_html_e('At a Glance', 'rsl-wp'); ?></h2>
+                    <div class="postbox-header">
+                        <h2 class="hndle ui-sortable-handle"><?php esc_html_e('At a Glance', 'rsl-wp'); ?></h2>
+                        <div class="handle-actions hide-if-no-js">
+                            <button type="button" class="handlediv" aria-expanded="true">
+                                <span class="screen-reader-text"><?php esc_html_e('Toggle panel: At a Glance', 'rsl-wp'); ?></span>
+                                <span class="toggle-indicator" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
                     <div class="inside">
                         <div class="rsl-at-glance-row">
                             <!-- Left: Stats -->
@@ -98,15 +103,20 @@ if (!defined('ABSPATH')) {
                 
                 <!-- Integration Status -->
                 <div id="rsl-integration-status" class="postbox">
-                    <button type="button" class="handlediv" aria-expanded="true">
-                        <span class="screen-reader-text"><?php esc_html_e('Toggle panel: Integration Status', 'rsl-wp'); ?></span>
-                    </button>
-                    <h2 class="hndle ui-sortable-handle">
-                        <?php esc_html_e('Integration Status', 'rsl-wp'); ?>
-                        <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-settings')); ?>" class="rsl-header-link">
-                            <?php esc_html_e('Go to Settings', 'rsl-wp'); ?>
-                        </a>
-                    </h2>
+                    <div class="postbox-header">
+                        <h2 class="hndle ui-sortable-handle">
+                            <?php esc_html_e('Integration Status', 'rsl-wp'); ?>
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-settings')); ?>" class="rsl-header-link">
+                                <?php esc_html_e('Go to Settings', 'rsl-wp'); ?>
+                            </a>
+                        </h2>
+                        <div class="handle-actions hide-if-no-js">
+                            <button type="button" class="handlediv" aria-expanded="true">
+                                <span class="screen-reader-text"><?php esc_html_e('Toggle panel: Integration Status', 'rsl-wp'); ?></span>
+                                <span class="toggle-indicator" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
                     <div class="inside">
                         <table class="widefat striped">
                             <tbody>
@@ -173,10 +183,15 @@ if (!defined('ABSPATH')) {
                 
                 <!-- About RSL -->
                 <div id="rsl-about" class="postbox">
-                    <button type="button" class="handlediv" aria-expanded="true">
-                        <span class="screen-reader-text"><?php esc_html_e('Toggle panel: About RSL', 'rsl-wp'); ?></span>
-                    </button>
-                    <h2 class="hndle ui-sortable-handle"><?php esc_html_e('About RSL', 'rsl-wp'); ?></h2>
+                    <div class="postbox-header">
+                        <h2 class="hndle ui-sortable-handle"><?php esc_html_e('About RSL', 'rsl-wp'); ?></h2>
+                        <div class="handle-actions hide-if-no-js">
+                            <button type="button" class="handlediv" aria-expanded="true">
+                                <span class="screen-reader-text"><?php esc_html_e('Toggle panel: About RSL', 'rsl-wp'); ?></span>
+                                <span class="toggle-indicator" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
                     <div class="inside">
                         <p>
                             <?php esc_html_e('Really Simple Licensing (RSL) is a machine-readable format for defining licensing terms for digital content. It enables content owners to specify how their content can be used by AI systems, search engines, and other automated tools.', 'rsl-wp'); ?>
@@ -203,10 +218,15 @@ if (!defined('ABSPATH')) {
                 
                 <!-- Recent Licenses -->
                 <div id="rsl-recent-licenses" class="postbox">
-                    <button type="button" class="handlediv" aria-expanded="true">
-                        <span class="screen-reader-text"><?php esc_html_e('Toggle panel: Recent Licenses', 'rsl-wp'); ?></span>
-                    </button>
-                    <h2 class="hndle ui-sortable-handle"><?php esc_html_e('Recent Licenses', 'rsl-wp'); ?></h2>
+                    <div class="postbox-header">
+                        <h2 class="hndle ui-sortable-handle"><?php esc_html_e('Recent Licenses', 'rsl-wp'); ?></h2>
+                        <div class="handle-actions hide-if-no-js">
+                            <button type="button" class="handlediv" aria-expanded="true">
+                                <span class="screen-reader-text"><?php esc_html_e('Toggle panel: Recent Licenses', 'rsl-wp'); ?></span>
+                                <span class="toggle-indicator" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
                     <div class="inside">
                         <?php if (!empty($licenses)) : ?>
                             <?php 
@@ -245,10 +265,15 @@ if (!defined('ABSPATH')) {
                 
                 <!-- System Status -->
                 <div id="rsl-system-status" class="postbox">
-                    <button type="button" class="handlediv" aria-expanded="true">
-                        <span class="screen-reader-text"><?php esc_html_e('Toggle panel: System Status', 'rsl-wp'); ?></span>
-                    </button>
-                    <h2 class="hndle ui-sortable-handle"><?php esc_html_e('System Status', 'rsl-wp'); ?></h2>
+                    <div class="postbox-header">
+                        <h2 class="hndle ui-sortable-handle"><?php esc_html_e('System Status', 'rsl-wp'); ?></h2>
+                        <div class="handle-actions hide-if-no-js">
+                            <button type="button" class="handlediv" aria-expanded="true">
+                                <span class="screen-reader-text"><?php esc_html_e('Toggle panel: System Status', 'rsl-wp'); ?></span>
+                                <span class="toggle-indicator" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
                     <div class="inside">
                         <table class="widefat">
                             <tbody>
