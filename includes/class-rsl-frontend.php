@@ -156,7 +156,7 @@ class RSL_Frontend {
         echo '    <link>' . esc_url(home_url()) . '</link>' . "\n";
         echo '    <description>' . esc_html(get_bloginfo('description')) . '</description>' . "\n";
         echo '    <language>' . esc_html(get_bloginfo('language')) . '</language>' . "\n";
-        echo '    <lastBuildDate>' . date('r') . '</lastBuildDate>' . "\n";
+        echo '    <lastBuildDate>' . gmdate('r') . '</lastBuildDate>' . "\n";
         
         foreach ($licenses as $license) {
             echo '    <item>' . "\n";
@@ -166,7 +166,7 @@ class RSL_Frontend {
             echo '      <guid>' . esc_url($this->get_license_xml_url($license['id'])) . '</guid>' . "\n";
             
             if (!empty($license['updated_at'])) {
-                echo '      <pubDate>' . date('r', strtotime($license['updated_at'])) . '</pubDate>' . "\n";
+                echo '      <pubDate>' . gmdate('r', strtotime($license['updated_at'])) . '</pubDate>' . "\n";
             }
             
             // Add RSL content as RSS extension
@@ -192,7 +192,7 @@ class RSL_Frontend {
         $atts = shortcode_atts(array(
             'id' => 0,
             'format' => 'link', // link, xml, info
-            'text' => __('View License', 'rsl-licensing')
+            'text' => __('View License', 'rsl-wp')
         ), $atts, 'rsl_license');
         
         $license_id = intval($atts['id']);
@@ -225,16 +225,16 @@ class RSL_Frontend {
                 }
                 
                 $output .= '<ul>';
-                $output .= '<li><strong>' . __('Payment Type:', 'rsl-licensing') . '</strong> ' . 
+                $output .= '<li><strong>' . __('Payment Type:', 'rsl-wp') . '</strong> ' . 
                           esc_html(ucfirst(str_replace('-', ' ', $license_data['payment_type']))) . '</li>';
                 
                 if (!empty($license_data['permits_usage'])) {
-                    $output .= '<li><strong>' . __('Permitted Usage:', 'rsl-licensing') . '</strong> ' . 
+                    $output .= '<li><strong>' . __('Permitted Usage:', 'rsl-wp') . '</strong> ' . 
                               esc_html($license_data['permits_usage']) . '</li>';
                 }
                 
                 if (!empty($license_data['copyright_holder'])) {
-                    $output .= '<li><strong>' . __('Copyright:', 'rsl-licensing') . '</strong> ' . 
+                    $output .= '<li><strong>' . __('Copyright:', 'rsl-wp') . '</strong> ' . 
                               esc_html($license_data['copyright_holder']) . '</li>';
                 }
                 

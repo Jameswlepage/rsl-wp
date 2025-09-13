@@ -170,10 +170,10 @@ class RSL_Robots {
             
             // Validate license URL
             if (!filter_var($validation['license_url'], FILTER_VALIDATE_URL)) {
-                $validation['issues'][] = __('License URL is not valid', 'rsl-licensing');
+                $validation['issues'][] = __('License URL is not valid', 'rsl-wp');
             }
         } else {
-            $validation['issues'][] = __('No License directive found', 'rsl-licensing');
+            $validation['issues'][] = __('No License directive found', 'rsl-wp');
         }
         
         // Check for Content-Usage directive

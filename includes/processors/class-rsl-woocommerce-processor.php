@@ -154,14 +154,14 @@ class RSL_WooCommerce_Processor implements RSL_Payment_Processor_Interface {
         return [
             'wc_product_visibility' => [
                 'type' => 'select',
-                'label' => __('License Product Visibility', 'rsl-licensing'),
+                'label' => __('License Product Visibility', 'rsl-wp'),
                 'options' => [
-                    'hidden' => __('Hidden (default)', 'rsl-licensing'),
-                    'catalog' => __('Visible in catalog', 'rsl-licensing'),
-                    'search' => __('Visible in search', 'rsl-licensing')
+                    'hidden' => __('Hidden (default)', 'rsl-wp'),
+                    'catalog' => __('Visible in catalog', 'rsl-wp'),
+                    'search' => __('Visible in search', 'rsl-wp')
                 ],
                 'default' => 'hidden',
-                'description' => __('How should auto-created license products appear in your store?', 'rsl-licensing')
+                'description' => __('How should auto-created license products appear in your store?', 'rsl-wp')
             ]
         ];
     }
@@ -194,8 +194,8 @@ class RSL_WooCommerce_Processor implements RSL_Payment_Processor_Interface {
         
         // Create new product
         $product_data = [
-            'post_title' => sprintf(__('RSL License: %s', 'rsl-licensing'), $license['name']),
-            'post_content' => sprintf(__('Digital content license for %s', 'rsl-licensing'), $license['content_url']),
+            'post_title' => sprintf(__('RSL License: %s', 'rsl-wp'), $license['name']),
+            'post_content' => sprintf(__('Digital content license for %s', 'rsl-wp'), $license['content_url']),
             'post_status' => 'publish',
             'post_type' => 'product',
             'meta_input' => [

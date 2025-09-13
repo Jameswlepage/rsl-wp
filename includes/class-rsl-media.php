@@ -172,7 +172,7 @@ class RSL_Media {
         // Read current image data with error handling
         $image_data = @file_get_contents($file_path);
         if ($image_data === false) {
-            error_log('RSL: Failed to read image file: ' . $file_path);
+            // error_log('RSL: Failed to read image file: ' . $file_path);
             return false;
         }
         
@@ -212,7 +212,7 @@ class RSL_Media {
         $licenses = $this->license_handler->get_licenses();
         $selected_license = get_post_meta($post->ID, '_rsl_license_id', true);
         
-        $options = '<option value="">' . __('Use Global License', 'rsl-licensing') . '</option>';
+        $options = '<option value="">' . __('Use Global License', 'rsl-wp') . '</option>';
         foreach ($licenses as $license) {
             $selected = selected($selected_license, $license['id'], false);
             $options .= '<option value="' . esc_attr($license['id']) . '" ' . $selected . '>';
@@ -221,20 +221,20 @@ class RSL_Media {
         }
         
         $form_fields['rsl_license'] = array(
-            'label' => __('RSL License', 'rsl-licensing'),
+            'label' => __('RSL License', 'rsl-wp'),
             'input' => 'html',
             'html' => '<select name="attachments[' . $post->ID . '][rsl_license_id]">' . $options . '</select>',
-            'helps' => __('Select RSL license for this media file.', 'rsl-licensing')
+            'helps' => __('Select RSL license for this media file.', 'rsl-wp')
         );
         
         // Show current RSL status
         $is_embedded = get_post_meta($post->ID, '_rsl_embedded', true);
         if ($is_embedded) {
             $form_fields['rsl_status'] = array(
-                'label' => __('RSL Status', 'rsl-licensing'),
+                'label' => __('RSL Status', 'rsl-wp'),
                 'input' => 'html',
-                'html' => '<span style="color: green;">' . __('RSL metadata embedded', 'rsl-licensing') . '</span>',
-                'helps' => __('This file contains embedded RSL licensing information.', 'rsl-licensing')
+                'html' => '<span style="color: green;">' . __('RSL metadata embedded', 'rsl-wp') . '</span>',
+                'helps' => __('This file contains embedded RSL licensing information.', 'rsl-wp')
             );
         }
         
@@ -260,7 +260,7 @@ class RSL_Media {
     }
     
     public function add_media_column($columns) {
-        $columns['rsl_license'] = __('RSL License', 'rsl-licensing');
+        $columns['rsl_license'] = __('RSL License', 'rsl-wp');
         return $columns;
     }
     
@@ -274,7 +274,7 @@ class RSL_Media {
                 if ($license_data) {
                     echo '<strong>' . esc_html($license_data['name']) . '</strong>';
                     if ($is_embedded) {
-                        echo '<br><span style="color: green; font-size: 11px;">✓ ' . __('Embedded', 'rsl-licensing') . '</span>';
+                        echo '<br><span style="color: green; font-size: 11px;">✓ ' . __('Embedded', 'rsl-wp') . '</span>';
                     }
                     return;
                 }
@@ -287,13 +287,13 @@ class RSL_Media {
                 if ($license_data) {
                     echo '<em>' . esc_html($license_data['name']) . ' (Global)</em>';
                     if ($is_embedded) {
-                        echo '<br><span style="color: green; font-size: 11px;">✓ ' . __('Embedded', 'rsl-licensing') . '</span>';
+                        echo '<br><span style="color: green; font-size: 11px;">✓ ' . __('Embedded', 'rsl-wp') . '</span>';
                     }
                     return;
                 }
             }
             
-            echo '<span style="color: #666;">' . __('No license', 'rsl-licensing') . '</span>';
+            echo '<span style="color: #666;">' . __('No license', 'rsl-wp') . '</span>';
         }
     }
     
@@ -346,13 +346,13 @@ class RSL_Media {
         $target_dir = realpath(dirname($file_path));
         
         if (!$upload_path || !$target_dir || strpos($target_dir, $upload_path) !== 0) {
-            error_log('RSL: Attempted to write file outside upload directory: ' . $file_path);
+            // error_log('RSL: Attempted to write file outside upload directory: ' . $file_path);
             return false;
         }
         
         // Check if directory is writable
         if (!is_writable(dirname($file_path))) {
-            error_log('RSL: Cannot write to directory: ' . dirname($file_path));
+            // error_log('RSL: Cannot write to directory: ' . dirname($file_path));
             return false;
         }
         
@@ -367,7 +367,7 @@ class RSL_Media {
         }
         
         if (empty($file_extension)) {
-            error_log('RSL: Invalid file extension for RSL file: ' . $file_path);
+            // error_log('RSL: Invalid file extension for RSL file: ' . $file_path);
             return false;
         }
         
@@ -375,7 +375,7 @@ class RSL_Media {
         $bytes_written = @file_put_contents($file_path, $content);
         
         if ($bytes_written === false) {
-            error_log('RSL: Failed to write RSL file: ' . $file_path);
+            // error_log('RSL: Failed to write RSL file: ' . $file_path);
             return false;
         }
         

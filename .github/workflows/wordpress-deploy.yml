@@ -64,8 +64,8 @@ jobs:
         VERSION="${{ steps.version.outputs.version }}"
         
         # Update version in plugin file
-        sed -i "s/Version: .*/Version: $VERSION/" rsl-licensing.php
-        sed -i "s/RSL_PLUGIN_VERSION\", \".*\"/RSL_PLUGIN_VERSION\", \"$VERSION\"/" rsl-licensing.php
+        sed -i "s/Version: .*/Version: $VERSION/" rsl-wp.php
+        sed -i "s/RSL_PLUGIN_VERSION\", \".*\"/RSL_PLUGIN_VERSION\", \"$VERSION\"/" rsl-wp.php
         
         # Update stable tag in readme.txt if it exists
         if [ -f readme.txt ]; then
@@ -77,7 +77,7 @@ jobs:
         if [ ! -f readme.txt ]; then
           echo "Creating readme.txt for WordPress.org..."
           cat > readme.txt << 'EOF'
-=== RSL Licensing for WordPress ===
+=== RSL for WordPress ===
 Contributors: jameswlepage
 Tags: licensing, rsl, ai-licensing, content-licensing, machine-readable, oauth, jwt
 Requires at least: 5.0
@@ -91,7 +91,7 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
 
 == Description ==
 
-RSL Licensing for WordPress provides comprehensive Really Simple Licensing (RSL) support with built-in OAuth 2.0 license server functionality. Perfect for content creators who want to define clear, machine-readable licensing terms for AI training, web crawling, and automated content usage.
+RSL for WordPress provides comprehensive Really Simple Licensing (RSL) support with built-in OAuth 2.0 license server functionality. Perfect for content creators who want to define clear, machine-readable licensing terms for AI training, web crawling, and automated content usage.
 
 = Key Features =
 

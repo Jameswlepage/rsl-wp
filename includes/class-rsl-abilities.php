@@ -25,8 +25,8 @@ class RSL_Abilities {
     private function register_admin_abilities() {
         // License Management
         wp_register_ability('rsl-licensing/create-license', array(
-            'label' => __('Create RSL License', 'rsl-licensing'),
-            'description' => __('Creates a new Really Simple Licensing (RSL) license with specified terms, permissions, and payment configuration. Supports all RSL 1.0 specification elements including usage restrictions, geographic limitations, and payment types.', 'rsl-licensing'),
+            'label' => __('Create RSL License', 'rsl-wp'),
+            'description' => __('Creates a new Really Simple Licensing (RSL) license with specified terms, permissions, and payment configuration. Supports all RSL 1.0 specification elements including usage restrictions, geographic limitations, and payment types.', 'rsl-wp'),
             'input_schema' => array(
                 'type' => 'object',
                 'properties' => array(
@@ -128,8 +128,8 @@ class RSL_Abilities {
         ));
         
         wp_register_ability('rsl-licensing/update-license', array(
-            'label' => __('Update RSL License', 'rsl-licensing'),
-            'description' => __('Updates an existing RSL license configuration. Modifies license terms, permissions, payment settings, and other properties while maintaining license history and validation.', 'rsl-licensing'),
+            'label' => __('Update RSL License', 'rsl-wp'),
+            'description' => __('Updates an existing RSL license configuration. Modifies license terms, permissions, payment settings, and other properties while maintaining license history and validation.', 'rsl-wp'),
             'input_schema' => array(
                 'type' => 'object',
                 'properties' => array(
@@ -185,8 +185,8 @@ class RSL_Abilities {
         ));
         
         wp_register_ability('rsl-licensing/delete-license', array(
-            'label' => __('Delete RSL License', 'rsl-licensing'),
-            'description' => __('Permanently removes an RSL license from the system. This action cannot be undone and will affect any content currently using this license.', 'rsl-licensing'),
+            'label' => __('Delete RSL License', 'rsl-wp'),
+            'description' => __('Permanently removes an RSL license from the system. This action cannot be undone and will affect any content currently using this license.', 'rsl-wp'),
             'input_schema' => array(
                 'type' => 'object',
                 'properties' => array(
@@ -224,8 +224,8 @@ class RSL_Abilities {
         ));
         
         wp_register_ability('rsl-licensing/list-licenses', array(
-            'label' => __('List RSL Licenses', 'rsl-licensing'),
-            'description' => __('Retrieves all RSL licenses with optional filtering by status, payment type, or search terms. Returns comprehensive license data for administration and management.', 'rsl-licensing'),
+            'label' => __('List RSL Licenses', 'rsl-wp'),
+            'description' => __('Retrieves all RSL licenses with optional filtering by status, payment type, or search terms. Returns comprehensive license data for administration and management.', 'rsl-wp'),
             'input_schema' => array(
                 'type' => 'object',
                 'properties' => array(
@@ -276,8 +276,8 @@ class RSL_Abilities {
         ));
         
         wp_register_ability('rsl-licensing/update-settings', array(
-            'label' => __('Update RSL Settings', 'rsl-licensing'),
-            'description' => __('Configures global RSL plugin settings including default license, integration methods (HTML injection, HTTP headers, robots.txt), and namespace configuration.', 'rsl-licensing'),
+            'label' => __('Update RSL Settings', 'rsl-wp'),
+            'description' => __('Configures global RSL plugin settings including default license, integration methods (HTML injection, HTTP headers, robots.txt), and namespace configuration.', 'rsl-wp'),
             'input_schema' => array(
                 'type' => 'object',
                 'properties' => array(
@@ -332,8 +332,8 @@ class RSL_Abilities {
     
     private function register_public_abilities() {
         wp_register_ability('rsl-licensing/get-content-license', array(
-            'label' => __('Get Content License', 'rsl-licensing'),
-            'description' => __('Retrieves RSL license information for specific content URL. Returns applicable license terms, permissions, payment requirements, and XML data for automated systems and AI agents.', 'rsl-licensing'),
+            'label' => __('Get Content License', 'rsl-wp'),
+            'description' => __('Retrieves RSL license information for specific content URL. Returns applicable license terms, permissions, payment requirements, and XML data for automated systems and AI agents.', 'rsl-wp'),
             'input_schema' => array(
                 'type' => 'object',
                 'properties' => array(
@@ -377,8 +377,8 @@ class RSL_Abilities {
         ));
         
         wp_register_ability('rsl-licensing/validate-content', array(
-            'label' => __('Validate Content Licensing', 'rsl-licensing'),
-            'description' => __('Validates whether content usage complies with RSL licensing terms. Checks usage type, user category, and geographic restrictions against license permissions.', 'rsl-licensing'),
+            'label' => __('Validate Content Licensing', 'rsl-wp'),
+            'description' => __('Validates whether content usage complies with RSL licensing terms. Checks usage type, user category, and geographic restrictions against license permissions.', 'rsl-wp'),
             'input_schema' => array(
                 'type' => 'object',
                 'properties' => array(
@@ -434,8 +434,8 @@ class RSL_Abilities {
         ));
         
         wp_register_ability('rsl-licensing/get-license-xml', array(
-            'label' => __('Get License XML', 'rsl-licensing'),
-            'description' => __('Generates RSL 1.0 compliant XML for a specific license. Returns machine-readable licensing data suitable for automated systems, crawlers, and AI agents.', 'rsl-licensing'),
+            'label' => __('Get License XML', 'rsl-wp'),
+            'description' => __('Generates RSL 1.0 compliant XML for a specific license. Returns machine-readable licensing data suitable for automated systems, crawlers, and AI agents.', 'rsl-wp'),
             'input_schema' => array(
                 'type' => 'object',
                 'properties' => array(
@@ -473,8 +473,8 @@ class RSL_Abilities {
     
     private function register_server_abilities() {
         wp_register_ability('rsl-licensing/issue-token', array(
-            'label' => __('Issue License Token', 'rsl-licensing'),
-            'description' => __('Issues authentication tokens for paid RSL licenses via Open Licensing Protocol (OLP). Handles payment verification and creates JWT tokens for authorized content access.', 'rsl-licensing'),
+            'label' => __('Issue License Token', 'rsl-wp'),
+            'description' => __('Issues authentication tokens for paid RSL licenses via Open Licensing Protocol (OLP). Handles payment verification and creates JWT tokens for authorized content access.', 'rsl-wp'),
             'input_schema' => array(
                 'type' => 'object',
                 'properties' => array(
@@ -529,8 +529,8 @@ class RSL_Abilities {
         ));
         
         wp_register_ability('rsl-licensing/introspect-token', array(
-            'label' => __('Introspect License Token', 'rsl-licensing'),
-            'description' => __('Validates and introspects RSL license tokens per RFC 7662. Verifies token authenticity, expiration, and associated permissions for secure content access control.', 'rsl-licensing'),
+            'label' => __('Introspect License Token', 'rsl-wp'),
+            'description' => __('Validates and introspects RSL license tokens per RFC 7662. Verifies token authenticity, expiration, and associated permissions for secure content access control.', 'rsl-wp'),
             'input_schema' => array(
                 'type' => 'object',
                 'properties' => array(
@@ -579,7 +579,7 @@ class RSL_Abilities {
         $license_id = $this->license_handler->create_license($input);
         
         if (!$license_id) {
-            return new \WP_Error('creation_failed', __('Failed to create license', 'rsl-licensing'));
+            return new \WP_Error('creation_failed', __('Failed to create license', 'rsl-wp'));
         }
         
         return array(
@@ -596,7 +596,7 @@ class RSL_Abilities {
         $result = $this->license_handler->update_license($license_id, $input);
         
         if (!$result) {
-            return new \WP_Error('update_failed', __('Failed to update license', 'rsl-licensing'));
+            return new \WP_Error('update_failed', __('Failed to update license', 'rsl-wp'));
         }
         
         return array(
@@ -609,13 +609,13 @@ class RSL_Abilities {
         $license = $this->license_handler->get_license($input['license_id']);
         
         if (!$license) {
-            return new \WP_Error('not_found', __('License not found', 'rsl-licensing'));
+            return new \WP_Error('not_found', __('License not found', 'rsl-wp'));
         }
         
         $result = $this->license_handler->delete_license($input['license_id']);
         
         if (!$result) {
-            return new \WP_Error('deletion_failed', __('Failed to delete license', 'rsl-licensing'));
+            return new \WP_Error('deletion_failed', __('Failed to delete license', 'rsl-wp'));
         }
         
         return array(
@@ -742,7 +742,7 @@ class RSL_Abilities {
         $license = $this->license_handler->get_license($input['license_id']);
         
         if (!$license || !$license['active']) {
-            return new \WP_Error('not_found', __('License not found or inactive', 'rsl-licensing'));
+            return new \WP_Error('not_found', __('License not found or inactive', 'rsl-wp'));
         }
         
         $xml = $this->license_handler->generate_rsl_xml($license);

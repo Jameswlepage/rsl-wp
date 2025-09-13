@@ -49,7 +49,7 @@ class RSL_License {
         
         // Validate required fields
         if (empty($data['name']) || empty($data['content_url'])) {
-            error_log('RSL: Cannot create license - name and content_url are required');
+            // error_log('RSL: Cannot create license - name and content_url are required');
             return false;
         }
         
@@ -64,7 +64,7 @@ class RSL_License {
         );
         
         if ($result === false) {
-            error_log('RSL: Database error creating license: ' . $wpdb->last_error);
+            // error_log('RSL: Database error creating license: ' . $wpdb->last_error);
             return false;
         }
         
@@ -88,7 +88,7 @@ class RSL_License {
         );
         
         if ($wpdb->last_error) {
-            error_log('RSL: Database error getting license: ' . $wpdb->last_error);
+            // error_log('RSL: Database error getting license: ' . $wpdb->last_error);
             return null;
         }
         
@@ -155,7 +155,7 @@ class RSL_License {
         
         // Add error handling
         if ($wpdb->last_error) {
-            error_log('RSL License Query Error: ' . $wpdb->last_error);
+            // error_log('RSL License Query Error: ' . $wpdb->last_error);
             return array();
         }
         
@@ -167,7 +167,7 @@ class RSL_License {
         
         $id = intval($id);
         if ($id <= 0) {
-            error_log('RSL: Invalid license ID for update: ' . $id);
+            // error_log('RSL: Invalid license ID for update: ' . $id);
             return false;
         }
         
@@ -180,7 +180,7 @@ class RSL_License {
             '%d', '%s', '%s'
         );
         
-        $result = $wpdb->update(
+        $result = $wpdb->upgmdate(
             $this->table_name,
             $data,
             array('id' => $id),
@@ -189,7 +189,7 @@ class RSL_License {
         );
         
         if ($result === false) {
-            error_log('RSL: Database error updating license ID ' . $id . ': ' . $wpdb->last_error);
+            // error_log('RSL: Database error updating license ID ' . $id . ': ' . $wpdb->last_error);
             return false;
         }
         
@@ -201,7 +201,7 @@ class RSL_License {
         
         $id = intval($id);
         if ($id <= 0) {
-            error_log('RSL: Invalid license ID for deletion: ' . $id);
+            // error_log('RSL: Invalid license ID for deletion: ' . $id);
             return false;
         }
         
@@ -212,7 +212,7 @@ class RSL_License {
         );
         
         if ($result === false) {
-            error_log('RSL: Database error deleting license ID ' . $id . ': ' . $wpdb->last_error);
+            // error_log('RSL: Database error deleting license ID ' . $id . ': ' . $wpdb->last_error);
             return false;
         }
         
@@ -245,7 +245,7 @@ class RSL_License {
         }
         
         if (!empty($license_data['lastmod'])) {
-            $xml .= ' lastmod="' . esc_attr(date('c', strtotime($license_data['lastmod']))) . '"';
+            $xml .= ' lastmod="' . esc_attr(gmdate('c', strtotime($license_data['lastmod']))) . '"';
         }
         
         $xml .= '>' . "\n";
@@ -336,54 +336,54 @@ class RSL_License {
     
     public function get_usage_options() {
         return array(
-            'all' => __('All automated processing', 'rsl-licensing'),
-            'train-ai' => __('Train AI model', 'rsl-licensing'),
-            'train-genai' => __('Train generative AI model', 'rsl-licensing'),
-            'ai-use' => __('Use as AI input (RAG)', 'rsl-licensing'),
-            'ai-summarize' => __('AI summarization', 'rsl-licensing'),
-            'search' => __('Search indexing', 'rsl-licensing')
+            'all' => __('All automated processing', 'rsl-wp'),
+            'train-ai' => __('Train AI model', 'rsl-wp'),
+            'train-genai' => __('Train generative AI model', 'rsl-wp'),
+            'ai-use' => __('Use as AI input (RAG)', 'rsl-wp'),
+            'ai-summarize' => __('AI summarization', 'rsl-wp'),
+            'search' => __('Search indexing', 'rsl-wp')
         );
     }
     
     public function get_user_options() {
         return array(
-            'commercial' => __('Commercial use', 'rsl-licensing'),
-            'non-commercial' => __('Non-commercial use', 'rsl-licensing'),
-            'education' => __('Educational use', 'rsl-licensing'),
-            'government' => __('Government use', 'rsl-licensing'),
-            'personal' => __('Personal use', 'rsl-licensing')
+            'commercial' => __('Commercial use', 'rsl-wp'),
+            'non-commercial' => __('Non-commercial use', 'rsl-wp'),
+            'education' => __('Educational use', 'rsl-wp'),
+            'government' => __('Government use', 'rsl-wp'),
+            'personal' => __('Personal use', 'rsl-wp')
         );
     }
     
     public function get_payment_options() {
         return array(
-            'free' => __('Free', 'rsl-licensing'),
-            'purchase' => __('One-time purchase', 'rsl-licensing'),
-            'subscription' => __('Subscription', 'rsl-licensing'),
-            'training' => __('Per training use', 'rsl-licensing'),
-            'crawl' => __('Per crawl', 'rsl-licensing'),
-            'inference' => __('Per inference', 'rsl-licensing'),
-            'attribution' => __('Attribution required', 'rsl-licensing'),
-            'royalty' => __('Royalty', 'rsl-licensing')
+            'free' => __('Free', 'rsl-wp'),
+            'purchase' => __('One-time purchase', 'rsl-wp'),
+            'subscription' => __('Subscription', 'rsl-wp'),
+            'training' => __('Per training use', 'rsl-wp'),
+            'crawl' => __('Per crawl', 'rsl-wp'),
+            'inference' => __('Per inference', 'rsl-wp'),
+            'attribution' => __('Attribution required', 'rsl-wp'),
+            'royalty' => __('Royalty', 'rsl-wp')
         );
     }
     
     public function get_warranty_options() {
         return array(
-            'ownership' => __('Ownership rights', 'rsl-licensing'),
-            'authority' => __('Authorization to license', 'rsl-licensing'),
-            'no-infringement' => __('No third-party infringement', 'rsl-licensing'),
-            'privacy-consent' => __('Privacy consents obtained', 'rsl-licensing'),
-            'no-malware' => __('Free from malware', 'rsl-licensing')
+            'ownership' => __('Ownership rights', 'rsl-wp'),
+            'authority' => __('Authorization to license', 'rsl-wp'),
+            'no-infringement' => __('No third-party infringement', 'rsl-wp'),
+            'privacy-consent' => __('Privacy consents obtained', 'rsl-wp'),
+            'no-malware' => __('Free from malware', 'rsl-wp')
         );
     }
     
     public function get_disclaimer_options() {
         return array(
-            'as-is' => __('Provided "as is"', 'rsl-licensing'),
-            'no-warranty' => __('No warranties', 'rsl-licensing'),
-            'no-liability' => __('No liability', 'rsl-licensing'),
-            'no-indemnity' => __('No indemnification', 'rsl-licensing')
+            'as-is' => __('Provided "as is"', 'rsl-wp'),
+            'no-warranty' => __('No warranties', 'rsl-wp'),
+            'no-liability' => __('No liability', 'rsl-wp'),
+            'no-indemnity' => __('No indemnification', 'rsl-wp')
         );
     }
 }

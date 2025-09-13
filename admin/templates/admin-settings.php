@@ -6,9 +6,9 @@ if (!defined('ABSPATH')) {
 
 <div class="wrap">
     <h1 class="wp-heading-inline">
-        <img src="<?php echo RSL_PLUGIN_URL . 'admin/images/rsl-logo.png'; ?>" 
+        <img src="<?php echo esc_url(RSL_PLUGIN_URL . 'admin/images/rsl-logo.png'; ?>" 
              alt="RSL" class="rsl-admin-icon">
-        <?php _e('RSL Licensing Settings', 'rsl-licensing'); ?>
+        <?php esc_html_e('RSL Licensing Settings', 'rsl-wp'); ?>
     </h1>
     <hr class="wp-header-end">
     
@@ -22,7 +22,7 @@ if (!defined('ABSPATH')) {
     
     <?php if (isset($_GET['settings-updated'])) : ?>
         <div class="notice notice-success is-dismissible">
-            <p><?php _e('Settings saved successfully.', 'rsl-licensing'); ?></p>
+            <p><?php esc_html_e('Settings saved successfully.', 'rsl-wp'); ?></p>
         </div>
     <?php endif; ?>
     
@@ -35,11 +35,11 @@ if (!defined('ABSPATH')) {
         <table class="form-table">
             <tr>
                 <th scope="row">
-                    <label for="rsl_global_license_id"><?php _e('Global License', 'rsl-licensing'); ?></label>
+                    <label for="rsl_global_license_id"><?php esc_html_e('Global License', 'rsl-wp'); ?></label>
                 </th>
                 <td>
                     <select name="rsl_global_license_id" id="rsl_global_license_id">
-                        <option value="0"><?php _e('No global license', 'rsl-licensing'); ?></option>
+                        <option value="0"><?php esc_html_e('No global license', 'rsl-wp'); ?></option>
                         <?php foreach ($licenses as $license) : ?>
                             <option value="<?php echo esc_attr($license['id']); ?>" 
                                     <?php selected($global_license_id, $license['id']); ?>>
@@ -48,91 +48,91 @@ if (!defined('ABSPATH')) {
                         <?php endforeach; ?>
                     </select>
                     <p class="description">
-                        <?php _e('Select a license to apply site-wide. Individual posts/pages can override this.', 'rsl-licensing'); ?>
+                        <?php esc_html_e('Select a license to apply site-wide. Individual posts/pages can override this.', 'rsl-wp'); ?>
                     </p>
                 </td>
             </tr>
             
             <tr>
-                <th scope="row"><?php _e('HTML Injection', 'rsl-licensing'); ?></th>
+                <th scope="row"><?php esc_html_e('HTML Injection', 'rsl-wp'); ?></th>
                 <td>
                     <label>
                         <input type="checkbox" name="rsl_enable_html_injection" value="1" 
                                <?php checked(get_option('rsl_enable_html_injection', 1)); ?>>
-                        <?php _e('Enable HTML head injection', 'rsl-licensing'); ?>
+                        <?php esc_html_e('Enable HTML head injection', 'rsl-wp'); ?>
                     </label>
                     <p class="description">
-                        <?php _e('Automatically inject RSL license information into HTML head section.', 'rsl-licensing'); ?>
+                        <?php esc_html_e('Automatically inject RSL license information into HTML head section.', 'rsl-wp'); ?>
                     </p>
                 </td>
             </tr>
             
             <tr>
-                <th scope="row"><?php _e('HTTP Headers', 'rsl-licensing'); ?></th>
+                <th scope="row"><?php esc_html_e('HTTP Headers', 'rsl-wp'); ?></th>
                 <td>
                     <label>
                         <input type="checkbox" name="rsl_enable_http_headers" value="1" 
                                <?php checked(get_option('rsl_enable_http_headers', 1)); ?>>
-                        <?php _e('Enable HTTP Link headers', 'rsl-licensing'); ?>
+                        <?php esc_html_e('Enable HTTP Link headers', 'rsl-wp'); ?>
                     </label>
                     <p class="description">
-                        <?php _e('Add RSL license information to HTTP response headers.', 'rsl-licensing'); ?>
+                        <?php esc_html_e('Add RSL license information to HTTP response headers.', 'rsl-wp'); ?>
                     </p>
                 </td>
             </tr>
             
             <tr>
-                <th scope="row"><?php _e('robots.txt Integration', 'rsl-licensing'); ?></th>
+                <th scope="row"><?php esc_html_e('robots.txt Integration', 'rsl-wp'); ?></th>
                 <td>
                     <label>
                         <input type="checkbox" name="rsl_enable_robots_txt" value="1" 
                                <?php checked(get_option('rsl_enable_robots_txt', 1)); ?>>
-                        <?php _e('Enable robots.txt license directive', 'rsl-licensing'); ?>
+                        <?php esc_html_e('Enable robots.txt license directive', 'rsl-wp'); ?>
                     </label>
                     <p class="description">
-                        <?php _e('Add License directive to robots.txt file.', 'rsl-licensing'); ?>
+                        <?php esc_html_e('Add License directive to robots.txt file.', 'rsl-wp'); ?>
                     </p>
                 </td>
             </tr>
             
             <tr>
-                <th scope="row"><?php _e('RSS Feed Integration', 'rsl-licensing'); ?></th>
+                <th scope="row"><?php esc_html_e('RSS Feed Integration', 'rsl-wp'); ?></th>
                 <td>
                     <label>
                         <input type="checkbox" name="rsl_enable_rss_feed" value="1" 
                                <?php checked(get_option('rsl_enable_rss_feed', 1)); ?>>
-                        <?php _e('Enable RSS feed RSL integration', 'rsl-licensing'); ?>
+                        <?php esc_html_e('Enable RSS feed RSL integration', 'rsl-wp'); ?>
                     </label>
                     <p class="description">
-                        <?php _e('Add RSL licensing information to RSS feeds.', 'rsl-licensing'); ?>
+                        <?php esc_html_e('Add RSL licensing information to RSS feeds.', 'rsl-wp'); ?>
                     </p>
                 </td>
             </tr>
             
             <tr>
-                <th scope="row"><?php _e('Media Metadata', 'rsl-licensing'); ?></th>
+                <th scope="row"><?php esc_html_e('Media Metadata', 'rsl-wp'); ?></th>
                 <td>
                     <label>
                         <input type="checkbox" name="rsl_enable_media_metadata" value="1" 
                                <?php checked(get_option('rsl_enable_media_metadata', 1)); ?>>
-                        <?php _e('Enable media file metadata embedding', 'rsl-licensing'); ?>
+                        <?php esc_html_e('Enable media file metadata embedding', 'rsl-wp'); ?>
                     </label>
                     <p class="description">
-                        <?php _e('Embed RSL license information in uploaded media files.', 'rsl-licensing'); ?>
+                        <?php esc_html_e('Embed RSL license information in uploaded media files.', 'rsl-wp'); ?>
                     </p>
                 </td>
             </tr>
             
             <tr>
                 <th scope="row">
-                    <label for="rsl_default_namespace"><?php _e('RSL Namespace', 'rsl-licensing'); ?></label>
+                    <label for="rsl_default_namespace"><?php esc_html_e('RSL Namespace', 'rsl-wp'); ?></label>
                 </th>
                 <td>
                     <input type="url" name="rsl_default_namespace" id="rsl_default_namespace" 
                            value="<?php echo esc_attr(get_option('rsl_default_namespace', 'https://rslstandard.org/rsl')); ?>" 
                            class="regular-text" />
                     <p class="description">
-                        <?php _e('RSL XML namespace URI. Use default unless you have a custom implementation.', 'rsl-licensing'); ?>
+                        <?php esc_html_e('RSL XML namespace URI. Use default unless you have a custom implementation.', 'rsl-wp'); ?>
                     </p>
                 </td>
             </tr>

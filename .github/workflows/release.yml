@@ -68,8 +68,8 @@ jobs:
         VERSION="${{ steps.version.outputs.version }}"
         
         # Update main plugin file
-        sed -i "s/Version: .*/Version: $VERSION/" rsl-licensing.php
-        sed -i "s/RSL_PLUGIN_VERSION\", \".*\"/RSL_PLUGIN_VERSION\", \"$VERSION\"/" rsl-licensing.php
+        sed -i "s/Version: .*/Version: $VERSION/" rsl-wp.php
+        sed -i "s/RSL_PLUGIN_VERSION\", \".*\"/RSL_PLUGIN_VERSION\", \"$VERSION\"/" rsl-wp.php
         
         echo "Updated plugin version to: $VERSION"
 
@@ -101,7 +101,7 @@ jobs:
           ./ /tmp/rsl-licensing/
         
         # Verify required files are present
-        test -f /tmp/rsl-licensing/rsl-licensing.php || { echo "Main plugin file missing"; exit 1; }
+        test -f /tmp/rsl-licensing/rsl-wp.php || { echo "Main plugin file missing"; exit 1; }
         test -d /tmp/rsl-licensing/includes/ || { echo "Includes directory missing"; exit 1; }
         test -d /tmp/rsl-licensing/vendor/ || { echo "Vendor directory missing"; exit 1; }
         

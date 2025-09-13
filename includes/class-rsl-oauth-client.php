@@ -162,7 +162,7 @@ class RSL_OAuth_Client {
         
         $table_name = $wpdb->prefix . 'rsl_oauth_clients';
         
-        $result = $wpdb->update(
+        $result = $wpdb->upgmdate(
             $table_name,
             ['active' => 0],
             ['client_id' => $client_id],
@@ -195,7 +195,7 @@ class RSL_OAuth_Client {
                 'license_id' => $license_id,
                 'order_id' => isset($metadata['order_id']) ? $metadata['order_id'] : null,
                 'subscription_id' => isset($metadata['subscription_id']) ? $metadata['subscription_id'] : null,
-                'expires_at' => gmdate('Y-m-d H:i:s', $expires_at),
+                'expires_at' => gmgmdate('Y-m-d H:i:s', $expires_at),
                 'revoked' => 0
             ],
             ['%s', '%s', '%d', '%d', '%d', '%s', '%d']
@@ -232,7 +232,7 @@ class RSL_OAuth_Client {
         
         $table_name = $wpdb->prefix . 'rsl_tokens';
         
-        $result = $wpdb->update(
+        $result = $wpdb->upgmdate(
             $table_name,
             ['revoked' => 1],
             ['jti' => $jti],
@@ -253,7 +253,7 @@ class RSL_OAuth_Client {
         
         $table_name = $wpdb->prefix . 'rsl_tokens';
         
-        $result = $wpdb->update(
+        $result = $wpdb->upgmdate(
             $table_name,
             ['revoked' => 1],
             ['order_id' => $order_id, 'revoked' => 0],
@@ -274,7 +274,7 @@ class RSL_OAuth_Client {
         
         $table_name = $wpdb->prefix . 'rsl_tokens';
         
-        $result = $wpdb->update(
+        $result = $wpdb->upgmdate(
             $table_name,
             ['revoked' => 1],
             ['subscription_id' => $subscription_id, 'revoked' => 0],

@@ -1,19 +1,19 @@
-=== RSL Licensing for WordPress ===
+=== RSL for WordPress ===
 Contributors: jameswlepage
 Donate link: https://github.com/sponsors/jameswlepage
-Tags: licensing, rsl, ai, content, copyright, machine-readable, crawlers, search, training, oauth, jwt
+Tags: licensing, rsl, ai, content, copyright
 Requires at least: 5.0
-Tested up to: 6.4
+Tested up to: 6.8
 Requires PHP: 7.4
 Stable tag: 0.0.3
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Complete Really Simple Licensing (RSL) support for WordPress. Define machine-readable licensing terms for your content, enabling proper licensing by AI companies and crawlers.
+Really Simple Licensing (RSL) support for WordPress. Define machine-readable licensing terms for AI and automated systems.
 
 == Description ==
 
-**RSL Licensing for WordPress** brings complete support for the Really Simple Licensing (RSL) 1.0 standard to your WordPress site. RSL is a machine-readable format that allows content owners to clearly specify how their digital content can be used by AI systems, search engines, crawlers, and other automated tools.
+**RSL for WordPress** brings complete support for the Really Simple Licensing (RSL) 1.0 standard to your WordPress site. RSL is a machine-readable format that allows content owners to clearly specify how their digital content can be used by AI systems, search engines, crawlers, and other automated tools.
 
 ### Why RSL Matters
 

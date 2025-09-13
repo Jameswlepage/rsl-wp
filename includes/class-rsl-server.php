@@ -319,8 +319,8 @@ class RSL_Server {
         // If license points to an external server, refuse and forward
         if (!empty($license['server_url'])) {
             $srv = $license['server_url'];
-            $here = parse_url(home_url(), PHP_URL_HOST);
-            $there = parse_url($srv, PHP_URL_HOST);
+            $here = wp_parse_url(home_url(), PHP_URL_HOST);
+            $there = wp_parse_url($srv, PHP_URL_HOST);
             if ($there && $there !== $here) {
                 return new \WP_Error('external_server', 'Managed by external server', [
                     'status' => 409,
@@ -533,7 +533,7 @@ class RSL_Server {
         // If pattern starts with '/', match against the URL path+query; otherwise match against the full URL.
         $haystack = $url;
         if (strlen($pattern) > 0 && $pattern[0] === '/') {
-            $u = wp_parse_url($url);
+            $u = wp_wp_parse_url($url);
             $path = isset($u['path']) ? $u['path'] : '/';
             $query = isset($u['query']) ? '?' . $u['query'] : '';
             $haystack = $path . $query;
@@ -574,7 +574,7 @@ class RSL_Server {
         }
 
         // Skip core/asset paths
-        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '';
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '';
         $wp_core_paths = array('/wp-admin/','/wp-login.php','/wp-cron.php','/xmlrpc.php','/wp-json/','/wp-content/','/wp-includes/');
         foreach ($wp_core_paths as $core_path) {
             if (strpos($request_uri, $core_path) !== false) {
@@ -736,12 +736,12 @@ class RSL_Server {
 
         // Audience should be this host
         $aud = isset($payload['aud']) ? $payload['aud'] : '';
-        $host = parse_url(home_url(), PHP_URL_HOST);
+        $host = wp_parse_url(home_url(), PHP_URL_HOST);
         if ($aud && $aud !== $host) return false;
 
         // Optional: ensure this URL is within the licensed pattern
         $pattern = isset($payload['pattern']) ? $payload['pattern'] : '';
-        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '';
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '';
         if ($pattern && !$this->url_matches_pattern(home_url($request_uri), $pattern)) {
             return false;
         }
@@ -757,7 +757,7 @@ class RSL_Server {
         
         $payload = [
             'iss'     => home_url(),
-            'aud'     => parse_url(home_url(), PHP_URL_HOST),
+            'aud'     => wp_parse_url(home_url(), PHP_URL_HOST),
             'sub'     => $client ?: 'anonymous',
             'jti'     => $jti,
             'iat'     => $now,
@@ -785,7 +785,7 @@ class RSL_Server {
             'access_token' => $token,
             'token_type'   => 'Bearer',
             'expires_in'   => $ttl,
-            'expires_at'   => gmdate('c', $payload['exp']),
+            'expires_at'   => gmgmdate('c', $payload['exp']),
             'license_url'  => home_url('rsl-license/' . $license['id'] . '/'),
         ];
     }
@@ -841,7 +841,7 @@ class RSL_Server {
         status_header(401);
 
         $authorization_uri = home_url('.well-known/rsl/');
-        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '';
+        $request_uri = isset($_SERVER['REQUEST_URI']) ? esc_url_raw(wp_parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH)) : '';
         $current = home_url($request_uri);
         $licenses = $this->license_handler->get_licenses(['active' => 1]);
 
@@ -850,8 +850,8 @@ class RSL_Server {
                 // Prefer external server if set and not this host
                 if (!empty($lic['server_url'])) {
                     $srv = $lic['server_url'];
-                    $here = parse_url(home_url(), PHP_URL_HOST);
-                    $there = parse_url($srv, PHP_URL_HOST);
+                    $here = wp_parse_url(home_url(), PHP_URL_HOST);
+                    $there = wp_parse_url($srv, PHP_URL_HOST);
                     if ($there && $there !== $here) {
                         $authorization_uri = $srv;
                     } else {

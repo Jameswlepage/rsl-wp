@@ -37,10 +37,10 @@ class RSL_Admin {
     public function add_admin_menu() {
         // Add main menu page with RSL icon - this will be the dashboard
         add_menu_page(
-            __('RSL Licensing', 'rsl-licensing'),
-            __('RSL Licensing', 'rsl-licensing'),
+            __('RSL Licensing', 'rsl-wp'),
+            __('RSL Licensing', 'rsl-wp'),
             'manage_options',
-            'rsl-licensing',
+            'rsl-wp',
             array($this, 'admin_page'),
             $this->get_menu_icon(),
             30 // Position after Settings
@@ -48,36 +48,36 @@ class RSL_Admin {
         
         // Add submenu pages under RSL Licensing (first submenu will be the same as parent)
         add_submenu_page(
-            'rsl-licensing',
-            __('Dashboard', 'rsl-licensing'),
-            __('Dashboard', 'rsl-licensing'),
+            'rsl-wp',
+            __('Dashboard', 'rsl-wp'),
+            __('Dashboard', 'rsl-wp'),
             'manage_options',
-            'rsl-licensing', // Same as parent to avoid duplication
+            'rsl-wp', // Same as parent to avoid duplication
             array($this, 'admin_page')
         );
         
         add_submenu_page(
-            'rsl-licensing',
-            __('All Licenses', 'rsl-licensing'),
-            __('All Licenses', 'rsl-licensing'),
+            'rsl-wp',
+            __('All Licenses', 'rsl-wp'),
+            __('All Licenses', 'rsl-wp'),
             'manage_options',
             'rsl-licenses',
             array($this, 'licenses_page')
         );
         
         add_submenu_page(
-            'rsl-licensing',
-            __('Add New License', 'rsl-licensing'),
-            __('Add New License', 'rsl-licensing'),
+            'rsl-wp',
+            __('Add New License', 'rsl-wp'),
+            __('Add New License', 'rsl-wp'),
             'manage_options',
             'rsl-add-license',
             array($this, 'add_license_page')
         );
         
         add_submenu_page(
-            'rsl-licensing',
-            __('Settings', 'rsl-licensing'),
-            __('Settings', 'rsl-licensing'),
+            'rsl-wp',
+            __('Settings', 'rsl-wp'),
+            __('Settings', 'rsl-wp'),
             'manage_options',
             'rsl-settings',
             array($this, 'settings_page')
@@ -131,15 +131,15 @@ class RSL_Admin {
                 'woocommerce_subscriptions_active' => ($wc_processor && in_array('subscription', $wc_processor->get_supported_payment_types())),
                 'has_payment_capability' => $has_payment_capability,
                 'strings' => array(
-                    'saving' => __('Saving...', 'rsl-licensing'),
-                    'error_occurred' => __('An error occurred while saving the license.', 'rsl-licensing'),
-                    'error_generating_xml' => __('Error generating XML', 'rsl-licensing'),
-                    'delete_confirm' => __('Are you sure you want to delete the license "%s"? This action cannot be undone.', 'rsl-licensing'),
-                    'error_deleting' => __('Error deleting license', 'rsl-licensing'),
-                    'xml_copied' => __('XML copied to clipboard!', 'rsl-licensing'),
-                    'copy_failed' => __('Failed to copy to clipboard. Please select and copy manually.', 'rsl-licensing'),
-                    'validate_url' => __('Please enter a valid URL', 'rsl-licensing'),
-                    'validate_email' => __('Please enter a valid email address', 'rsl-licensing')
+                    'saving' => __('Saving...', 'rsl-wp'),
+                    'error_occurred' => __('An error occurred while saving the license.', 'rsl-wp'),
+                    'error_generating_xml' => __('Error generating XML', 'rsl-wp'),
+                    'delete_confirm' => __('Are you sure you want to delete the license "%s"? This action cannot be undone.', 'rsl-wp'),
+                    'error_deleting' => __('Error deleting license', 'rsl-wp'),
+                    'xml_copied' => __('XML copied to clipboard!', 'rsl-wp'),
+                    'copy_failed' => __('Failed to copy to clipboard. Please select and copy manually.', 'rsl-wp'),
+                    'validate_url' => __('Please enter a valid URL', 'rsl-wp'),
+                    'validate_email' => __('Please enter a valid email address', 'rsl-wp')
                 )
             ));
         }
@@ -192,13 +192,13 @@ class RSL_Admin {
         check_ajax_referer('rsl_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permission denied', 'rsl-licensing'));
+            wp_die(__('Permission denied', 'rsl-wp'));
         }
         
         // Validate required fields
         if (empty($_POST['name']) || empty($_POST['content_url'])) {
             wp_send_json_error(array(
-                'message' => __('Name and Content URL are required fields.', 'rsl-licensing')
+                'message' => __('Name and Content URL are required fields.', 'rsl-wp')
             ));
             return;
         }
@@ -215,18 +215,18 @@ class RSL_Admin {
         if ($looks_absolute) {
             $content_url = esc_url_raw($content_url_input);
             if (empty($content_url)) {
-                wp_send_json_error(['message' => __('Invalid Content URL format.', 'rsl-licensing')]);
+                wp_send_json_error(['message' => __('Invalid Content URL format.', 'rsl-wp')]);
                 return;
             }
         } elseif ($looks_server_relative) {
             // Basic character allowlist per robots-style patterns; allow RFC3986 pchar + '*' and '$'
             if (!preg_match('#^/[A-Za-z0-9._~!\'()*+,;=:@/\-%]*\*?\$?$#', $content_url_input)) {
-                wp_send_json_error(['message' => __('Invalid server-relative path/pattern.', 'rsl-licensing')]);
+                wp_send_json_error(['message' => __('Invalid server-relative path/pattern.', 'rsl-wp')]);
                 return;
             }
             $content_url = $content_url_input; // store as provided (e.g., "/images/*")
         } else {
-            wp_send_json_error(['message' => __('Content URL must be an absolute URL (http/https) or a server-relative path (starting with "/").', 'rsl-licensing')]);
+            wp_send_json_error(['message' => __('Content URL must be an absolute URL (http/https) or a server-relative path (starting with "/").', 'rsl-wp')]);
             return;
         }
         // --- END: RSL-safe URL/path validation ---
@@ -234,7 +234,7 @@ class RSL_Admin {
         $server_url = esc_url_raw($_POST['server_url']);
         if (!empty($server_url) && !filter_var($server_url, FILTER_VALIDATE_URL)) {
             wp_send_json_error(array(
-                'message' => __('Invalid Server URL format.', 'rsl-licensing')
+                'message' => __('Invalid Server URL format.', 'rsl-wp')
             ));
             return;
         }
@@ -243,7 +243,7 @@ class RSL_Admin {
         $amount = floatval($_POST['amount']);
         if ($amount < 0 || $amount > 999999.99) {
             wp_send_json_error(array(
-                'message' => __('Amount must be between 0 and 999,999.99.', 'rsl-licensing')
+                'message' => __('Amount must be between 0 and 999,999.99.', 'rsl-wp')
             ));
             return;
         }
@@ -252,7 +252,7 @@ class RSL_Admin {
         $currency = strtoupper(sanitize_text_field($_POST['currency']));
         if (!empty($currency) && !preg_match('/^[A-Z]{3}$/', $currency)) {
             wp_send_json_error(array(
-                'message' => __('Currency must be a valid 3-letter ISO code (e.g., USD, EUR).', 'rsl-licensing')
+                'message' => __('Currency must be a valid 3-letter ISO code (e.g., USD, EUR).', 'rsl-wp')
             ));
             return;
         }
@@ -270,22 +270,22 @@ class RSL_Admin {
                 $wc_processor = $this->payment_registry->get_processor('woocommerce');
                 
                 if (!$wc_processor) {
-                    $message = __('WooCommerce is required for paid licensing (amount > $0). ', 'rsl-licensing');
+                    $message = __('WooCommerce is required for paid licensing (amount > $0). ', 'rsl-wp');
                     
                     if ($payment_type === 'attribution') {
-                        $message .= __('For paid attribution licenses, please install and activate WooCommerce, then set up your preferred payment gateway (Stripe, PayPal, etc.).', 'rsl-licensing');
+                        $message .= __('For paid attribution licenses, please install and activate WooCommerce, then set up your preferred payment gateway (Stripe, PayPal, etc.).', 'rsl-wp');
                     } else {
-                        $message .= __('Please install and activate WooCommerce to enable payment processing.', 'rsl-licensing');
+                        $message .= __('Please install and activate WooCommerce to enable payment processing.', 'rsl-wp');
                     }
                 } else {
                     $message = sprintf(
-                        __('The %s payment method is not supported. WooCommerce supports %s payment types. ', 'rsl-licensing'),
+                        __('The %s payment method is not supported. WooCommerce supports %s payment types. ', 'rsl-wp'),
                         $payment_type,
                         implode(', ', $wc_processor->get_supported_payment_types())
                     );
                     
                     if ($payment_type === 'attribution') {
-                        $message .= __('For attribution licenses, set the amount to $0 or use "purchase" payment type.', 'rsl-licensing');
+                        $message .= __('For attribution licenses, set the amount to $0 or use "purchase" payment type.', 'rsl-wp');
                     }
                 }
                 
@@ -300,7 +300,7 @@ class RSL_Admin {
         $contact_email = sanitize_email($_POST['contact_email']);
         if (!empty($contact_email) && !is_email($contact_email)) {
             wp_send_json_error(array(
-                'message' => __('Invalid email address format.', 'rsl-licensing')
+                'message' => __('Invalid email address format.', 'rsl-wp')
             ));
             return;
         }
@@ -351,12 +351,12 @@ class RSL_Admin {
         
         if ($result) {
             wp_send_json_success(array(
-                'message' => __('License saved successfully', 'rsl-licensing'),
+                'message' => __('License saved successfully', 'rsl-wp'),
                 'license_id' => $license_id
             ));
         } else {
             wp_send_json_error(array(
-                'message' => __('Failed to save license', 'rsl-licensing')
+                'message' => __('Failed to save license', 'rsl-wp')
             ));
         }
     }
@@ -365,18 +365,18 @@ class RSL_Admin {
         check_ajax_referer('rsl_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permission denied', 'rsl-licensing'));
+            wp_die(__('Permission denied', 'rsl-wp'));
         }
         
         $license_id = intval($_POST['license_id']);
         
         if ($this->license_handler->delete_license($license_id)) {
             wp_send_json_success(array(
-                'message' => __('License deleted successfully', 'rsl-licensing')
+                'message' => __('License deleted successfully', 'rsl-wp')
             ));
         } else {
             wp_send_json_error(array(
-                'message' => __('Failed to delete license', 'rsl-licensing')
+                'message' => __('Failed to delete license', 'rsl-wp')
             ));
         }
     }
@@ -385,7 +385,7 @@ class RSL_Admin {
         check_ajax_referer('rsl_nonce', 'nonce');
         
         if (!current_user_can('manage_options')) {
-            wp_die(__('Permission denied', 'rsl-licensing'));
+            wp_die(__('Permission denied', 'rsl-wp'));
         }
         
         $license_id = intval($_POST['license_id']);
@@ -398,7 +398,7 @@ class RSL_Admin {
             ));
         } else {
             wp_send_json_error(array(
-                'message' => __('License not found', 'rsl-licensing')
+                'message' => __('License not found', 'rsl-wp')
             ));
         }
     }
@@ -418,7 +418,7 @@ class RSL_Admin {
         foreach ($post_types as $post_type) {
             add_meta_box(
                 'rsl_license_meta',
-                __('RSL License', 'rsl-licensing'),
+                __('RSL License', 'rsl-wp'),
                 array($this, 'meta_box_callback'),
                 $post_type,
                 'side',
@@ -440,15 +440,15 @@ class RSL_Admin {
             $global_license = $this->license_handler->get_license($global_license_id);
             if ($global_license) {
                 echo '<div style="background: #f0f6fc; border: 1px solid #c3c4c7; padding: 8px; margin-bottom: 12px; border-radius: 4px;">';
-                echo '<strong>' . __('Global License Active:', 'rsl-licensing') . '</strong><br>';
+                echo '<strong>' . esc_html(__('Global License Active:', 'rsl-wp')) . '</strong><br>';
                 echo '<small>' . esc_html($global_license['name']) . ' (' . esc_html($global_license['payment_type']) . ')</small>';
                 echo '</div>';
             }
         }
         
-        echo '<p><label for="rsl_license_select">' . __('License Override:', 'rsl-licensing') . '</label></p>';
+        echo '<p><label for="rsl_license_select">' . esc_html(__('License Override:', 'rsl-wp')) . '</label></p>';
         echo '<select id="rsl_license_select" name="rsl_license_id" style="width: 100%;">';
-        echo '<option value="">' . __('Use Global License', 'rsl-licensing') . '</option>';
+        echo '<option value="">' . esc_html(__('Use Global License', 'rsl-wp')) . '</option>';
         
         foreach ($licenses as $license) {
             $selected = selected($selected_license, $license['id'], false);
@@ -458,16 +458,16 @@ class RSL_Admin {
         }
         
         echo '</select>';
-        echo '<p><small>' . __('Select a specific license to override the global license for this content.', 'rsl-licensing') . '</small></p>';
+        echo '<p><small>' . esc_html(__('Select a specific license to override the global license for this content.', 'rsl-wp')) . '</small></p>';
         
         echo '<p style="margin-top: 15px;"><label for="rsl_override_url">';
-        echo __('Override Content URL:', 'rsl-licensing');
+        echo esc_html(__('Override Content URL:', 'rsl-wp'));
         echo '</label></p>';
         echo '<input type="url" id="rsl_override_url" name="rsl_override_content_url" ';
         echo 'value="' . esc_attr($override_content_url) . '" style="width: 100%;" ';
-        echo 'placeholder="' . __('Leave empty to use post URL', 'rsl-licensing') . '">';
+        echo 'placeholder="' . esc_attr(__('Leave empty to use post URL', 'rsl-wp')) . '">';
         
-        echo '<p><small>' . __('Override the content URL for this specific post/page. Useful for syndicated content.', 'rsl-licensing') . '</small></p>';
+        echo '<p><small>' . esc_html(__('Override the content URL for this specific post/page. Useful for syndicated content.', 'rsl-wp')) . '</small></p>';
     }
     
     public function save_post_meta($post_id) {
@@ -527,7 +527,7 @@ class RSL_Admin {
             if (!$license || !$license['active']) {
                 // Invalid license, remove it
                 delete_post_meta($post_id, '_rsl_license_id');
-                error_log('RSL: Removed invalid license ID ' . $license_id . ' from post ' . $post_id);
+                // error_log('RSL: Removed invalid license ID ' . $license_id . ' from post ' . $post_id);
             }
         }
         
@@ -535,7 +535,7 @@ class RSL_Admin {
         $override_url = get_post_meta($post_id, '_rsl_override_content_url', true);
         if (!empty($override_url) && !filter_var($override_url, FILTER_VALIDATE_URL)) {
             delete_post_meta($post_id, '_rsl_override_content_url');
-            error_log('RSL: Removed invalid override URL from post ' . $post_id);
+            // error_log('RSL: Removed invalid override URL from post ' . $post_id);
         }
     }
     
@@ -617,36 +617,36 @@ class RSL_Admin {
         
         $screen->add_help_tab(array(
             'id' => 'rsl-overview',
-            'title' => __('RSL Overview', 'rsl-licensing'),
-            'content' => '<h3>' . __('Really Simple Licensing (RSL)', 'rsl-licensing') . '</h3>
-                <p>' . __('RSL enables you to define machine-readable licensing terms for your content. This helps AI companies, search engines, and other automated systems understand how they can use your content.', 'rsl-licensing') . '</p>
-                <h4>' . __('Integration Methods', 'rsl-licensing') . '</h4>
+            'title' => __('RSL Overview', 'rsl-wp'),
+            'content' => '<h3>' . __('Really Simple Licensing (RSL)', 'rsl-wp') . '</h3>
+                <p>' . __('RSL enables you to define machine-readable licensing terms for your content. This helps AI companies, search engines, and other automated systems understand how they can use your content.', 'rsl-wp') . '</p>
+                <h4>' . __('Integration Methods', 'rsl-wp') . '</h4>
                 <ul>
-                    <li><strong>' . __('HTML Head Injection', 'rsl-licensing') . '</strong>: ' . __('Embed licenses in page headers', 'rsl-licensing') . '</li>
-                    <li><strong>' . __('HTTP Headers', 'rsl-licensing') . '</strong>: ' . __('Add Link headers to responses', 'rsl-licensing') . '</li>
-                    <li><strong>' . __('robots.txt Integration', 'rsl-licensing') . '</strong>: ' . __('Extend robots.txt with RSL directives', 'rsl-licensing') . '</li>
-                    <li><strong>' . __('RSS Enhancement', 'rsl-licensing') . '</strong>: ' . __('Add licensing to feed items', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('HTML Head Injection', 'rsl-wp') . '</strong>: ' . __('Embed licenses in page headers', 'rsl-wp') . '</li>
+                    <li><strong>' . __('HTTP Headers', 'rsl-wp') . '</strong>: ' . __('Add Link headers to responses', 'rsl-wp') . '</li>
+                    <li><strong>' . __('robots.txt Integration', 'rsl-wp') . '</strong>: ' . __('Extend robots.txt with RSL directives', 'rsl-wp') . '</li>
+                    <li><strong>' . __('RSS Enhancement', 'rsl-wp') . '</strong>: ' . __('Add licensing to feed items', 'rsl-wp') . '</li>
                 </ul>'
         ));
         
         $screen->add_help_tab(array(
             'id' => 'rsl-quick-start',
-            'title' => __('Quick Start', 'rsl-licensing'),
-            'content' => '<h3>' . __('Getting Started', 'rsl-licensing') . '</h3>
+            'title' => __('Quick Start', 'rsl-wp'),
+            'content' => '<h3>' . __('Getting Started', 'rsl-wp') . '</h3>
                 <ol>
-                    <li>' . __('Create your first license using "Add New License"', 'rsl-licensing') . '</li>
-                    <li>' . __('Configure license terms and permissions', 'rsl-licensing') . '</li>
-                    <li>' . __('Set it as your global license', 'rsl-licensing') . '</li>
-                    <li>' . __('Enable integration methods (HTML, robots.txt, etc.)', 'rsl-licensing') . '</li>
-                    <li>' . __('Save settings', 'rsl-licensing') . '</li>
+                    <li>' . __('Create your first license using "Add New License"', 'rsl-wp') . '</li>
+                    <li>' . __('Configure license terms and permissions', 'rsl-wp') . '</li>
+                    <li>' . __('Set it as your global license', 'rsl-wp') . '</li>
+                    <li>' . __('Enable integration methods (HTML, robots.txt, etc.)', 'rsl-wp') . '</li>
+                    <li>' . __('Save settings', 'rsl-wp') . '</li>
                 </ol>
-                <p>' . __('Your site will now broadcast machine-readable licensing terms!', 'rsl-licensing') . '</p>'
+                <p>' . __('Your site will now broadcast machine-readable licensing terms!', 'rsl-wp') . '</p>'
         ));
         
         $screen->set_help_sidebar(
-            '<p><strong>' . __('RSL Resources', 'rsl-licensing') . '</strong></p>
-            <p><a href="https://rslstandard.org" target="_blank">' . __('RSL Standard Documentation', 'rsl-licensing') . '</a></p>
-            <p><a href="https://github.com/jameswlepage/rsl-wp" target="_blank">' . __('Plugin Documentation', 'rsl-licensing') . '</a></p>'
+            '<p><strong>' . __('RSL Resources', 'rsl-wp') . '</strong></p>
+            <p><a href="https://rslstandard.org" target="_blank">' . __('RSL Standard Documentation', 'rsl-wp') . '</a></p>
+            <p><a href="https://github.com/jameswlepage/rsl-wp" target="_blank">' . __('Plugin Documentation', 'rsl-wp') . '</a></p>'
         );
     }
     
@@ -655,31 +655,31 @@ class RSL_Admin {
         
         $screen->add_help_tab(array(
             'id' => 'rsl-license-management',
-            'title' => __('License Management', 'rsl-licensing'),
-            'content' => '<h3>' . __('Managing Your Licenses', 'rsl-licensing') . '</h3>
-                <p>' . __('This page shows all your RSL licenses. You can create multiple licenses for different content areas or use cases.', 'rsl-licensing') . '</p>
-                <h4>' . __('License Actions', 'rsl-licensing') . '</h4>
+            'title' => __('License Management', 'rsl-wp'),
+            'content' => '<h3>' . __('Managing Your Licenses', 'rsl-wp') . '</h3>
+                <p>' . __('This page shows all your RSL licenses. You can create multiple licenses for different content areas or use cases.', 'rsl-wp') . '</p>
+                <h4>' . __('License Actions', 'rsl-wp') . '</h4>
                 <ul>
-                    <li><strong>' . __('Edit', 'rsl-licensing') . '</strong>: ' . __('Modify license terms and settings', 'rsl-licensing') . '</li>
-                    <li><strong>' . __('Generate XML', 'rsl-licensing') . '</strong>: ' . __('Download the RSL XML for this license', 'rsl-licensing') . '</li>
-                    <li><strong>' . __('Delete', 'rsl-licensing') . '</strong>: ' . __('Remove the license permanently', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('Edit', 'rsl-wp') . '</strong>: ' . __('Modify license terms and settings', 'rsl-wp') . '</li>
+                    <li><strong>' . __('Generate XML', 'rsl-wp') . '</strong>: ' . __('Download the RSL XML for this license', 'rsl-wp') . '</li>
+                    <li><strong>' . __('Delete', 'rsl-wp') . '</strong>: ' . __('Remove the license permanently', 'rsl-wp') . '</li>
                 </ul>'
         ));
         
         $screen->add_help_tab(array(
             'id' => 'rsl-payment-types',
-            'title' => __('Payment Types', 'rsl-licensing'),
-            'content' => '<h3>' . __('Understanding Payment Types', 'rsl-licensing') . '</h3>
+            'title' => __('Payment Types', 'rsl-wp'),
+            'content' => '<h3>' . __('Understanding Payment Types', 'rsl-wp') . '</h3>
                 <ul>
-                    <li><strong>' . __('Free', 'rsl-licensing') . '</strong>: ' . __('No payment required', 'rsl-licensing') . '</li>
-                    <li><strong>' . __('Purchase', 'rsl-licensing') . '</strong>: ' . __('One-time payment', 'rsl-licensing') . '</li>
-                    <li><strong>' . __('Subscription', 'rsl-licensing') . '</strong>: ' . __('Recurring payments (requires WooCommerce Subscriptions)', 'rsl-licensing') . '</li>
-                    <li><strong>' . __('Attribution', 'rsl-licensing') . '</strong>: ' . __('Credit/attribution required (can be free or paid)', 'rsl-licensing') . '</li>
-                    <li><strong>' . __('Training', 'rsl-licensing') . '</strong>: ' . __('AI training-specific licensing', 'rsl-licensing') . '</li>
-                    <li><strong>' . __('Crawl', 'rsl-licensing') . '</strong>: ' . __('Web crawling permissions', 'rsl-licensing') . '</li>
-                    <li><strong>' . __('Inference', 'rsl-licensing') . '</strong>: ' . __('AI inference usage rights', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('Free', 'rsl-wp') . '</strong>: ' . __('No payment required', 'rsl-wp') . '</li>
+                    <li><strong>' . __('Purchase', 'rsl-wp') . '</strong>: ' . __('One-time payment', 'rsl-wp') . '</li>
+                    <li><strong>' . __('Subscription', 'rsl-wp') . '</strong>: ' . __('Recurring payments (requires WooCommerce Subscriptions)', 'rsl-wp') . '</li>
+                    <li><strong>' . __('Attribution', 'rsl-wp') . '</strong>: ' . __('Credit/attribution required (can be free or paid)', 'rsl-wp') . '</li>
+                    <li><strong>' . __('Training', 'rsl-wp') . '</strong>: ' . __('AI training-specific licensing', 'rsl-wp') . '</li>
+                    <li><strong>' . __('Crawl', 'rsl-wp') . '</strong>: ' . __('Web crawling permissions', 'rsl-wp') . '</li>
+                    <li><strong>' . __('Inference', 'rsl-wp') . '</strong>: ' . __('AI inference usage rights', 'rsl-wp') . '</li>
                 </ul>
-                <p><em>' . __('Note: Set amount to $0 for free licenses of any type. Amounts > $0 require WooCommerce for payment processing.', 'rsl-licensing') . '</em></p>'
+                <p><em>' . __('Note: Set amount to $0 for free licenses of any type. Amounts > $0 require WooCommerce for payment processing.', 'rsl-wp') . '</em></p>'
         ));
     }
     
@@ -688,43 +688,43 @@ class RSL_Admin {
         
         $screen->add_help_tab(array(
             'id' => 'rsl-license-creation',
-            'title' => __('Creating Licenses', 'rsl-licensing'),
-            'content' => '<h3>' . __('License Creation Guide', 'rsl-licensing') . '</h3>
-                <h4>' . __('Required Fields', 'rsl-licensing') . '</h4>
+            'title' => __('Creating Licenses', 'rsl-wp'),
+            'content' => '<h3>' . __('License Creation Guide', 'rsl-wp') . '</h3>
+                <h4>' . __('Required Fields', 'rsl-wp') . '</h4>
                 <ul>
-                    <li><strong>' . __('Name', 'rsl-licensing') . '</strong>: ' . __('Descriptive name for this license', 'rsl-licensing') . '</li>
-                    <li><strong>' . __('Content URL', 'rsl-licensing') . '</strong>: ' . __('URL pattern this license covers (e.g., "/", "/blog/*", "*.pdf")', 'rsl-licensing') . '</li>
+                    <li><strong>' . __('Name', 'rsl-wp') . '</strong>: ' . __('Descriptive name for this license', 'rsl-wp') . '</li>
+                    <li><strong>' . __('Content URL', 'rsl-wp') . '</strong>: ' . __('URL pattern this license covers (e.g., "/", "/blog/*", "*.pdf")', 'rsl-wp') . '</li>
                 </ul>
-                <h4>' . __('URL Patterns', 'rsl-licensing') . '</h4>
+                <h4>' . __('URL Patterns', 'rsl-wp') . '</h4>
                 <ul>
-                    <li><code>/</code> - ' . __('Entire site', 'rsl-licensing') . '</li>
-                    <li><code>/blog/*</code> - ' . __('Blog directory and subdirectories', 'rsl-licensing') . '</li>
-                    <li><code>*.pdf</code> - ' . __('All PDF files', 'rsl-licensing') . '</li>
-                    <li><code>/api/*$</code> - ' . __('API endpoints (end anchor)', 'rsl-licensing') . '</li>
+                    <li><code>/</code> - ' . __('Entire site', 'rsl-wp') . '</li>
+                    <li><code>/blog/*</code> - ' . __('Blog directory and subdirectories', 'rsl-wp') . '</li>
+                    <li><code>*.pdf</code> - ' . __('All PDF files', 'rsl-wp') . '</li>
+                    <li><code>/api/*$</code> - ' . __('API endpoints (end anchor)', 'rsl-wp') . '</li>
                 </ul>'
         ));
         
         $screen->add_help_tab(array(
             'id' => 'rsl-woocommerce-setup',
-            'title' => __('WooCommerce Setup', 'rsl-licensing'),
-            'content' => '<h3>' . __('Setting Up Paid Licensing', 'rsl-licensing') . '</h3>
-                <p>' . __('For paid licensing (amount > $0), you need WooCommerce installed and configured.', 'rsl-licensing') . '</p>
-                <h4>' . __('Setup Steps', 'rsl-licensing') . '</h4>
+            'title' => __('WooCommerce Setup', 'rsl-wp'),
+            'content' => '<h3>' . __('Setting Up Paid Licensing', 'rsl-wp') . '</h3>
+                <p>' . __('For paid licensing (amount > $0), you need WooCommerce installed and configured.', 'rsl-wp') . '</p>
+                <h4>' . __('Setup Steps', 'rsl-wp') . '</h4>
                 <ol>
-                    <li>' . __('Install and activate WooCommerce plugin', 'rsl-licensing') . '</li>
-                    <li>' . __('Complete WooCommerce setup wizard', 'rsl-licensing') . '</li>
-                    <li>' . __('Configure payment gateways (Stripe, PayPal, etc.)', 'rsl-licensing') . '</li>
-                    <li>' . __('Create paid license with amount > $0', 'rsl-licensing') . '</li>
-                    <li>' . __('Set Server URL to built-in server option', 'rsl-licensing') . '</li>
+                    <li>' . __('Install and activate WooCommerce plugin', 'rsl-wp') . '</li>
+                    <li>' . __('Complete WooCommerce setup wizard', 'rsl-wp') . '</li>
+                    <li>' . __('Configure payment gateways (Stripe, PayPal, etc.)', 'rsl-wp') . '</li>
+                    <li>' . __('Create paid license with amount > $0', 'rsl-wp') . '</li>
+                    <li>' . __('Set Server URL to built-in server option', 'rsl-wp') . '</li>
                 </ol>
-                <p>' . __('The plugin will automatically create hidden WooCommerce products for your licenses and handle the complete payment-to-token flow.', 'rsl-licensing') . '</p>'
+                <p>' . __('The plugin will automatically create hidden WooCommerce products for your licenses and handle the complete payment-to-token flow.', 'rsl-wp') . '</p>'
         ));
         
         $screen->set_help_sidebar(
-            '<p><strong>' . __('Need Help?', 'rsl-licensing') . '</strong></p>
-            <p><a href="https://rslstandard.org" target="_blank">' . __('RSL Standard Docs', 'rsl-licensing') . '</a></p>
-            <p><a href="https://github.com/jameswlepage/rsl-wp/blob/main/docs/PAYMENTS.md" target="_blank">' . __('Payment Setup Guide', 'rsl-licensing') . '</a></p>
-            <p><a href="https://github.com/jameswlepage/rsl-wp/blob/main/docs/DEVELOPER.md" target="_blank">' . __('Developer Guide', 'rsl-licensing') . '</a></p>'
+            '<p><strong>' . __('Need Help?', 'rsl-wp') . '</strong></p>
+            <p><a href="https://rslstandard.org" target="_blank">' . __('RSL Standard Docs', 'rsl-wp') . '</a></p>
+            <p><a href="https://github.com/jameswlepage/rsl-wp/blob/main/docs/PAYMENTS.md" target="_blank">' . __('Payment Setup Guide', 'rsl-wp') . '</a></p>
+            <p><a href="https://github.com/jameswlepage/rsl-wp/blob/main/docs/DEVELOPER.md" target="_blank">' . __('Developer Guide', 'rsl-wp') . '</a></p>'
         );
     }
 }

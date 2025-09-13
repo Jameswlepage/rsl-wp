@@ -1,6 +1,6 @@
 <?php
 /**
- * Plugin Name: RSL Licensing for WordPress
+ * Plugin Name: RSL for WordPress
  * Plugin URI: https://github.com/jameswlepage/rsl-wp
  * Description: Complete Really Simple Licensing (RSL) support for WordPress sites. Define machine-readable licensing terms for your content, enabling AI companies and crawlers to properly license your digital assets.
  * Version: 0.0.3
@@ -8,12 +8,11 @@
  * Author URI: https://j.cv
  * License: GPL v2 or later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: rsl-licensing
+ * Text Domain: rsl-wp
  * Domain Path: /languages
  * Requires at least: 5.0
  * Tested up to: 6.4
  * Requires PHP: 7.4
- * Network: false
  */
 
 if (!defined("ABSPATH")) {
@@ -27,7 +26,7 @@ if (!defined("ABSPATH")) {
 if (!function_exists('rsl_log')) {
     function rsl_log($message, $level = 'info') {
         if (defined('WP_DEBUG') && WP_DEBUG && defined('RSL_DEBUG') && RSL_DEBUG) {
-            error_log(sprintf('[RSL %s] %s', strtoupper($level), $message));
+            // error_log(sprintf('[RSL %s] %s', strtoupper($level), $message));
         }
     }
 }
@@ -69,7 +68,7 @@ class RSL_Licensing
     private function load_textdomain()
     {
         load_plugin_textdomain(
-            "rsl-licensing",
+            "rsl-wp",
             false,
             dirname(RSL_PLUGIN_BASENAME) . "/languages",
         );
@@ -128,7 +127,7 @@ class RSL_Licensing
     {
         if (!$this->create_tables()) {
             deactivate_plugins(plugin_basename(__FILE__));
-            wp_die(__('RSL Licensing: Failed to create required database tables. Please check database permissions.', 'rsl-licensing'));
+            wp_die(__('RSL Licensing: Failed to create required database tables. Please check database permissions.', 'rsl-wp'));
         }
         
         if (!$this->create_default_options()) {
@@ -154,8 +153,8 @@ class RSL_Licensing
     public function add_plugin_action_links($links)
     {
         $action_links = array(
-            'dashboard' => '<a href="' . admin_url('admin.php?page=rsl-licensing') . '">' . __('Dashboard', 'rsl-licensing') . '</a>',
-            'settings' => '<a href="' . admin_url('admin.php?page=rsl-settings') . '">' . __('Settings', 'rsl-licensing') . '</a>',
+            'dashboard' => '<a href="' . admin_url('admin.php?page=rsl-licensing') . '">' . __('Dashboard', 'rsl-wp') . '</a>',
+            'settings' => '<a href="' . admin_url('admin.php?page=rsl-settings') . '">' . __('Settings', 'rsl-wp') . '</a>',
         );
         
         return array_merge($action_links, $links);
@@ -211,7 +210,7 @@ class RSL_Licensing
         ));
         
         if (!$table_exists) {
-            error_log('RSL: Failed to create database table: ' . $table_name);
+            // error_log('RSL: Failed to create database table: ' . $table_name);
             if ($wpdb->last_error) {
                 rsl_log('Database error: ' . $wpdb->last_error, 'error');
             }
@@ -243,7 +242,7 @@ class RSL_Licensing
         ));
         
         if (!$oauth_table_exists) {
-            error_log('RSL: Failed to create OAuth clients table: ' . $oauth_table);
+            // error_log('RSL: Failed to create OAuth clients table: ' . $oauth_table);
             if ($wpdb->last_error) {
                 rsl_log('Database error: ' . $wpdb->last_error, 'error');
             }
@@ -277,7 +276,7 @@ class RSL_Licensing
         ));
         
         if (!$tokens_table_exists) {
-            error_log('RSL: Failed to create tokens table: ' . $tokens_table);
+            // error_log('RSL: Failed to create tokens table: ' . $tokens_table);
             return false;
         }
         
@@ -301,7 +300,7 @@ class RSL_Licensing
             if (get_option($option) === false) {
                 $result = add_option($option, $value);
                 if (!$result) {
-                    error_log('RSL: Failed to create option: ' . $option);
+                    // error_log('RSL: Failed to create option: ' . $option);
                     $success = false;
                 }
             }
@@ -319,7 +318,7 @@ class RSL_Licensing
         $existing_licenses = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
         
         if ($wpdb->last_error) {
-            error_log('RSL: Database error checking existing licenses: ' . $wpdb->last_error);
+            // error_log('RSL: Database error checking existing licenses: ' . $wpdb->last_error);
             return false;
         }
         
@@ -329,8 +328,8 @@ class RSL_Licensing
             $admin_email = get_option('admin_email');
             
             $default_license = [
-                'name' => __('Default Site License', 'rsl-licensing'),
-                'description' => __('Default licensing terms for this WordPress site', 'rsl-licensing'),
+                'name' => __('Default Site License', 'rsl-wp'),
+                'description' => __('Default licensing terms for this WordPress site', 'rsl-wp'),
                 'content_url' => $site_url,
                 'server_url' => '', // Don't require server authentication for default license
                 'encrypted' => 0,
@@ -374,12 +373,12 @@ class RSL_Licensing
                 $license_id = $wpdb->insert_id;
                 $option_updated = update_option('rsl_global_license_id', $license_id);
                 if (!$option_updated) {
-                    error_log('RSL: Failed to set global license ID: ' . $license_id);
+                    // error_log('RSL: Failed to set global license ID: ' . $license_id);
                     return false;
                 }
                 return true;
             } else {
-                error_log('RSL: Failed to insert default license: ' . $wpdb->last_error);
+                // error_log('RSL: Failed to insert default license: ' . $wpdb->last_error);
                 return false;
             }
         }
@@ -413,7 +412,7 @@ class RSL_Licensing
                 $result = $wpdb->query($sql);
                 
                 if ($result === false) {
-                    error_log('RSL: Failed to create index ' . $index_name . ': ' . $wpdb->last_error);
+                    // error_log('RSL: Failed to create index ' . $index_name . ': ' . $wpdb->last_error);
                     $success = false;
                 }
             }

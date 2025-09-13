@@ -134,7 +134,7 @@ jobs:
       run: |
         # Verify plugin header is valid
         php -r "
-        \$content = file_get_contents('rsl-licensing.php');
+        \$content = file_get_contents('rsl-wp.php');
         if (strpos(\$content, 'Plugin Name:') === false) {
           echo 'Missing Plugin Name header';
           exit(1);
@@ -149,7 +149,7 @@ jobs:
     - name: Check plugin structure
       run: |
         # Verify required files exist
-        test -f rsl-licensing.php || { echo "Main plugin file missing"; exit 1; }
+        test -f rsl-wp.php || { echo "Main plugin file missing"; exit 1; }
         test -d includes/ || { echo "Includes directory missing"; exit 1; }
         test -f README.md || { echo "README.md missing"; exit 1; }
         echo "Plugin structure validation passed"

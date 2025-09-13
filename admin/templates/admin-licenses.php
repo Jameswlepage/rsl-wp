@@ -6,12 +6,12 @@ if (!defined('ABSPATH')) {
 
 <div class="wrap">
     <h1 class="wp-heading-inline">
-        <img src="<?php echo RSL_PLUGIN_URL . 'admin/images/rsl-logo.png'; ?>" 
+        <img src="<?php echo esc_url(RSL_PLUGIN_URL . 'admin/images/rsl-logo.png'; ?>" 
              alt="RSL" class="rsl-admin-icon">
-        <?php _e('RSL Licenses', 'rsl-licensing'); ?>
+        <?php esc_html_e('RSL Licenses', 'rsl-wp'); ?>
     </h1>
-    <a href="<?php echo admin_url('admin.php?page=rsl-add-license'); ?>" class="page-title-action">
-        <?php _e('Add New License', 'rsl-licensing'); ?>
+    <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license'); ?>" class="page-title-action">
+        <?php esc_html_e('Add New License', 'rsl-wp'); ?>
     </a>
     <hr class="wp-header-end">
     
@@ -28,9 +28,9 @@ if (!defined('ABSPATH')) {
     <?php if (empty($licenses)) : ?>
         <div class="notice notice-info">
             <p>
-                <?php _e('No licenses found.', 'rsl-licensing'); ?>
-                <a href="<?php echo admin_url('admin.php?page=rsl-add-license'); ?>">
-                    <?php _e('Create your first license', 'rsl-licensing'); ?>
+                <?php esc_html_e('No licenses found.', 'rsl-wp'); ?>
+                <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license'); ?>">
+                    <?php esc_html_e('Create your first license', 'rsl-wp'); ?>
                 </a>
             </p>
         </div>
@@ -38,12 +38,12 @@ if (!defined('ABSPATH')) {
         <table class="wp-list-table widefat fixed striped">
             <thead>
                 <tr>
-                    <th scope="col"><?php _e('Name', 'rsl-licensing'); ?></th>
-                    <th scope="col"><?php _e('Content URL', 'rsl-licensing'); ?></th>
-                    <th scope="col"><?php _e('Payment Type', 'rsl-licensing'); ?></th>
-                    <th scope="col"><?php _e('Usage Permits', 'rsl-licensing'); ?></th>
-                    <th scope="col"><?php _e('Status', 'rsl-licensing'); ?></th>
-                    <th scope="col"><?php _e('Actions', 'rsl-licensing'); ?></th>
+                    <th scope="col"><?php esc_html_e('Name', 'rsl-wp'); ?></th>
+                    <th scope="col"><?php esc_html_e('Content URL', 'rsl-wp'); ?></th>
+                    <th scope="col"><?php esc_html_e('Payment Type', 'rsl-wp'); ?></th>
+                    <th scope="col"><?php esc_html_e('Usage Permits', 'rsl-wp'); ?></th>
+                    <th scope="col"><?php esc_html_e('Status', 'rsl-wp'); ?></th>
+                    <th scope="col"><?php esc_html_e('Actions', 'rsl-wp'); ?></th>
                 </tr>
             </thead>
             <tbody>
@@ -92,32 +92,32 @@ if (!defined('ABSPATH')) {
                             if (!empty($permits)) {
                                 echo '<small>' . esc_html(implode('; ', $permits)) . '</small>';
                             } else {
-                                echo '<em>' . __('All permitted', 'rsl-licensing') . '</em>';
+                                echo '<em>' . __('All permitted', 'rsl-wp') . '</em>';
                             }
                             ?>
                         </td>
                         <td>
                             <?php if ($license['active']) : ?>
-                                <span class="rsl-status-active"><?php _e('Active', 'rsl-licensing'); ?></span>
+                                <span class="rsl-status-active"><?php esc_html_e('Active', 'rsl-wp'); ?></span>
                             <?php else : ?>
-                                <span class="rsl-status-inactive"><?php _e('Inactive', 'rsl-licensing'); ?></span>
+                                <span class="rsl-status-inactive"><?php esc_html_e('Inactive', 'rsl-wp'); ?></span>
                             <?php endif; ?>
                         </td>
                         <td>
-                            <a href="<?php echo admin_url('admin.php?page=rsl-add-license&edit=' . $license['id']); ?>" 
+                            <a href="<?php echo esc_url(admin_url('admin.php?page=rsl-add-license&edit=' . $license['id']); ?>" 
                                class="button button-small">
-                                <?php _e('Edit', 'rsl-licensing'); ?>
+                                <?php esc_html_e('Edit', 'rsl-wp'); ?>
                             </a>
                             
                             <button type="button" class="button button-small rsl-generate-xml" 
                                     data-license-id="<?php echo esc_attr($license['id']); ?>">
-                                <?php _e('Generate XML', 'rsl-licensing'); ?>
+                                <?php esc_html_e('Generate XML', 'rsl-wp'); ?>
                             </button>
                             
                             <button type="button" class="button button-small button-link-delete rsl-delete-license" 
                                     data-license-id="<?php echo esc_attr($license['id']); ?>"
                                     data-license-name="<?php echo esc_attr($license['name']); ?>">
-                                <?php _e('Delete', 'rsl-licensing'); ?>
+                                <?php esc_html_e('Delete', 'rsl-wp'); ?>
                             </button>
                         </td>
                     </tr>
@@ -130,17 +130,17 @@ if (!defined('ABSPATH')) {
 <div id="rsl-xml-modal" class="rsl-modal rsl-hidden">
     <div class="rsl-modal-content">
         <div class="rsl-modal-header">
-            <h3><?php _e('Generated RSL XML', 'rsl-licensing'); ?></h3>
+            <h3><?php esc_html_e('Generated RSL XML', 'rsl-wp'); ?></h3>
             <span class="rsl-modal-close">&times;</span>
         </div>
         <div class="rsl-modal-body">
             <textarea id="rsl-xml-content" rows="20" cols="80" readonly></textarea>
             <p>
                 <button type="button" id="rsl-copy-xml" class="button button-primary">
-                    <?php _e('Copy to Clipboard', 'rsl-licensing'); ?>
+                    <?php esc_html_e('Copy to Clipboard', 'rsl-wp'); ?>
                 </button>
                 <button type="button" id="rsl-download-xml" class="button">
-                    <?php _e('Download XML', 'rsl-licensing'); ?>
+                    <?php esc_html_e('Download XML', 'rsl-wp'); ?>
                 </button>
             </p>
         </div>

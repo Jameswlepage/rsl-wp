@@ -77,13 +77,13 @@ class TestRSLAdmin extends TestCase {
         $this->assertTrue($rsl_menu_found, 'RSL Licensing main menu should be registered');
 
         // Check submenu pages
-        $this->assertArrayHasKey('rsl-licensing', $submenu);
-        $this->assertIsArray($submenu['rsl-licensing']);
+        $this->assertArrayHasKey('rsl-wp', $submenu);
+        $this->assertIsArray($submenu['rsl-wp']);
         
         $expected_submenus = ['Dashboard', 'All Licenses', 'Add New License', 'Settings'];
         foreach ($expected_submenus as $expected) {
             $found = false;
-            foreach ($submenu['rsl-licensing'] as $submenu_item) {
+            foreach ($submenu['rsl-wp'] as $submenu_item) {
                 if (strpos($submenu_item[0], $expected) !== false) {
                     $found = true;
                     break;
@@ -558,7 +558,7 @@ class TestRSLAdmin extends TestCase {
         $this->admin->admin_page();
         $output = ob_get_clean();
 
-        $this->assertStringContainsString('rsl-licensing', $output);
+        $this->assertStringContainsString('rsl-wp', $output);
         $this->assertStringContainsString('dashboard', $output);
     }
 

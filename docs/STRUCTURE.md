@@ -5,7 +5,7 @@ This document outlines the complete file structure for the RSL Licensing WordPre
 ## Root Level Files
 
 ```
-rsl-licensing.php           # Main plugin file with header and initialization
+rsl-wp.php           # Main plugin file with header and initialization
 readme.txt                  # WordPress.org plugin readme (required)
 README.md                   # GitHub documentation
 INSTALL.md                  # Installation guide
@@ -97,7 +97,7 @@ For WordPress.org repository submission, this plugin follows the standard struct
 
 | File/Directory | Purpose |
 |----------------|---------|
-| `rsl-licensing.php` | Main plugin bootstrap and initialization |
+| `rsl-wp.php` | Main plugin bootstrap and initialization |
 | `readme.txt` | WordPress.org plugin information and installation guide |
 | `includes/` | Core plugin functionality and business logic |
 | `admin/` | WordPress admin interface integration |

@@ -172,7 +172,7 @@ EOF
         echo "Checking WordPress coding standards..."
         
         # Check for proper plugin header
-        if ! head -20 rsl-licensing.php | grep -q "Plugin Name:"; then
+        if ! head -20 rsl-wp.php | grep -q "Plugin Name:"; then
           echo "❌ Missing plugin header"
           exit 1
         fi
