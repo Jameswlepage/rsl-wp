@@ -13,7 +13,7 @@
   "features": {
     "networking": true
   },
-  "landingPage": "/wp-admin/admin.php?page=rsl-licensing",
+  "landingPage": "/wp-admin/admin.php?page=rsl-wp",
   "login": true,
   "preferredVersions": {
     "php": "8.2",
