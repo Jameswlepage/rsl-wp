@@ -2,16 +2,15 @@
 
 ![RSL for WordPress Banner](https://github.com/Jameswlepage/rsl-wp/blob/main/assets/banner-1544x500.png?raw=true)
 
+[![Download Plugin](https://img.shields.io/badge/Download-Plugin%20ZIP-green?style=for-the-badge&logo=download)](https://github.com/jameswlepage/rsl-wp/releases/latest/download/rsl-licensing-0.0.5.zip)
+
 [![Version](https://img.shields.io/badge/Version-0.0.5-blue)](https://github.com/jameswlepage/rsl-wp/releases/latest) [![Downloads](https://img.shields.io/github/downloads/jameswlepage/rsl-wp/total)](https://github.com/jameswlepage/rsl-wp/releases) [![License](https://img.shields.io/badge/License-GPL%20v2-blue)](https://www.gnu.org/licenses/gpl-2.0.html) [![Tests](https://img.shields.io/badge/Tests-28%20passing-green)](https://github.com/jameswlepage/rsl-wp/actions) [![Try Live](https://img.shields.io/badge/Try%20Live-WordPress%20Playground-blue?logo=wordpress)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FJameswlepage%2Frsl-wp%2Fmain%2Fblueprint.json)
 
 Complete Really Simple Licensing (RSL) support for WordPress sites. Define machine-readable licensing terms for your content, enabling AI companies, crawlers, and other automated systems to properly license your digital assets.
 
-## Try Live Demo & Download
+## Installation
 
 **Latest Release:** [v0.0.5-alpha](https://github.com/jameswlepage/rsl-wp/releases/tag/v0.0.5-alpha) • **Size:** ~750KB
-
-[![Try Live Demo](https://img.shields.io/badge/Try%20Live%20Demo-WordPress%20Playground-blue?style=for-the-badge&logo=wordpress)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FJameswlepage%2Frsl-wp%2Fmain%2Fblueprint.json)
-[![Download Plugin](https://img.shields.io/badge/Download-Plugin%20ZIP-green?style=for-the-badge&logo=download)](https://github.com/jameswlepage/rsl-wp/releases/latest/download/rsl-licensing-0.0.4.zip)
 
 ```bash
 # Direct download via curl/wget
