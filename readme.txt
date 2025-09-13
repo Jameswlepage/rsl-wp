@@ -95,7 +95,7 @@ Prohibits User Types: commercial
 ### Quick Start
 
 1. Install and activate the plugin
-2. Go to Settings > RSL Licensing
+2. Go to RSL for WordPress > Dashboard
 3. Create your first license with "Add RSL License"
 4. Set it as your global license
 5. Enable integration methods (HTML, HTTP headers, robots.txt)
@@ -156,10 +156,10 @@ Embeds RSL licensing directly into uploaded images, PDFs, and EPUB files.
 4. Activate the plugin
 
 = After Installation =
-1. Go to Settings > RSL Licensing
+1. Go to RSL for WordPress > Dashboard
 2. Click "Add RSL License" to create your first license
 3. Configure your license terms and permissions
-4. Set it as your global license in Settings > RSL Licensing
+4. Set it as your global license in RSL for WordPress > Dashboard
 5. Enable desired integration methods
 6. Save settings
 
