@@ -254,16 +254,8 @@ class TestWooCommerceIntegration extends TestCase {
             ['rsl_license_id', true, $license_id]
         ]);
 
-        // Mock wc_get_order function
-        if (!function_exists('wc_get_order')) {
-            function wc_get_order($order_id) {
-                global $mock_order;
-                return $mock_order;
-            }
-        }
-        
-        global $mock_order;
-        $mock_order = $order;
+        // Mock wc_get_order function using Brain Monkey
+        \Brain\Monkey\Functions\when('wc_get_order')->justReturn($order);
 
         // Test the hook handler
         $this->server->handle_wc_payment_completed($order_id);

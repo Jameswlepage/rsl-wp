@@ -30,7 +30,7 @@ jobs:
         TITLE="${{ github.event.pull_request.title }}"
         
         # Check for conventional commit format or descriptive title
-        if [[ "$TITLE" =~ ^(feat|fix|docs|style|refactor|test|chore|security)(\(.+\))?: .+ ]] || 
+        if [[ "$TITLE" =~ ^(feat|fix|docs|style|refactor|test|chore|security)(\(.+\))?:\ .+ ]] || 
            [[ ${#TITLE} -ge 10 && ${#TITLE} -le 100 ]]; then
           echo "✅ PR title format is acceptable: $TITLE"
         else
