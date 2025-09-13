@@ -6,14 +6,14 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
 
 ## 📥 Quick Download
 
-**Latest Release:** [v0.0.2](https://github.com/jameswlepage/rsl-wp/releases/tag/v0.0.2) • **Size:** 354KB
+**Latest Release:** [v0.0.3](https://github.com/jameswlepage/rsl-wp/releases/tag/v0.0.3) • **Size:** 707KB
 
-[![Download Plugin](https://img.shields.io/badge/Download-Plugin%20ZIP-blue?style=for-the-badge&logo=download)](https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.2/rsl-licensing-0.0.2.zip)
+[![Download Plugin](https://img.shields.io/badge/Download-Plugin%20ZIP-blue?style=for-the-badge&logo=download)](https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.3/rsl-licensing-0.0.3.zip)
 
 ```bash
 # Direct download via curl/wget
-curl -L -o rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.2/rsl-licensing-0.0.2.zip"
-wget -O rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.2/rsl-licensing-0.0.2.zip"
+curl -L -o rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.3/rsl-licensing-0.0.3.zip"
+wget -O rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.3/rsl-licensing-0.0.3.zip"
 
 # Or build from source
 git clone https://github.com/jameswlepage/rsl-wp.git
@@ -26,7 +26,7 @@ make zip  # Creates production-ready ZIP file
 2. Upload via WordPress Admin → Plugins → Add New → Upload Plugin
 3. Activate and configure at Settings → RSL Licensing
 
-> **Alpha Notice:** This is an early alpha release (v0.0.2) of the RSL Licensing plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
+> **Alpha Notice:** This is an early alpha release (v0.0.3) of the RSL Licensing plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
 
 ## What is RSL (Really Simple Licensing)?
 
