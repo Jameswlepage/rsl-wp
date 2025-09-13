@@ -61,6 +61,7 @@ class RSL_Frontend {
                 header('Content-Type: application/rsl+xml; charset=UTF-8');
                 header('Cache-Control: public, max-age=3600');
                 
+                // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
                 echo $this->license_handler->generate_rsl_xml($license_data);
                 exit;
             }
@@ -133,6 +134,7 @@ class RSL_Frontend {
             'standalone' => false
         ));
         
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo $xml . "\n";
         echo '</script>' . "\n";
         echo "<!-- End RSL Licensing Information -->\n\n";
@@ -156,7 +158,7 @@ class RSL_Frontend {
         echo '    <link>' . esc_url(home_url()) . '</link>' . "\n";
         echo '    <description>' . esc_html(get_bloginfo('description')) . '</description>' . "\n";
         echo '    <language>' . esc_html(get_bloginfo('language')) . '</language>' . "\n";
-        echo '    <lastBuildDate>' . gmdate('r') . '</lastBuildDate>' . "\n";
+        echo '    <lastBuildDate>' . esc_html(gmdate('r')) . '</lastBuildDate>' . "\n";
         
         foreach ($licenses as $license) {
             echo '    <item>' . "\n";
@@ -166,7 +168,7 @@ class RSL_Frontend {
             echo '      <guid>' . esc_url($this->get_license_xml_url($license['id'])) . '</guid>' . "\n";
             
             if (!empty($license['updated_at'])) {
-                echo '      <pubDate>' . gmdate('r', strtotime($license['updated_at'])) . '</pubDate>' . "\n";
+                echo '      <pubDate>' . esc_html(gmdate('r', strtotime($license['updated_at']))) . '</pubDate>' . "\n";
             }
             
             // Add RSL content as RSS extension
@@ -180,6 +182,7 @@ class RSL_Frontend {
             $rsl_xml = str_replace('</rsl>', '', $rsl_xml);
             $rsl_xml = preg_replace('/<(\/?)(content|license|permits|prohibits|payment|standard|custom|amount|legal|schema|copyright|terms)/', '<$1rsl:$2', $rsl_xml);
             
+            // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
             echo $rsl_xml;
             echo '    </item>' . "\n";
         }

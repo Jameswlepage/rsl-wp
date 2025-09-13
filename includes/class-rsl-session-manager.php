@@ -220,9 +220,11 @@ class RSL_Session_Manager {
         // Find expired sessions
         $expired_sessions = $wpdb->get_col($wpdb->prepare(
             "SELECT option_name FROM {$wpdb->options} 
-             WHERE option_name LIKE 'rsl_session_%' 
-             AND option_value LIKE '%expires_at%' 
+             WHERE option_name LIKE %s 
+             AND option_value LIKE %s 
              AND CAST(SUBSTRING_INDEX(SUBSTRING_INDEX(option_value, '\"expires_at\":', -1), ',', 1) AS UNSIGNED) < %d",
+            'rsl_session_%',
+            '%expires_at%',
             $expired_time
         ));
         

@@ -127,6 +127,7 @@ class RSL_Server {
         header('Cache-Control: public, max-age=3600');
         $this->add_cors_headers();
         
+        // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped
         echo $this->license_handler->generate_rsl_xml($license_data);
     }
     
@@ -868,7 +869,7 @@ class RSL_Server {
 
         header('WWW-Authenticate: License error="invalid_request", error_description="Access to this resource requires a valid license", authorization_uri="' . esc_url_raw($authorization_uri) . '"');
         header('Content-Type: text/plain');
-        echo "License required. Obtain a token at $authorization_uri";
+        echo 'License required. Obtain a token at ' . esc_url($authorization_uri);
     }
     
     private function send_invalid_license_response() {
@@ -878,7 +879,7 @@ class RSL_Server {
                'authorization_uri="' . home_url('.well-known/rsl/') . '"');
         header('Content-Type: text/plain');
         
-        echo "Invalid license token. Please obtain a valid license at " . home_url('.well-known/rsl/');
+        echo 'Invalid license token. Please obtain a valid license at ' . esc_url(home_url('.well-known/rsl/'));
     }
     
     private function add_cors_headers() {

@@ -287,6 +287,7 @@ class RSL_Admin {
                     );
                     
                     if ($payment_type === 'attribution') {
+                        /* translators: %s will be replaced with "$0" */
                         $message .= __('For attribution licenses, set the amount to $0 or use "purchase" payment type.', 'rsl-wp');
                     }
                 }

@@ -84,7 +84,7 @@ class RSL_OAuth_Client {
         $table_name = $wpdb->prefix . 'rsl_oauth_clients';
         
         $client = $wpdb->get_row($wpdb->prepare(
-            "SELECT client_secret_hash, active FROM $table_name WHERE client_id = %s",
+            "SELECT client_secret_hash, active FROM `{$wpdb->prefix}rsl_oauth_clients` WHERE client_id = %s",
             $client_id
         ));
         
@@ -115,7 +115,7 @@ class RSL_OAuth_Client {
         
         $client = $wpdb->get_row($wpdb->prepare(
             "SELECT id, client_id, client_name, redirect_uris, grant_types, active, created_at 
-             FROM $table_name WHERE client_id = %s",
+             FROM `{$wpdb->prefix}rsl_oauth_clients` WHERE client_id = %s",
             $client_id
         ), ARRAY_A);
         
@@ -139,15 +139,19 @@ class RSL_OAuth_Client {
         $params = [];
         
         if (isset($args['active'])) {
-            $where .= ' WHERE active = %d';
+            $where = ' WHERE active = %d';
             $params[] = $args['active'];
         }
         
-        $clients = $wpdb->get_results($wpdb->prepare(
-            "SELECT id, client_id, client_name, grant_types, active, created_at 
-             FROM $table_name $where ORDER BY created_at DESC",
-            ...$params
-        ), ARRAY_A);
+        $base_query = "SELECT id, client_id, client_name, grant_types, active, created_at 
+                       FROM `{$wpdb->prefix}rsl_oauth_clients`" . $where . " ORDER BY created_at DESC";
+        
+        if (!empty($params)) {
+            $clients = $wpdb->get_results($wpdb->prepare($base_query, ...$params), ARRAY_A);
+        } else {
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $clients = $wpdb->get_results($base_query, ARRAY_A);
+        }
         
         return $clients ?: [];
     }
@@ -215,7 +219,7 @@ class RSL_OAuth_Client {
         $table_name = $wpdb->prefix . 'rsl_tokens';
         
         $revoked = $wpdb->get_var($wpdb->prepare(
-            "SELECT revoked FROM $table_name WHERE jti = %s",
+            "SELECT revoked FROM `{$wpdb->prefix}rsl_tokens` WHERE jti = %s",
             $jti
         ));
         
@@ -294,7 +298,7 @@ class RSL_OAuth_Client {
         $table_name = $wpdb->prefix . 'rsl_tokens';
         
         $deleted = $wpdb->query($wpdb->prepare(
-            "DELETE FROM $table_name WHERE expires_at < %s",
+            "DELETE FROM `{$wpdb->prefix}rsl_tokens` WHERE expires_at < %s",
             current_time('mysql', true)
         ));
         

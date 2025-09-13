@@ -72,8 +72,8 @@ class RSL_RSS {
                 <link><?php echo esc_url(home_url()); ?></link>
                 <description><?php echo esc_html(get_bloginfo('description')); ?></description>
                 <language><?php echo esc_html(get_bloginfo('language')); ?></language>
-                <lastBuildDate><?php echo gmdate('r'); ?></lastBuildDate>
-                <generator>RSL for WordPress v<?php echo RSL_PLUGIN_VERSION; ?></generator>
+                <lastBuildDate><?php echo esc_html(gmdate('r')); ?></lastBuildDate>
+                <generator>RSL for WordPress v<?php echo esc_html(RSL_PLUGIN_VERSION); ?></generator>
                 
                 <?php foreach ($licenses as $license) : ?>
                 <item>
@@ -82,7 +82,7 @@ class RSL_RSS {
                     <description><?php echo esc_html($license['description'] ?: 'RSL License Configuration'); ?></description>
                     <guid><?php echo esc_url($this->get_license_xml_url($license['id'])); ?></guid>
                     <?php if (!empty($license['updated_at'])) : ?>
-                    <pubDate><?php echo gmdate('r', strtotime($license['updated_at'])); ?></pubDate>
+                    <pubDate><?php echo esc_html(gmdate('r', strtotime($license['updated_at']))); ?></pubDate>
                     <?php endif; ?>
                     
                     <?php $this->output_rss_rsl_content($license); ?>

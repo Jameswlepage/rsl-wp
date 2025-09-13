@@ -274,7 +274,7 @@ class RSL_Media {
                 if ($license_data) {
                     echo '<strong>' . esc_html($license_data['name']) . '</strong>';
                     if ($is_embedded) {
-                        echo '<br><span style="color: green; font-size: 11px;">✓ ' . __('Embedded', 'rsl-wp') . '</span>';
+                        echo '<br><span style="color: green; font-size: 11px;">✓ ' . esc_html__('Embedded', 'rsl-wp') . '</span>';
                     }
                     return;
                 }
@@ -287,13 +287,13 @@ class RSL_Media {
                 if ($license_data) {
                     echo '<em>' . esc_html($license_data['name']) . ' (Global)</em>';
                     if ($is_embedded) {
-                        echo '<br><span style="color: green; font-size: 11px;">✓ ' . __('Embedded', 'rsl-wp') . '</span>';
+                        echo '<br><span style="color: green; font-size: 11px;">✓ ' . esc_html__('Embedded', 'rsl-wp') . '</span>';
                     }
                     return;
                 }
             }
             
-            echo '<span style="color: #666;">' . __('No license', 'rsl-wp') . '</span>';
+            echo '<span style="color: #666;">' . esc_html__('No license', 'rsl-wp') . '</span>';
         }
     }
     

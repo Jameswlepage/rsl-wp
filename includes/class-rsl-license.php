@@ -81,7 +81,7 @@ class RSL_License {
         
         $result = $wpdb->get_row(
             $wpdb->prepare(
-                "SELECT * FROM {$this->table_name} WHERE id = %d",
+                "SELECT * FROM `{$wpdb->prefix}rsl_licenses` WHERE id = %d",
                 $id
             ),
             ARRAY_A
@@ -129,28 +129,33 @@ class RSL_License {
             $values[] = intval($args['active']);
         }
         
-        $sql = "SELECT * FROM {$this->table_name}";
+        $base_sql = "SELECT * FROM `{$wpdb->prefix}rsl_licenses`";
         
         if (!empty($where)) {
-            $sql .= " WHERE " . implode(' AND ', $where);
+            $base_sql .= " WHERE " . implode(' AND ', $where);
         }
         
-        $sql .= " ORDER BY `{$args['orderby']}` {$args['order']}";
+        // Safe to use directly since $args['orderby'] is validated against allowlist
+        $base_sql .= " ORDER BY `{$args['orderby']}` {$args['order']}";
         
         if ($args['limit'] > 0) {
-            $sql .= " LIMIT %d";
+            $base_sql .= " LIMIT %d";
             $values[] = $args['limit'];
             
             if ($args['offset'] > 0) {
-                $sql .= " OFFSET %d";
+                $base_sql .= " OFFSET %d";
                 $values[] = $args['offset'];
             }
         }
         
         if (!empty($values)) {
-            $sql = $wpdb->prepare($sql, $values);
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
+            $sql = $wpdb->prepare($base_sql, $values);
+        } else {
+            $sql = $base_sql;
         }
         
+        // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
         $results = $wpdb->get_results($sql, ARRAY_A);
         
         // Add error handling

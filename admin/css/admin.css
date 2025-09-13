@@ -1,190 +1,59 @@
 /* RSL Licensing Admin Styles */
 
-/* Core RSL Status Indicators */
-.rsl-enabled {
+/* Core RSL Status Indicators - Use WordPress native classes */
+/* WordPress already provides .yes and .no classes with proper colors */
+.yes {
     color: #00a32a;
     font-weight: 600;
 }
 
-.rsl-disabled {
+.no {
     color: #d63638;
     font-weight: 600;
 }
 
-/* Dashboard Layout - Native WordPress Grid */
-.rsl-dashboard-wrap {
-    display: block;
-    width: 100%;
-    max-width: none;
-    margin-top: 20px;
-}
-
-.rsl-dashboard-wrap .postbox-container.rsl-full-width {
-    width: 100%;
-    margin-bottom: 20px;
-}
-
-/* Dashboard Rows */
-.rsl-dashboard-row {
-    display: block;
-    width: 100%;
-    margin-bottom: 20px;
-    overflow: hidden;
-}
-
-.rsl-dashboard-row .postbox-container {
+/* WordPress Dashboard Integration */
+/* Use WordPress's built-in dashboard layout classes */
+#dashboard-widgets .postbox-container {
     float: left;
     margin-bottom: 20px;
     min-height: 1px;
     box-sizing: border-box;
 }
 
-.rsl-dashboard-row .postbox-container.rsl-half-width {
-    width: calc(50% - 10px);
-    margin-right: 20px;
-}
-
-.rsl-dashboard-row .postbox-container.rsl-half-width:last-child {
-    margin-right: 0;
-}
-
 /* Clearfix for dashboard rows */
-.rsl-dashboard-row::after {
-    content: "";
-    display: table;
-    clear: both;
-}
+/* WordPress inherits all postbox styling automatically */
+/* No custom styling needed for .postbox, .postbox-header, .hndle, .inside */
 
-/* WordPress Native Postbox Styling */
-.rsl-dashboard-wrap .postbox {
-    background: #fff;
-    border: 1px solid #c3c4c7;
-    box-shadow: 0 1px 1px rgba(0,0,0,.04);
-    min-width: 255px;
-    position: relative;
-}
+/* WordPress Dashboard Integration */
+/* Use WordPress's native dashboard styling - no custom layout needed */
 
-.rsl-dashboard-wrap .postbox .postbox-header {
-    border-bottom: 1px solid #c3c4c7;
-    position: relative;
-}
-
-.rsl-dashboard-wrap .postbox .postbox-header .hndle {
-    border: none;
-    box-shadow: none;
-    color: #1d2327;
+/* Quick Actions Section */
+.activity-block h3 {
+    margin: 0 0 8px 0;
     font-size: 14px;
     font-weight: 600;
-    line-height: 1.4;
+}
+
+.activity-block .sub {
     margin: 0;
-    padding: 12px;
-    position: relative;
 }
 
-.rsl-dashboard-wrap .postbox .inside {
-    margin: 12px;
-    position: relative;
+.activity-block .button {
+    margin-right: 8px;
+    margin-bottom: 4px;
 }
 
-/* At a Glance with Quick Actions Layout */
-.rsl-at-glance-wrapper {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-}
-
-.rsl-stats-section {
-    flex: 1;
-}
-
-.rsl-quick-actions-section {
-    flex-shrink: 0;
-}
-
-/* At a Glance Widget Styling */
-.rsl-dashboard-wrap .main ul {
-    list-style: none;
-    margin: 0;
-    overflow: hidden;
-    padding: 0;
-}
-
-.rsl-dashboard-wrap .main ul li {
-    float: left;
-    font-size: 14px;
-    margin: 0 15px 0 0;
-    line-height: 1.4;
-    list-style: none;
-    white-space: nowrap;
-    width: auto;
-}
-
-.rsl-dashboard-wrap .main ul li:after {
-    content: "|";
-    color: #c3c4c7;
-    font-weight: 400;
-    margin-left: 15px;
-}
-
-.rsl-dashboard-wrap .main ul li:last-child:after {
-    content: "";
-}
-
-.rsl-dashboard-wrap .main ul li strong {
-    color: #1d2327;
-    font-weight: 600;
-    margin-right: 5px;
-}
-
-.rsl-dashboard-wrap .main ul li span:last-child {
-    color: #646970;
-}
-
-/* Quick Actions Inline */
-.rsl-actions-inline {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 8px;
-}
-
-.rsl-actions-inline .button {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    white-space: nowrap;
-}
-
-/* Action Buttons */
-.rsl-actions .button {
-    display: inline-flex;
-    align-items: center;
-    gap: 5px;
-    margin-bottom: 8px;
-    min-width: 180px;
-}
-
-.rsl-actions .button .dashicons {
+/* WordPress handles button and dashicon styling automatically */
+.button .dashicons {
     font-size: 16px;
     width: 16px;
     height: 16px;
+    margin-right: 5px;
+}
 }
 
-/* Table Styling for Integration Status */
-.rsl-dashboard-wrap .widefat {
-    border: 1px solid #c3c4c7;
-    box-shadow: none;
-}
-
-.rsl-dashboard-wrap .widefat td,
-.rsl-dashboard-wrap .widefat th {
-    border: none;
-    padding: 8px 12px;
-}
-
-.rsl-dashboard-wrap .widefat tbody tr:nth-child(odd) {
-    background-color: #f6f7f7;
-}
+/* WordPress handles widefat table styling automatically */
 
 /* Payment Type Tags */
 .rsl-payment-tag {
@@ -225,7 +94,7 @@
     color: #155724;
 }
 
-/* Status Indicators */
+/* WordPress provides .yes/.no classes, but keep specific status classes */
 .rsl-status-active {
     color: #00a32a;
     font-weight: 600;

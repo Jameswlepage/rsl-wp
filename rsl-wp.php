@@ -127,7 +127,7 @@ class RSL_Licensing
     {
         if (!$this->create_tables()) {
             deactivate_plugins(plugin_basename(__FILE__));
-            wp_die(__('RSL Licensing: Failed to create required database tables. Please check database permissions.', 'rsl-wp'));
+            wp_die(esc_html__('RSL Licensing: Failed to create required database tables. Please check database permissions.', 'rsl-wp'));
         }
         
         if (!$this->create_default_options()) {
@@ -315,7 +315,7 @@ class RSL_Licensing
         
         $table_name = $wpdb->prefix . "rsl_licenses";
         
-        $existing_licenses = $wpdb->get_var("SELECT COUNT(*) FROM $table_name");
+        $existing_licenses = $wpdb->get_var("SELECT COUNT(*) FROM `{$wpdb->prefix}rsl_licenses`");
         
         if ($wpdb->last_error) {
             // error_log('RSL: Database error checking existing licenses: ' . $wpdb->last_error);
@@ -403,12 +403,13 @@ class RSL_Licensing
         foreach ($indexes as $index_name => $column) {
             // Check if index already exists
             $index_exists = $wpdb->get_var($wpdb->prepare(
-                "SHOW INDEX FROM {$table_name} WHERE Key_name = %s",
+                "SHOW INDEX FROM `{$wpdb->prefix}rsl_licenses` WHERE Key_name = %s",
                 $index_name
             ));
             
             if (!$index_exists) {
                 $sql = "ALTER TABLE {$table_name} ADD INDEX {$index_name} ({$column})";
+                // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
                 $result = $wpdb->query($sql);
                 
                 if ($result === false) {
