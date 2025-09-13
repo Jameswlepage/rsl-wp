@@ -1,6 +1,6 @@
-# RSL for WordPress
+# RSL
 
-![RSL for WordPress Banner](https://github.com/Jameswlepage/rsl-wp/blob/main/assets/banner-1544x500.png?raw=true)
+![RSL Banner](https://github.com/Jameswlepage/rsl-wp/blob/main/assets/banner-1544x500.png?raw=true)
 
 [![Download Plugin](https://img.shields.io/badge/Download-Plugin%20ZIP-green?style=for-the-badge&logo=download)](https://github.com/jameswlepage/rsl-wp/releases/latest/download/rsl-licensing-0.0.5.zip)
 
@@ -26,7 +26,7 @@ make zip  # Creates production-ready ZIP file
 **Installation:** 
 1. Download ZIP using the button above or from [Releases](https://github.com/jameswlepage/rsl-wp/releases)
 2. Upload via WordPress Admin → Plugins → Add New → Upload Plugin
-3. Activate and configure at RSL for WordPress → Dashboard
+3. Activate and configure at RSL → Dashboard
 
 > **Alpha Notice:** This is an early alpha release (v0.0.5-alpha) of the RSL for WordPress plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
 
@@ -106,7 +106,7 @@ This enables:
 
 ### 1. Create Your First License
 
-1. Go to **RSL for WordPress > Add New License**
+1. Go to **RSL > Add New License**
 2. Fill in basic information:
    - **Name**: "Site Content License"
    - **Content URL**: "/" (for entire site)
@@ -116,7 +116,7 @@ This enables:
 
 ### 2. Set Global License
 
-1. Navigate to **RSL for WordPress > Dashboard**
+1. Navigate to **RSL > Dashboard**
 2. Select your license from the "Global License" dropdown
 3. Enable desired integration methods
 4. Save settings
@@ -209,7 +209,7 @@ RSL uses **only the OAuth 2.0 Client Credentials Grant** - the simplest OAuth fl
 #### Creating OAuth Clients
 
 **Method 1: WordPress Admin Interface**
-1. Navigate to **RSL for WordPress > OAuth Clients** (if available)
+1. Navigate to **RSL > OAuth Clients** (if available)
 2. Click "Add New Client"
 3. Enter client name (e.g., "OpenAI Crawler")
 4. Copy the generated `client_id` and `client_secret` (shown only once)

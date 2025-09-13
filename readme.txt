@@ -1,4 +1,4 @@
-=== RSL for WordPress ===
+=== RSL ===
 Contributors: jameswlepage
 Donate link: https://github.com/sponsors/jameswlepage
 Tags: licensing, rsl, ai, content, copyright
@@ -9,11 +9,11 @@ Stable tag: 0.0.5
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Really Simple Licensing (RSL) support for WordPress. Define machine-readable licensing terms for AI and automated systems.
+Really Simple Licensing (RSL) support. Define machine-readable licensing terms for AI and automated systems.
 
 == Description ==
 
-**RSL for WordPress** brings complete support for the Really Simple Licensing (RSL) 1.0 standard to your WordPress site. RSL is a machine-readable format that allows content owners to clearly specify how their digital content can be used by AI systems, search engines, crawlers, and other automated tools.
+**RSL** brings complete support for the Really Simple Licensing (RSL) 1.0 standard to your site. RSL is a machine-readable format that allows content owners to clearly specify how their digital content can be used by AI systems, search engines, crawlers, and other automated tools.
 
 ### Why RSL Matters
 
@@ -95,7 +95,7 @@ Prohibits User Types: commercial
 ### Quick Start
 
 1. Install and activate the plugin
-2. Go to RSL for WordPress > Dashboard
+2. Go to RSL > Dashboard
 3. Create your first license with "Add RSL License"
 4. Set it as your global license
 5. Enable integration methods (HTML, HTTP headers, robots.txt)
@@ -146,7 +146,7 @@ Embeds RSL licensing directly into uploaded images, PDFs, and EPUB files.
 
 = Automatic Installation =
 1. Go to Plugins > Add New in your WordPress admin
-2. Search for "RSL for WordPress"
+2. Search for "RSL"
 3. Click Install Now and then Activate
 
 = Manual Installation =
@@ -156,10 +156,10 @@ Embeds RSL licensing directly into uploaded images, PDFs, and EPUB files.
 4. Activate the plugin
 
 = After Installation =
-1. Go to RSL for WordPress > Dashboard
+1. Go to RSL > Dashboard
 2. Click "Add RSL License" to create your first license
 3. Configure your license terms and permissions
-4. Set it as your global license in RSL for WordPress > Dashboard
+4. Set it as your global license in RSL > Dashboard
 5. Enable desired integration methods
 6. Save settings
 
