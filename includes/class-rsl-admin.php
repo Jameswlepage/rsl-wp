@@ -205,7 +205,7 @@ class RSL_Admin {
         }
         
         // --- BEGIN: RSL-safe URL/path validation ---
-        $content_url_input = isset($_POST['content_url']) ? trim((string) $_POST['content_url']) : '';
+        $content_url_input = isset($_POST['content_url']) ? trim((string) wp_unslash($_POST['content_url'])) : '';
 
         // Allow either:
         // 1) Absolute URL (http/https), OR
@@ -232,7 +232,7 @@ class RSL_Admin {
         }
         // --- END: RSL-safe URL/path validation ---
         
-        $server_url = esc_url_raw($_POST['server_url']);
+        $server_url = isset($_POST['server_url']) ? esc_url_raw(wp_unslash($_POST['server_url'])) : '';
         if (!empty($server_url) && !filter_var($server_url, FILTER_VALIDATE_URL)) {
             wp_send_json_error(array(
                 'message' => __('Invalid Server URL format.', 'rsl-wp')
@@ -241,7 +241,7 @@ class RSL_Admin {
         }
         
         // Validate amount
-        $amount = floatval($_POST['amount']);
+        $amount = isset($_POST['amount']) ? floatval($_POST['amount']) : 0;
         if ($amount < 0 || $amount > 999999.99) {
             wp_send_json_error(array(
                 'message' => __('Amount must be between 0 and 999,999.99.', 'rsl-wp')
@@ -250,7 +250,7 @@ class RSL_Admin {
         }
         
         // Validate currency code
-        $currency = strtoupper(sanitize_text_field($_POST['currency']));
+        $currency = isset($_POST['currency']) ? strtoupper(sanitize_text_field(wp_unslash($_POST['currency']))) : '';
         if (!empty($currency) && !preg_match('/^[A-Z]{3}$/', $currency)) {
             wp_send_json_error(array(
                 'message' => __('Currency must be a valid 3-letter ISO code (e.g., USD, EUR).', 'rsl-wp')
@@ -259,7 +259,7 @@ class RSL_Admin {
         }
         
         // Validate payment processor availability for paid licenses
-        $payment_type = sanitize_text_field($_POST['payment_type']);
+        $payment_type = isset($_POST['payment_type']) ? sanitize_text_field(wp_unslash($_POST['payment_type'])) : 'free';
         if ($amount > 0) {
             $processor = $this->payment_registry->get_processor_for_license([
                 'payment_type' => $payment_type,
@@ -300,7 +300,7 @@ class RSL_Admin {
         }
         
         // Validate email
-        $contact_email = sanitize_email($_POST['contact_email']);
+        $contact_email = isset($_POST['contact_email']) ? sanitize_email(wp_unslash($_POST['contact_email'])) : '';
         if (!empty($contact_email) && !is_email($contact_email)) {
             wp_send_json_error(array(
                 'message' => __('Invalid email address format.', 'rsl-wp')
@@ -310,43 +310,43 @@ class RSL_Admin {
         
         // Validate payment type
         $allowed_payment_types = array('free', 'purchase', 'subscription', 'training', 'crawl', 'inference', 'attribution', 'royalty');
-        $payment_type = sanitize_text_field($_POST['payment_type']);
+        $payment_type = isset($_POST['payment_type']) ? sanitize_text_field(wp_unslash($_POST['payment_type'])) : 'free';
         if (!in_array($payment_type, $allowed_payment_types)) {
             $payment_type = 'free';
         }
         
         $license_data = array(
-            'name' => sanitize_text_field($_POST['name']),
-            'description' => sanitize_textarea_field($_POST['description']),
+            'name' => sanitize_text_field(wp_unslash($_POST['name'])),
+            'description' => isset($_POST['description']) ? sanitize_textarea_field(wp_unslash($_POST['description'])) : '',
             'content_url' => $content_url,
             'server_url' => $server_url,
             'encrypted' => isset($_POST['encrypted']) ? 1 : 0,
             'lastmod' => current_time('mysql'),
-            'permits_usage' => sanitize_text_field($_POST['permits_usage']),
-            'permits_user' => sanitize_text_field($_POST['permits_user']),
-            'permits_geo' => sanitize_text_field($_POST['permits_geo']),
-            'prohibits_usage' => sanitize_text_field($_POST['prohibits_usage']),
-            'prohibits_user' => sanitize_text_field($_POST['prohibits_user']),
-            'prohibits_geo' => sanitize_text_field($_POST['prohibits_geo']),
+            'permits_usage' => isset($_POST['permits_usage']) ? sanitize_text_field(wp_unslash($_POST['permits_usage'])) : '',
+            'permits_user' => isset($_POST['permits_user']) ? sanitize_text_field(wp_unslash($_POST['permits_user'])) : '',
+            'permits_geo' => isset($_POST['permits_geo']) ? sanitize_text_field(wp_unslash($_POST['permits_geo'])) : '',
+            'prohibits_usage' => isset($_POST['prohibits_usage']) ? sanitize_text_field(wp_unslash($_POST['prohibits_usage'])) : '',
+            'prohibits_user' => isset($_POST['prohibits_user']) ? sanitize_text_field(wp_unslash($_POST['prohibits_user'])) : '',
+            'prohibits_geo' => isset($_POST['prohibits_geo']) ? sanitize_text_field(wp_unslash($_POST['prohibits_geo'])) : '',
             'payment_type' => $payment_type,
-            'standard_url' => esc_url_raw($_POST['standard_url']),
-            'custom_url' => esc_url_raw($_POST['custom_url']),
+            'standard_url' => isset($_POST['standard_url']) ? esc_url_raw(wp_unslash($_POST['standard_url'])) : '',
+            'custom_url' => isset($_POST['custom_url']) ? esc_url_raw(wp_unslash($_POST['custom_url'])) : '',
             'amount' => $amount,
             'currency' => $currency,
-            'warranty' => sanitize_text_field($_POST['warranty']),
-            'disclaimer' => sanitize_text_field($_POST['disclaimer']),
-            'schema_url' => esc_url_raw($_POST['schema_url']),
-            'copyright_holder' => sanitize_text_field($_POST['copyright_holder']),
-            'copyright_type' => sanitize_text_field($_POST['copyright_type']),
+            'warranty' => isset($_POST['warranty']) ? sanitize_text_field(wp_unslash($_POST['warranty'])) : '',
+            'disclaimer' => isset($_POST['disclaimer']) ? sanitize_text_field(wp_unslash($_POST['disclaimer'])) : '',
+            'schema_url' => isset($_POST['schema_url']) ? esc_url_raw(wp_unslash($_POST['schema_url'])) : '',
+            'copyright_holder' => isset($_POST['copyright_holder']) ? sanitize_text_field(wp_unslash($_POST['copyright_holder'])) : '',
+            'copyright_type' => isset($_POST['copyright_type']) ? sanitize_text_field(wp_unslash($_POST['copyright_type'])) : '',
             'contact_email' => $contact_email,
-            'contact_url' => esc_url_raw($_POST['contact_url']),
-            'terms_url' => esc_url_raw($_POST['terms_url']),
+            'contact_url' => isset($_POST['contact_url']) ? esc_url_raw(wp_unslash($_POST['contact_url'])) : '',
+            'terms_url' => isset($_POST['terms_url']) ? esc_url_raw(wp_unslash($_POST['terms_url'])) : '',
             'active' => isset($_POST['active']) ? 1 : 0
         );
         
         if (isset($_POST['license_id']) && is_numeric($_POST['license_id']) && $_POST['license_id'] > 0) {
-            $result = $this->license_handler->update_license($_POST['license_id'], $license_data);
-            $license_id = $_POST['license_id'];
+            $license_id = intval(wp_unslash($_POST['license_id']));
+            $result = $this->license_handler->update_license($license_id, $license_data);
         } else {
             $license_id = $this->license_handler->create_license($license_data);
             $result = $license_id !== false;
@@ -371,7 +371,7 @@ class RSL_Admin {
             wp_die(esc_html__('Permission denied', 'rsl-wp'));
         }
         
-        $license_id = intval($_POST['license_id']);
+        $license_id = isset($_POST['license_id']) ? intval($_POST['license_id']) : 0;
         
         if ($this->license_handler->delete_license($license_id)) {
             wp_send_json_success(array(
@@ -391,7 +391,7 @@ class RSL_Admin {
             wp_die(esc_html__('Permission denied', 'rsl-wp'));
         }
         
-        $license_id = intval($_POST['license_id']);
+        $license_id = isset($_POST['license_id']) ? intval($_POST['license_id']) : 0;
         $license_data = $this->license_handler->get_license($license_id);
         
         if ($license_data) {
@@ -493,13 +493,13 @@ class RSL_Admin {
         }
         
         // Classic editor nonce verification
-        if (!isset($_POST['rsl_meta_nonce']) || !wp_verify_nonce($_POST['rsl_meta_nonce'], 'rsl_meta_box')) {
+        if (!isset($_POST['rsl_meta_nonce']) || !wp_verify_nonce(wp_unslash($_POST['rsl_meta_nonce']), 'rsl_meta_box')) {
             return;
         }
         
         // Process classic editor form data
         $license_id = isset($_POST['rsl_license_id']) ? intval($_POST['rsl_license_id']) : 0;
-        $override_url = isset($_POST['rsl_override_content_url']) ? esc_url_raw($_POST['rsl_override_content_url']) : '';
+        $override_url = isset($_POST['rsl_override_content_url']) ? esc_url_raw(wp_unslash($_POST['rsl_override_content_url'])) : '';
         
         // Validate override URL if provided
         if (!empty($override_url) && !filter_var($override_url, FILTER_VALIDATE_URL)) {
