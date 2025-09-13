@@ -5,6 +5,54 @@ All notable changes to the RSL Licensing for WordPress plugin will be documented
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.0.3] - 2025-09-13
+
+### Added
+- **Comprehensive Testing Infrastructure**
+  - PHPUnit 9.6 testing framework with 28 passing tests (136 assertions)
+  - Mock WordPress environment for reliable testing without full WP setup
+  - Test suites covering unit, integration, security, and performance testing
+  - Test fixtures and utilities for all plugin components
+
+- **GitHub Actions CI/CD Pipeline**
+  - Matrix testing across PHP 7.4-8.3 on Ubuntu
+  - Automated plugin ZIP building for releases (production-only, ~700KB)
+  - Security scanning with weekly scheduled vulnerability checks
+  - Code quality validation and WordPress standards compliance
+  - Automated WordPress.org deployment workflow
+
+- **Professional Development Tools**
+  - Makefile with comprehensive development commands
+  - Security analysis script for vulnerability detection
+  - Test runner script with colored output and HTML reporting
+  - GitHub issue and PR templates with comprehensive checklists
+  - Dependabot for automated dependency updates
+
+- **Release Automation**
+  - Automatic GitHub release creation with assets and checksums
+  - Clean production ZIP builds excluding development files
+  - Professional release notes with technical details
+  - Download link automation for main repository page
+
+### Changed
+- Updated AGENTS.md to follow proper agents.md format and guidelines
+- Enhanced README with prominent download section and working links
+- Improved documentation with correct RSL specification URLs
+- Cleaned commit history to remove AI co-authorship references
+
+### Fixed
+- Fixed GitHub Actions workflows to use non-deprecated actions (v3→v4)
+- Resolved composer validation issues with missing license field
+- Fixed CI class redefinition conflicts during coverage generation
+- Corrected broken RSL documentation links in README and templates
+- Removed emojis from all release templates and documentation
+
+### Security
+- Complete security test suite validating all input sanitization
+- SQL injection prevention testing across all database queries
+- XSS protection validation and JWT token manipulation resistance
+- Rate limiting enforcement testing and authorization bypass prevention
+
 ## [0.0.2] - 2025-09-12
 
 ### Added
