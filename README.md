@@ -6,17 +6,21 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
 
 ## 📥 Quick Download
 
-**Latest Release:** [v0.0.2-beta.1](https://github.com/jameswlepage/rsl-wp/releases/latest) • **Size:** ~353KB
+**Latest Release:** Check [Releases Page](https://github.com/jameswlepage/rsl-wp/releases) • **Size:** ~353KB
 
-[![Download Plugin](https://img.shields.io/badge/Download-Plugin%20ZIP-blue?style=for-the-badge&logo=download)](https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.2-beta.1/rsl-licensing-0.0.2.zip)
+[![Download Latest](https://img.shields.io/badge/Download-Latest%20Release-blue?style=for-the-badge&logo=download)](https://github.com/jameswlepage/rsl-wp/releases/latest)
 
 ```bash
-# Direct download via curl/wget
-curl -L -o rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.2-beta.1/rsl-licensing-0.0.2.zip"
-wget -O rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/download/v0.0.2-beta.1/rsl-licensing-0.0.2.zip"
+# Build from source
+git clone https://github.com/jameswlepage/rsl-wp.git
+cd rsl-wp
+make zip  # Creates production-ready ZIP file
 ```
 
-**Installation:** Upload the ZIP file via WordPress Admin → Plugins → Add New → Upload Plugin
+**Installation:** 
+1. Download ZIP from [Releases](https://github.com/jameswlepage/rsl-wp/releases)
+2. Upload via WordPress Admin → Plugins → Add New → Upload Plugin
+3. Activate and configure at Settings → RSL Licensing
 
 > **Alpha Notice:** This is an early alpha release (v0.0.2) of the RSL Licensing plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
 
