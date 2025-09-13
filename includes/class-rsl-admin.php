@@ -31,28 +31,28 @@ class RSL_Admin {
 
 		// Add help tabs to admin pages
 		add_action(
-			'load-toplevel_page_rsl-licensing',
+			'load-toplevel_page_rsl-wp',
 			array(
 				$this,
 				'add_help_tabs_dashboard',
 			)
 		);
 		add_action(
-			'load-rsl-licensing_page_rsl-licenses',
+			'load-rsl-wp_page_rsl-licenses',
 			array(
 				$this,
 				'add_help_tabs_licenses',
 			)
 		);
 		add_action(
-			'load-rsl-licensing_page_rsl-add-license',
+			'load-rsl-wp_page_rsl-add-license',
 			array(
 				$this,
 				'add_help_tabs_add_license',
 			)
 		);
 		add_action(
-			'load-rsl-licensing_page_rsl-settings',
+			'load-rsl-wp_page_rsl-settings',
 			array(
 				$this,
 				'add_help_tabs_dashboard',
