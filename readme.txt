@@ -1,4 +1,4 @@
-=== RSL ===
+=== Really Simple Licensing ===
 Contributors: jameswlepage
 Donate link: https://github.com/sponsors/jameswlepage
 Tags: licensing, rsl, ai, content, copyright

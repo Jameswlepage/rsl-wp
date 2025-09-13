@@ -1,8 +1,8 @@
 {
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
   "meta": {
-    "title": "RSL Demo",
-    "description": "Demo of RSL plugin with sample licenses and content to showcase Really Simple Licensing (RSL) functionality for AI content licensing.",
+    "title": "Really Simple Licensing Demo",
+    "description": "Demo of Really Simple Licensing plugin with sample licenses and content to showcase Really Simple Licensing (RSL) functionality for AI content licensing.",
     "author": "James W. LePage",
     "categories": [
       "Content",

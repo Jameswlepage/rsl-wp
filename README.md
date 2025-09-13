@@ -1,4 +1,4 @@
-# RSL
+# Really Simple Licensing
 
 ![RSL Banner](https://github.com/Jameswlepage/rsl-wp/blob/main/assets/banner-1544x500.png?raw=true)
 
