@@ -77,7 +77,6 @@ zip: ## Create distribution ZIP
 		--exclude='test-report.html' \
 		--exclude='.phpunit*' \
 		--exclude='phpunit.xml' \
-		--exclude='composer.json' \
 		--exclude='composer.lock' \
 		--exclude='Makefile' \
 		--exclude='AGENTS.md' \
