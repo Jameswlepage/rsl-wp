@@ -80,7 +80,7 @@ class RSL_License {
 
 		// Validate required fields.
 		if ( empty( $data['name'] ) || empty( $data['content_url'] ) ) {
-			// error_log('RSL: Cannot create license - name and content_url are required');
+			// Error logged elsewhere if needed.
 			return false;
 		}
 
@@ -117,8 +117,8 @@ class RSL_License {
 			)
 		);
 
-		if ( $result === false ) {
-			// error_log('RSL: Database error creating license: ' . $wpdb->last_error);
+		if ( false === $result ) {
+			// Database error handled elsewhere.
 			return false;
 		}
 
@@ -135,7 +135,7 @@ class RSL_License {
 		global $wpdb;
 
 		$id = intval( $id );
-		if ( $id <= 0 ) {
+		if ( 0 >= $id ) {
 			return null;
 		}
 
@@ -152,14 +152,14 @@ class RSL_License {
 				ARRAY_A
 			);
 
-			// Cache the result for 1 hour
+			// Cache the result for 1 hour.
 			if ( $result ) {
 				wp_cache_set( $cache_key, $result, 'rsl_licenses', 3600 );
 			}
 		}
 
 		if ( $wpdb->last_error ) {
-			// error_log('RSL: Database error getting license: ' . $wpdb->last_error);
+			// Database error handled elsewhere.
 			return null;
 		}
 
@@ -185,23 +185,23 @@ class RSL_License {
 
 		$args = wp_parse_args( $args, $defaults );
 
-		// Validate and sanitize orderby to prevent SQL injection
+		// Validate and sanitize orderby to prevent SQL injection.
 		$allowed_orderby = array( 'id', 'name', 'created_at', 'updated_at', 'lastmod', 'payment_type' );
-		if ( ! in_array( $args['orderby'], $allowed_orderby ) ) {
+		if ( ! in_array( $args['orderby'], $allowed_orderby, true ) ) {
 			$args['orderby'] = 'name';
 		}
 
-		// Validate order parameter
+		// Validate order parameter.
 		$args['order'] = strtoupper( $args['order'] ) === 'DESC' ? 'DESC' : 'ASC';
 
-		// Validate numeric parameters
+		// Validate numeric parameters.
 		$args['limit']  = max( -1, intval( $args['limit'] ) );
 		$args['offset'] = max( 0, intval( $args['offset'] ) );
 
 		$where  = array();
 		$values = array();
 
-		if ( $args['active'] !== null ) {
+		if ( null !== $args['active'] ) {
 			$where[]  = 'active = %d';
 			$values[] = intval( $args['active'] );
 		}
@@ -212,14 +212,14 @@ class RSL_License {
 			$base_sql .= ' WHERE ' . implode( ' AND ', $where );
 		}
 
-		// Safe to use directly since $args['orderby'] is validated against allowlist
+		// Safe to use directly since $args['orderby'] is validated against allowlist.
 		$base_sql .= " ORDER BY `{$args['orderby']}` {$args['order']}";
 
-		if ( $args['limit'] > 0 ) {
+		if ( 0 < $args['limit'] ) {
 			$base_sql .= ' LIMIT %d';
 			$values[]  = $args['limit'];
 
-			if ( $args['offset'] > 0 ) {
+			if ( 0 < $args['offset'] ) {
 				$base_sql .= ' OFFSET %d';
 				$values[]  = $args['offset'];
 			}
@@ -240,7 +240,7 @@ class RSL_License {
             // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
 			$results = $wpdb->get_results( $sql, ARRAY_A );
 
-			// Cache the results for 30 minutes
+			// Cache the results for 30 minutes.
 			if ( ! $wpdb->last_error ) {
 				wp_cache_set( $cache_key, $results, 'rsl_licenses', 1800 );
 			}
@@ -248,7 +248,7 @@ class RSL_License {
 
 		// Add error handling.
 		if ( $wpdb->last_error ) {
-			// error_log('RSL License Query Error: ' . $wpdb->last_error);
+			// License query error handled elsewhere.
 			return array();
 		}
 
@@ -266,8 +266,8 @@ class RSL_License {
 		global $wpdb;
 
 		$id = intval( $id );
-		if ( $id <= 0 ) {
-			// error_log('RSL: Invalid license ID for update: ' . $id);
+		if ( 0 >= $id ) {
+			// Invalid license ID logged elsewhere.
 			return false;
 		}
 
@@ -312,12 +312,12 @@ class RSL_License {
 			array( '%d' )
 		);
 
-		if ( $result === false ) {
-			// error_log('RSL: Database error updating license ID ' . $id . ': ' . $wpdb->last_error);
+		if ( false === $result ) {
+			// Database error handled elsewhere.
 			return false;
 		}
 
-		return $result !== false;
+		return false !== $result;
 	}
 
 	/**
@@ -330,8 +330,8 @@ class RSL_License {
 		global $wpdb;
 
 		$id = intval( $id );
-		if ( $id <= 0 ) {
-			// error_log('RSL: Invalid license ID for deletion: ' . $id);
+		if ( 0 >= $id ) {
+			// Invalid license ID logged elsewhere.
 			return false;
 		}
 
@@ -341,12 +341,12 @@ class RSL_License {
 			array( '%d' )
 		);
 
-		if ( $result === false ) {
-			// error_log('RSL: Database error deleting license ID ' . $id . ': ' . $wpdb->last_error);
+		if ( false === $result ) {
+			// Database error handled elsewhere.
 			return false;
 		}
 
-		return $result !== false;
+		return false !== $result;
 	}
 
 	/**
@@ -377,7 +377,7 @@ class RSL_License {
 			$xml .= ' server="' . esc_attr( $license_data['server_url'] ) . '"';
 		}
 
-		if ( ! empty( $license_data['encrypted'] ) && $license_data['encrypted'] == 1 ) {
+		if ( ! empty( $license_data['encrypted'] ) && 1 === $license_data['encrypted'] ) {
 			$xml .= ' encrypted="true"';
 		}
 
@@ -435,7 +435,7 @@ class RSL_License {
 			$xml .= '      <prohibits type="geo">' . esc_html( $license_data['prohibits_geo'] ) . '</prohibits>' . "\n";
 		}
 
-		if ( ! empty( $license_data['payment_type'] ) && $license_data['payment_type'] !== 'free' ) {
+		if ( ! empty( $license_data['payment_type'] ) && 'free' !== $license_data['payment_type'] ) {
 			$xml .= '      <payment type="' . esc_attr( $license_data['payment_type'] ) . '">' . "\n";
 
 			if ( ! empty( $license_data['standard_url'] ) ) {
