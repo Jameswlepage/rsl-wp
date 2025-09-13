@@ -60,7 +60,7 @@ build: clean install lint test ## Full build process
 
 zip: ## Create distribution ZIP
 	@echo "Creating distribution ZIP..."
-	$(eval VERSION := $(shell grep "Version:" rsl-licensing.php | head -1 | awk '{print $$2}'))
+	$(eval VERSION := $(shell grep "Version:" rsl-licensing.php | head -1 | sed 's/.*Version: *//' | tr -d ' '))
 	$(eval ZIP_NAME := rsl-licensing-$(VERSION).zip)
 	
 	@echo "Installing production dependencies only..."
