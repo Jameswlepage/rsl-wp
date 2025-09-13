@@ -35,10 +35,10 @@ make zip  # Creates production-ready ZIP file
 ### Key RSL Resources
 
 - **[RSL Standard Website](https://rslstandard.org)** - Official specification and documentation
-- **[RSL 1.0 Specification](https://rslstandard.org/spec)** - Technical specification details
-- **[Why RSL Matters](https://rslstandard.org/why)** - Understanding the need for machine-readable licensing
-- **[Community & Support](https://rslstandard.org/community)** - Join discussions and get help
-- **[Implementation Examples](https://rslstandard.org/examples)** - Real-world RSL usage patterns
+- **[Plugin Documentation](https://github.com/jameswlepage/rsl-wp/blob/main/README.md)** - Complete setup and usage guide
+- **[Payment Integration Guide](https://github.com/jameswlepage/rsl-wp/blob/main/docs/PAYMENTS.md)** - WooCommerce and OAuth setup
+- **[Developer API Guide](https://github.com/jameswlepage/rsl-wp/blob/main/docs/DEVELOPER.md)** - REST API and integration details
+- **[GitHub Issues](https://github.com/jameswlepage/rsl-wp/issues)** - Support and bug reporting
 
 ### How RSL Works
 
@@ -773,7 +773,7 @@ We welcome contributions! Please:
 
 ## Support
 
-- **Documentation**: [RSL Standard Website](https://rslstandard.org)
+- **Documentation**: [RSL Standard Website](https://rslstandard.org) | [Plugin Documentation](https://github.com/jameswlepage/rsl-wp)
 - **Issues**: Report bugs via GitHub Issues
 - **Community**: Join RSL discussions
 
