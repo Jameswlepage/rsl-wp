@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<h1 class="wp-heading-inline">
 		<img src="<?php echo esc_url( RSL_PLUGIN_URL . 'admin/images/rsl-logo.png' ); ?>" 
 			alt="RSL" class="rsl-admin-icon">
-		<?php esc_html_e( 'RSL Licenses', 'rsl-wp' ); ?>
+		<?php esc_html_e( 'All Licenses', 'rsl-wp' ); ?>
 	</h1>
 	<a href="<?php echo esc_url( admin_url( 'admin.php?page=rsl-add-license' ) ); ?>" class="page-title-action">
 		<?php esc_html_e( 'Add New License', 'rsl-wp' ); ?>
@@ -35,7 +35,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 			</p>
 		</div>
 	<?php else : ?>
-		<table class="wp-list-table widefat fixed striped">
+		<table class="wp-list-table widefat fixed striped" style="margin-top: 20px;">
 			<thead>
 				<tr>
 					<th scope="col"><?php esc_html_e( 'Name', 'rsl-wp' ); ?></th>

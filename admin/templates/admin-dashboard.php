@@ -13,7 +13,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 		?>
 		"
 			alt="RSL" class="rsl-admin-icon">
-		<?php esc_html_e( 'RSL Licensing', 'rsl-wp' ); ?>
+		<?php esc_html_e( 'Really Simple Licensing', 'rsl-wp' ); ?>
 	</h1>
 	<a href="
 	<?php

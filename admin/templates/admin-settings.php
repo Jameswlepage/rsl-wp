@@ -8,7 +8,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 	<h1 class="wp-heading-inline">
 		<img src="<?php echo esc_url( RSL_PLUGIN_URL . 'admin/images/rsl-logo.png' ); ?>" 
 			alt="RSL" class="rsl-admin-icon">
-		<?php esc_html_e( 'RSL Licensing Settings', 'rsl-wp' ); ?>
+		<?php esc_html_e( 'RSL Settings', 'rsl-wp' ); ?>
 	</h1>
 	<hr class="wp-header-end">
 	

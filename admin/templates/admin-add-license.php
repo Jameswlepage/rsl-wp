@@ -5,7 +5,7 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 $license_handler = new RSL_License();
 $is_edit         = ! empty( $license_data );
-$title           = $is_edit ? __( 'Edit RSL License', 'rsl-wp' ) : __( 'Add RSL License', 'rsl-wp' );
+$title           = $is_edit ? __( 'Edit License', 'rsl-wp' ) : __( 'Add New License', 'rsl-wp' );
 ?>
 
 <div class="wrap">
