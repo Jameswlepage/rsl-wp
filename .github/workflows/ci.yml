@@ -1,0 +1,151 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches: [ main, develop, 'feature/**', 'fix/**', 'add/**' ]
+  pull_request:
+    branches: [ main, develop ]
+
+jobs:
+  test:
+    name: Test PHP ${{ matrix.php }} on ${{ matrix.os }}
+    runs-on: ${{ matrix.os }}
+    
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ ubuntu-latest ]
+        php: [ '7.4', '8.0', '8.1', '8.2', '8.3' ]
+        
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: ${{ matrix.php }}
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+        coverage: xdebug
+
+    - name: Cache Composer packages
+      id: composer-cache
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-${{ matrix.php }}-${{ hashFiles('**/composer.lock') }}
+        restore-keys: |
+          ${{ runner.os }}-php-${{ matrix.php }}-
+
+    - name: Install dependencies
+      run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+    - name: Check PHP syntax
+      run: find . -name "*.php" -not -path "./vendor/*" -not -path "./tests/*" -exec php -l {} \;
+
+    - name: Run PHPUnit tests
+      run: |
+        mkdir -p test-results
+        vendor/bin/phpunit --log-junit test-results/phpunit.xml
+
+    - name: Generate coverage report
+      if: matrix.php == '8.1' && matrix.os == 'ubuntu-latest'
+      run: vendor/bin/phpunit --coverage-clover coverage.xml
+
+    - name: Upload coverage to Codecov
+      if: matrix.php == '8.1' && matrix.os == 'ubuntu-latest'
+      uses: codecov/codecov-action@v3
+      with:
+        file: ./coverage.xml
+        flags: unittests
+        name: codecov-umbrella
+        fail_ci_if_error: false
+
+    - name: Upload test results
+      uses: actions/upload-artifact@v3
+      if: always()
+      with:
+        name: test-results-php${{ matrix.php }}
+        path: test-results/
+
+  lint:
+    name: Code Quality & Linting
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+        extensions: dom, curl, libxml, mbstring, zip, pcntl, pdo, sqlite, pdo_sqlite, bcmath, soap, intl, gd, exif, iconv, imagick
+
+    - name: Cache Composer packages
+      uses: actions/cache@v3
+      with:
+        path: vendor
+        key: ${{ runner.os }}-php-8.1-${{ hashFiles('**/composer.lock') }}
+
+    - name: Install dependencies
+      run: composer install --no-progress --prefer-dist --optimize-autoloader
+
+    - name: Check WordPress Coding Standards
+      run: |
+        # Install WordPress Coding Standards if available
+        if composer show | grep -q "wp-coding-standards"; then
+          vendor/bin/phpcs --standard=WordPress --extensions=php --ignore=vendor/ .
+        else
+          echo "WordPress Coding Standards not installed - skipping"
+        fi
+
+    - name: Check for security vulnerabilities
+      run: composer audit || true # Don't fail on security warnings for now
+
+    - name: Validate composer.json
+      run: composer validate --strict
+
+  compatibility:
+    name: WordPress Compatibility Check
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
+    - name: Install WP-CLI
+      run: |
+        curl -O https://raw.githubusercontent.com/wp-cli/wp-cli/v2.8.1/utils/wp-completion.bash
+        wget https://github.com/wp-cli/wp-cli/releases/download/v2.8.1/wp-cli-2.8.1.phar
+        chmod +x wp-cli-2.8.1.phar
+        sudo mv wp-cli-2.8.1.phar /usr/local/bin/wp
+
+    - name: Check plugin header
+      run: |
+        # Verify plugin header is valid
+        php -r "
+        \$content = file_get_contents('rsl-licensing.php');
+        if (strpos(\$content, 'Plugin Name:') === false) {
+          echo 'Missing Plugin Name header';
+          exit(1);
+        }
+        if (strpos(\$content, 'Version:') === false) {
+          echo 'Missing Version header'; 
+          exit(1);
+        }
+        echo 'Plugin header validation passed';
+        "
+
+    - name: Check plugin structure
+      run: |
+        # Verify required files exist
+        test -f rsl-licensing.php || { echo "Main plugin file missing"; exit 1; }
+        test -d includes/ || { echo "Includes directory missing"; exit 1; }
+        test -f README.md || { echo "README.md missing"; exit 1; }
+        echo "Plugin structure validation passed"

@@ -11,6 +11,12 @@ node_modules/
 .DS_Store
 Thumbs.db
 
+# Testing
+/test-logs/
+/coverage/
+.phpunit.result.cache
+test-report.html
+
 # IDE
 .vscode/
 .idea/

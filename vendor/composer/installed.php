@@ -3,7 +3,7 @@
         'name' => 'jameswlepage/rsl-licensing',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => 'c99a627e6fba37f9f3e0b5eb3f1ce2a6b4e5e2e4',
+        'reference' => 'f64b7c51cc769ab9fc9ee0dc3f0e0bd3854fe548',
         'type' => 'wordpress-plugin',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -70,7 +70,7 @@
         'jameswlepage/rsl-licensing' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => 'c99a627e6fba37f9f3e0b5eb3f1ce2a6b4e5e2e4',
+            'reference' => 'f64b7c51cc769ab9fc9ee0dc3f0e0bd3854fe548',
             'type' => 'wordpress-plugin',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),

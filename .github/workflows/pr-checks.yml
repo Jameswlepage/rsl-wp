@@ -1,0 +1,180 @@
+name: Pull Request Checks
+
+on:
+  pull_request:
+    types: [opened, synchronize, reopened, ready_for_review]
+    branches: [ main, develop ]
+
+jobs:
+  validate-pr:
+    name: PR Validation
+    runs-on: ubuntu-latest
+    if: github.event.pull_request.draft == false
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      with:
+        fetch-depth: 0
+
+    - name: Setup PHP
+      uses: shivammathur/setup-php@v2
+      with:
+        php-version: '8.1'
+
+    - name: Install dependencies
+      run: composer install --dev
+
+    - name: Check PR title format
+      run: |
+        TITLE="${{ github.event.pull_request.title }}"
+        
+        # Check for conventional commit format or descriptive title
+        if [[ "$TITLE" =~ ^(feat|fix|docs|style|refactor|test|chore|security)(\(.+\))?: .+ ]] || 
+           [[ ${#TITLE} -ge 10 && ${#TITLE} -le 100 ]]; then
+          echo "✅ PR title format is acceptable: $TITLE"
+        else
+          echo "❌ PR title should be descriptive (10-100 chars) or use conventional commits format"
+          echo "Examples:"
+          echo "  feat(oauth): add rate limiting to token endpoint"
+          echo "  fix: resolve XSS vulnerability in license name field"
+          echo "  Add comprehensive test coverage for license management"
+          exit 1
+        fi
+
+    - name: Check for required files
+      run: |
+        # Check if tests were added for new features
+        CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }})
+        
+        if echo "$CHANGED_FILES" | grep -q "includes/.*\.php$"; then
+          echo "✅ Plugin files changed - checking for tests..."
+          
+          if echo "$CHANGED_FILES" | grep -q "tests/.*\.php$"; then
+            echo "✅ Tests were updated/added"
+          else
+            echo "⚠️ Plugin files changed but no tests added"
+            echo "Consider adding tests for new functionality"
+          fi
+        fi
+
+    - name: Run quick tests
+      run: |
+        echo "Running quick test suite..."
+        vendor/bin/phpunit tests/unit/TestBasicFunctionality.php tests/unit/TestRSLLicense.php
+        echo "✅ Quick tests passed"
+
+    - name: Check for breaking changes
+      run: |
+        # Check if any public APIs have changed
+        echo "Checking for potential breaking changes..."
+        
+        CHANGED_FILES=$(git diff --name-only ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }})
+        
+        if echo "$CHANGED_FILES" | grep -q "rsl-licensing\.php\|includes/class-rsl-server\.php"; then
+          echo "⚠️ Core plugin files changed - review for breaking changes"
+          
+          # Check for removed public functions
+          git diff ${{ github.event.pull_request.base.sha }}...${{ github.event.pull_request.head.sha }} -- includes/ | grep "^-.*function.*public" && {
+            echo "❌ Public functions may have been removed - potential breaking change"
+            exit 1
+          } || echo "✅ No public functions removed"
+        fi
+
+    - name: Validate plugin structure
+      run: |
+        echo "Validating plugin structure..."
+        
+        # Required files
+        test -f rsl-licensing.php || { echo "❌ Main plugin file missing"; exit 1; }
+        test -d includes/ || { echo "❌ Includes directory missing"; exit 1; }
+        test -f README.md || { echo "❌ README.md missing"; exit 1; }
+        
+        # Check plugin header
+        grep -q "Plugin Name:" rsl-licensing.php || { echo "❌ Plugin header missing"; exit 1; }
+        grep -q "Version:" rsl-licensing.php || { echo "❌ Version header missing"; exit 1; }
+        
+        echo "✅ Plugin structure valid"
+
+    - name: Check code quality
+      run: |
+        # Basic code quality checks
+        echo "Running basic code quality checks..."
+        
+        # Check for PHP syntax errors
+        find includes/ -name "*.php" -exec php -l {} \; | grep -v "No syntax errors" && exit 1 || echo "✅ No syntax errors"
+        
+        # Check for TODO/FIXME comments that should be addressed
+        if grep -r "TODO\|FIXME\|XXX" includes/ --include="*.php"; then
+          echo "⚠️ Found TODO/FIXME comments - consider addressing before merge"
+        fi
+        
+        # Check for debug statements that shouldn't be committed
+        if grep -r "var_dump\|print_r\|error_log.*test\|console\.log" includes/ --include="*.php"; then
+          echo "⚠️ Found debug statements - should these be removed?"
+        fi
+
+  size-impact:
+    name: Plugin Size Impact
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout base branch
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.base.ref }}
+        path: base
+
+    - name: Checkout PR branch
+      uses: actions/checkout@v4
+      with:
+        ref: ${{ github.event.pull_request.head.ref }}
+        path: head
+
+    - name: Calculate size impact
+      run: |
+        echo "## Plugin Size Impact" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        BASE_SIZE=$(du -sb base/ --exclude='.git' | cut -f1)
+        HEAD_SIZE=$(du -sb head/ --exclude='.git' | cut -f1)
+        
+        DIFF_BYTES=$((HEAD_SIZE - BASE_SIZE))
+        DIFF_KB=$((DIFF_BYTES / 1024))
+        
+        echo "**Base size:** $(numfmt --to=iec $BASE_SIZE)" >> $GITHUB_STEP_SUMMARY
+        echo "**New size:** $(numfmt --to=iec $HEAD_SIZE)" >> $GITHUB_STEP_SUMMARY
+        
+        if [ $DIFF_BYTES -gt 0 ]; then
+          echo "**Size increase:** +$(numfmt --to=iec $DIFF_BYTES)" >> $GITHUB_STEP_SUMMARY
+          
+          if [ $DIFF_KB -gt 1000 ]; then
+            echo "⚠️ **Large size increase** - consider if all changes are necessary" >> $GITHUB_STEP_SUMMARY
+          fi
+        elif [ $DIFF_BYTES -lt 0 ]; then
+          echo "**Size decrease:** $(numfmt --to=iec $((DIFF_BYTES * -1)))" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Great job reducing plugin size!**" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "**No size change**" >> $GITHUB_STEP_SUMMARY
+        fi
+
+    - name: File count impact
+      run: |
+        echo "" >> $GITHUB_STEP_SUMMARY
+        echo "### File Changes" >> $GITHUB_STEP_SUMMARY
+        echo "" >> $GITHUB_STEP_SUMMARY
+        
+        BASE_FILES=$(find base/ -name "*.php" | wc -l)
+        HEAD_FILES=$(find head/ -name "*.php" | wc -l)
+        DIFF_FILES=$((HEAD_FILES - BASE_FILES))
+        
+        echo "**PHP files in base:** $BASE_FILES" >> $GITHUB_STEP_SUMMARY
+        echo "**PHP files in head:** $HEAD_FILES" >> $GITHUB_STEP_SUMMARY
+        
+        if [ $DIFF_FILES -gt 0 ]; then
+          echo "**New files:** +$DIFF_FILES" >> $GITHUB_STEP_SUMMARY
+        elif [ $DIFF_FILES -lt 0 ]; then
+          echo "**Removed files:** $((DIFF_FILES * -1))" >> $GITHUB_STEP_SUMMARY
+        else
+          echo "**No file count change**" >> $GITHUB_STEP_SUMMARY
+        fi
