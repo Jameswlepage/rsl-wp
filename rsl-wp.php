@@ -60,18 +60,8 @@ class RSL_Licensing
 
     public function init()
     {
-        $this->load_textdomain();
         $this->includes();
         $this->init_hooks();
-    }
-
-    private function load_textdomain()
-    {
-        load_plugin_textdomain(
-            'rsl-wp',
-            false,
-            dirname(plugin_basename(__FILE__)) . '/languages/'
-        );
     }
 
     private function includes()

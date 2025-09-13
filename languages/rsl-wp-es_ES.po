@@ -120,7 +120,7 @@ msgid ""
 "Are you sure you want to delete the license \"%s\"? This action cannot be "
 "undone."
 msgstr ""
-"¿Estás seguro de que quieres eliminar la licencia \"%s\"? Esta acción no se "
+"¿Está seguro de que desea eliminar la licencia \"%s\"? Esta acción no se "
 "puede deshacer."
 
 #: admin/templates/admin-dashboard.php:49
@@ -157,7 +157,7 @@ msgid ""
 "Check if the licensed content requires decryption keys from the license "
 "server."
 msgstr ""
-"Marcar si el contenido licenciado requiere claves de desencriptación del "
+"Marque si el contenido licenciado requiere claves de descifrado del "
 "servidor de licencias."
 
 #: admin/templates/admin-add-license.php:194
@@ -167,12 +167,20 @@ msgid ""
 msgstr ""
 "Lista separada por comas de países/regiones permitidos (códigos ISO 3166-1 "
 "alpha-2)."
+"Lista separada por comas de países/regiones permitidos (códigos ISO 3166-1 "
+"alpha-2)."
+"Lista separada por comas de países/regiones permitidos (códigos ISO 3166-1 "
+"alpha-2)."
 
 #: admin/templates/admin-add-license.php:258
 msgid ""
 "Comma-separated list of prohibited countries/regions (ISO 3166-1 alpha-2 "
 "codes)."
 msgstr ""
+"Lista separada por comas de países/regiones prohibidos (códigos ISO 3166-1 "
+"alpha-2)."
+"Lista separada por comas de países/regiones prohibidos (códigos ISO 3166-1 "
+"alpha-2)."
 "Lista separada por comas de países/regiones prohibidos (códigos ISO 3166-1 "
 "alpha-2)."
 
@@ -200,6 +208,9 @@ msgid ""
 msgstr ""
 "Configura ajustes globales del plugin RSL incluyendo licencia predeterminada, "
 "métodos de integración (inyección HTML, cabeceras HTTP, robots.txt), y "
+"configuración de espacio de nombres."
+"Configura ajustes globales del plugin RSL incluyendo licencia predeterminada, "
+"métodos de integración (inyección HTML, cabeceras HTTP, robots.txt), y "
 "configuración de namespace."
 
 #: admin/templates/admin-add-license.php:434
@@ -224,6 +235,8 @@ msgid ""
 "Content URL must be an absolute URL (http/https) or a server-relative path "
 "(starting with \"/\")."
 msgstr ""
+"La URL del contenido debe ser una URL absoluta (http/https) o una ruta "
+"relativa al servidor (que comience con \"/\")."
 "La URL del contenido debe ser una URL absoluta (http/https) o una ruta "
 "relativa al servidor (que comience con \"/\")."
 
@@ -276,6 +289,14 @@ msgid ""
 "elements including usage restrictions, geographic limitations, and payment "
 "types."
 msgstr ""
+"Crea una nueva licencia Really Simple Licensing (RSL) con términos, "
+"permisos y configuración de pago especificados. Soporta todos los elementos "
+"de la especificación RSL 1.0 incluyendo restricciones de uso, limitaciones "
+"geográficas y tipos de pago."
+"Crea una nueva licencia Really Simple Licensing (RSL) con términos, "
+"permisos y configuración de pago especificados. Soporta todos los elementos "
+"de la especificación RSL 1.0 incluyendo restricciones de uso, limitaciones "
+"geográficas y tipos de pago."
 
 #: includes/class-rsl-admin.php:695
 msgid "Creating Licenses"
@@ -410,7 +431,7 @@ msgstr "Habilitado"
 
 #: admin/templates/admin-add-license.php:114
 msgid "Enter the URL of the external RSL License Server API endpoint."
-msgstr ""
+msgstr "Ingrese la URL del endpoint de la API del Servidor de Licencias RSL externo."
 
 #: includes/class-rsl-admin.php:704
 msgid "Entire site"
@@ -463,18 +484,30 @@ msgid ""
 "For attribution licenses, set the amount to $0 or use \"purchase\" payment "
 "type."
 msgstr ""
+"Para licencias de atribución, configure la cantidad a $0 o use el tipo de "
+"pago \"compra\"."
 
 #: includes/class-rsl-admin.php:278
 msgid ""
 "For paid attribution licenses, please install and activate WooCommerce, then "
 "set up your preferred payment gateway (Stripe, PayPal, etc.)."
 msgstr ""
+"Para licencias de atribución pagadas, por favor instale y active "
+"WooCommerce, luego configure su pasarela de pago preferida (Stripe, PayPal, "
+"etc.)."
+"Para licencias de atribución pagadas, por favor instale y active "
+"WooCommerce, luego configure su pasarela de pago preferida (Stripe, PayPal, "
+"etc.)."
 
 #: includes/class-rsl-admin.php:715
 msgid ""
 "For paid licensing (amount > $0), you need WooCommerce installed and "
 "configured."
 msgstr ""
+"Para licencias pagadas (cantidad > $0), necesita WooCommerce instalado y "
+"configurado."
+"Para licencias pagadas (cantidad > $0), necesita WooCommerce instalado y "
+"configurado."
 
 #: includes/class-rsl-admin.php:678 includes/class-rsl-license.php:365
 msgid "Free"
@@ -498,18 +531,21 @@ msgid ""
 "readable licensing data suitable for automated systems, crawlers, and AI "
 "agents."
 msgstr ""
+"Genera XML compatible con RSL 1.0 para una licencia específica. Devuelve "
+"datos de licencias legibles por máquina adecuados para sistemas automatizados, "
+"rastreadores y agentes de IA."
 
 #: includes/class-rsl-abilities.php:335
 msgid "Get Content License"
-msgstr ""
+msgstr "Obtener Licencia de Contenido"
 
 #: includes/class-rsl-abilities.php:437
 msgid "Get License XML"
-msgstr ""
+msgstr "Obtener XML de Licencia"
 
 #: includes/class-rsl-admin.php:639
 msgid "Getting Started"
-msgstr ""
+msgstr "Comenzando"
 
 #: admin/templates/admin-dashboard.php:104
 #: admin/templates/admin-settings.php:33
@@ -546,11 +582,11 @@ msgstr "Cabeceras HTTP Link"
 
 #: includes/processors/class-rsl-woocommerce-processor.php:159
 msgid "Hidden (default)"
-msgstr ""
+msgstr "Oculto (predeterminado)"
 
 #: includes/processors/class-rsl-woocommerce-processor.php:164
 msgid "How should auto-created license products appear in your store?"
-msgstr ""
+msgstr "¿Cómo deberían aparecer los productos de licencia creados automáticamente en su tienda?"
 
 #: admin/templates/admin-licenses.php:103
 msgid "Inactive"
@@ -566,11 +602,11 @@ msgstr "Instalar WooCommerce"
 
 #: includes/class-rsl-admin.php:718
 msgid "Install and activate WooCommerce plugin"
-msgstr ""
+msgstr "Instalar y activar el plugin WooCommerce"
 
 #: includes/class-rsl-admin.php:627
 msgid "Integration Methods"
-msgstr ""
+msgstr "Métodos de Integración"
 
 #: admin/templates/admin-dashboard.php:208
 msgid "Integration Status"
@@ -578,7 +614,7 @@ msgstr "Estado de Integración"
 
 #: includes/class-rsl-abilities.php:532
 msgid "Introspect License Token"
-msgstr ""
+msgstr "Inspeccionar Token de Licencia"
 
 #: includes/class-rsl-admin.php:220
 msgid "Invalid Content URL format."
@@ -598,7 +634,7 @@ msgstr "Ruta/patrón relativo al servidor inválido."
 
 #: includes/class-rsl-abilities.php:476
 msgid "Issue License Token"
-msgstr ""
+msgstr "Emitir Token de Licencia"
 
 #: includes/class-rsl-abilities.php:477
 msgid ""
@@ -606,6 +642,12 @@ msgid ""
 "Protocol (OLP). Handles payment verification and creates JWT tokens for "
 "authorized content access."
 msgstr ""
+"Emite tokens de autenticación para licencias RSL pagadas a través del "
+"Protocolo de Licencias Abiertas (OLP). Maneja la verificación de pagos y "
+"crea tokens JWT para acceso autorizado al contenido."
+"Emite tokens de autenticación para licencias RSL pagadas a través del "
+"Protocolo de Licencias Abiertas (OLP). Maneja la verificación de pagos y "
+"crea tokens JWT para acceso autorizado al contenido."
 
 #: includes/class-rsl-admin.php:472
 msgid "Leave empty to use post URL"
@@ -618,20 +660,20 @@ msgstr "Información Legal"
 #: admin/templates/admin-dashboard.php:79
 msgid "License"
 msgid_plural "Licenses"
-msgstr[0] ""
-msgstr[1] ""
+msgstr[0] "Licencia"
+msgstr[1] "Licencias"
 
 #: includes/class-rsl-admin.php:665
 msgid "License Actions"
-msgstr ""
+msgstr "Acciones de Licencia"
 
 #: includes/class-rsl-admin.php:696
 msgid "License Creation Guide"
-msgstr ""
+msgstr "Guía de Creación de Licencias"
 
 #: includes/class-rsl-admin.php:662
 msgid "License Management"
-msgstr ""
+msgstr "Gestión de Licencias"
 
 #: admin/templates/admin-add-license.php:43
 msgid "License Name"
@@ -643,15 +685,15 @@ msgstr "Anular Licencia:"
 
 #: includes/processors/class-rsl-woocommerce-processor.php:157
 msgid "License Product Visibility"
-msgstr ""
+msgstr "Visibilidad del Producto de Licencia"
 
 #: admin/templates/admin-add-license.php:78
 msgid "License Server"
-msgstr ""
+msgstr "Servidor de Licencias"
 
 #: admin/templates/admin-add-license.php:82
 msgid "License Server Options"
-msgstr ""
+msgstr "Opciones del Servidor de Licencias"
 
 #: includes/class-rsl-robots.php:173
 msgid "License URL is not valid"
@@ -671,7 +713,7 @@ msgstr "Licencia no encontrada"
 
 #: includes/class-rsl-abilities.php:745
 msgid "License not found or inactive"
-msgstr ""
+msgstr "Licencia no encontrada o inactiva"
 
 #: includes/class-rsl-admin.php:358
 msgid "License saved successfully"
@@ -679,7 +721,7 @@ msgstr "Licencia guardada exitosamente"
 
 #: includes/class-rsl-abilities.php:227
 msgid "List RSL Licenses"
-msgstr ""
+msgstr "Listar Licencias RSL"
 
 #: admin/templates/admin-dashboard.php:132
 msgid "Manage Licenses"
@@ -687,7 +729,7 @@ msgstr "Gestionar Licencias"
 
 #: includes/class-rsl-admin.php:663
 msgid "Managing Your Licenses"
-msgstr ""
+msgstr "Gestionando Sus Licencias"
 
 #: admin/templates/admin-dashboard.php:338
 #: admin/templates/admin-settings.php:108
@@ -696,7 +738,7 @@ msgstr "Metadatos de Medios"
 
 #: includes/class-rsl-admin.php:667
 msgid "Modify license terms and settings"
-msgstr ""
+msgstr "Modificar términos de licencia y configuraciones"
 
 #: includes/class-rsl-admin.php:699 admin/templates/admin-licenses.php:41
 msgid "Name"
@@ -708,7 +750,7 @@ msgstr "El nombre y la URL del contenido son campos obligatorios."
 
 #: includes/class-rsl-admin.php:728
 msgid "Need Help?"
-msgstr ""
+msgstr "¿Necesita Ayuda?"
 
 #: includes/class-rsl-robots.php:176
 msgid "No License directive found"
@@ -756,13 +798,17 @@ msgstr "Uso no comercial"
 
 #: admin/templates/admin-dashboard.php:391
 msgid "Not installed"
-msgstr ""
+msgstr "No instalado"
 
 #: includes/class-rsl-admin.php:686
 msgid ""
 "Note: Set amount to $0 for free licenses of any type. Amounts > $0 require "
 "WooCommerce for payment processing."
 msgstr ""
+"Nota: Configure la cantidad a $0 para licencias gratuitas de cualquier tipo. "
+"Las cantidades > $0 requieren WooCommerce para el procesamiento de pagos."
+"Nota: Configure la cantidad a $0 para licencias gratuitas de cualquier tipo. "
+"Las cantidades > $0 requieren WooCommerce para el procesamiento de pagos."
 
 #: includes/class-rsl-admin.php:679
 msgid "One-time payment"
@@ -774,7 +820,7 @@ msgstr "Compra única"
 
 #: admin/templates/admin-add-license.php:306
 msgid "Only amount = 0 will work for token generation."
-msgstr ""
+msgstr "Solo la cantidad = 0 funcionará para la generación de tokens."
 
 #: admin/templates/admin-add-license.php:58
 msgid "Optional description of this license."
@@ -793,6 +839,8 @@ msgid ""
 "Override the content URL for this specific post/page. Useful for syndicated "
 "content."
 msgstr ""
+"Anular la URL del contenido para esta entrada/página específica. Ütil para "
+"contenido sindicado."
 "Anular la URL del contenido para esta entrada/página específica. Útil para "
 "contenido sindicado."
 
@@ -810,7 +858,7 @@ msgstr "Pago y Compensación"
 
 #: includes/class-rsl-admin.php:730
 msgid "Payment Setup Guide"
-msgstr ""
+msgstr "Guía de Configuración de Pagos"
 
 #: admin/templates/admin-add-license.php:271
 #: admin/templates/admin-licenses.php:43
@@ -823,7 +871,7 @@ msgstr "Tipo de Pago:"
 
 #: includes/class-rsl-admin.php:675
 msgid "Payment Types"
-msgstr ""
+msgstr "Tipos de Pago"
 
 #: includes/class-rsl-license.php:369
 msgid "Per crawl"
@@ -842,6 +890,8 @@ msgid ""
 "Permanently removes an RSL license from the system. This action cannot be "
 "undone and will affect any content currently using this license."
 msgstr ""
+"Elimina permanentemente una licencia RSL del sistema. Esta acción no se "
+"puede deshacer y afectará cualquier contenido que use actualmente esta licencia."
 
 #: includes/class-rsl-admin.php:197 includes/class-rsl-admin.php:372
 #: includes/class-rsl-admin.php:392
@@ -886,11 +936,11 @@ msgstr "Por favor, introduce una dirección de correo válida"
 
 #: includes/class-rsl-admin.php:280
 msgid "Please install and activate WooCommerce to enable payment processing."
-msgstr ""
+msgstr "Por favor instale y active WooCommerce para habilitar el procesamiento de pagos."
 
 #: includes/class-rsl-admin.php:653
 msgid "Plugin Documentation"
-msgstr ""
+msgstr "Documentación del Plugin"
 
 #: includes/class-rsl-license.php:381
 msgid "Privacy consents obtained"
@@ -918,7 +968,7 @@ msgstr "Compra"
 
 #: includes/class-rsl-admin.php:638
 msgid "Quick Start"
-msgstr ""
+msgstr "Inicio Rápido"
 
 #: admin/templates/admin-dashboard.php:198
 msgid "RSL Collective"
@@ -933,7 +983,7 @@ msgstr "Licencia RSL"
 #: includes/processors/class-rsl-woocommerce-processor.php:198
 #, php-format
 msgid "RSL License: %s"
-msgstr ""
+msgstr "Licencia RSL: %s"
 
 #: admin/templates/admin-licenses.php:11
 msgid "RSL Licenses"
@@ -954,6 +1004,8 @@ msgid ""
 "database permissions."
 msgstr ""
 "Licencias RSL: Error al crear las tablas de base de datos requeridas. Por "
+"favor verifique los permisos de la base de datos."
+"Licencias RSL: Error al crear las tablas de base de datos requeridas. Por "
 "favor verifica los permisos de la base de datos."
 
 #: admin/templates/admin-settings.php:123
@@ -962,7 +1014,7 @@ msgstr "Espacio de Nombres RSL"
 
 #: includes/class-rsl-admin.php:624
 msgid "RSL Overview"
-msgstr ""
+msgstr "Resumen de RSL"
 
 #: admin/templates/admin-dashboard.php:542
 msgid "RSL Plugin"
@@ -970,7 +1022,7 @@ msgstr "Plugin RSL"
 
 #: includes/class-rsl-admin.php:651
 msgid "RSL Resources"
-msgstr ""
+msgstr "Recursos RSL"
 
 #: admin/templates/admin-dashboard.php:150
 #: admin/templates/admin-dashboard.php:194
@@ -979,11 +1031,11 @@ msgstr "Estándar RSL"
 
 #: includes/class-rsl-admin.php:729
 msgid "RSL Standard Docs"
-msgstr ""
+msgstr "Documentación del Estándar RSL"
 
 #: includes/class-rsl-admin.php:652
 msgid "RSL Standard Documentation"
-msgstr ""
+msgstr "Documentación del Estándar RSL"
 
 #: includes/class-rsl-media.php:234
 msgid "RSL Status"
@@ -993,6 +1045,8 @@ msgstr "Estado RSL"
 msgid ""
 "RSL XML namespace URI. Use default unless you have a custom implementation."
 msgstr ""
+"URI del espacio de nombres XML RSL. Use el predeterminado a menos que tenga "
+"una implementación personalizada."
 "URI del espacio de nombres XML RSL. Usar por defecto a menos que tengas una "
 "implementación personalizada."
 
@@ -1002,6 +1056,12 @@ msgid ""
 "This helps AI companies, search engines, and other automated systems "
 "understand how they can use your content."
 msgstr ""
+"RSL le permite definir términos de licencia legibles por máquina para su "
+"contenido. Esto ayuda a las empresas de IA, motores de búsqueda y otros "
+"sistemas automatizados a entender cómo pueden usar su contenido."
+"RSL le permite definir términos de licencia legibles por máquina para su "
+"contenido. Esto ayuda a las empresas de IA, motores de búsqueda y otros "
+"sistemas automatizados a entender cómo pueden usar su contenido."
 
 #: includes/class-rsl-media.php:236
 msgid "RSL metadata embedded"
@@ -1009,7 +1069,7 @@ msgstr "Metadatos RSL incrustados"
 
 #: includes/class-rsl-admin.php:632
 msgid "RSS Enhancement"
-msgstr ""
+msgstr "Mejora de RSS"
 
 #: admin/templates/admin-dashboard.php:311
 msgid "RSS Feed Enhancement"
@@ -1021,7 +1081,7 @@ msgstr "Integración de Feed RSS"
 
 #: includes/class-rsl-admin.php:625
 msgid "Really Simple Licensing (RSL)"
-msgstr ""
+msgstr "Really Simple Licensing (RSL)"
 
 #: admin/templates/admin-dashboard.php:186
 msgid ""
@@ -1034,6 +1094,10 @@ msgstr ""
 "términos de licencia para contenido digital. Permite a los propietarios de "
 "contenido especificar cómo puede ser utilizado su contenido por sistemas de "
 "IA, motores de búsqueda y otras herramientas automatizadas."
+"Really Simple Licensing (RSL) es un formato legible por máquina para definir "
+"términos de licencia para contenido digital. Permite a los propietarios de "
+"contenido especificar cómo puede ser utilizado su contenido por sistemas de "
+"IA, motores de búsqueda y otras herramientas automatizadas."
 
 #: admin/templates/admin-dashboard.php:417
 msgid "Recent Licenses"
@@ -1041,7 +1105,7 @@ msgstr "Licencias Recientes"
 
 #: admin/templates/admin-add-license.php:88
 msgid "Recommended"
-msgstr ""
+msgstr "Recomendado"
 
 #: includes/class-rsl-admin.php:680
 msgid "Recurring payments (requires WooCommerce Subscriptions)"
@@ -1049,15 +1113,15 @@ msgstr "Pagos recurrentes (requiere WooCommerce Subscriptions)"
 
 #: includes/class-rsl-admin.php:669
 msgid "Remove the license permanently"
-msgstr ""
+msgstr "Eliminar la licencia permanentemente"
 
 #: includes/class-rsl-admin.php:697
 msgid "Required Fields"
-msgstr ""
+msgstr "Campos Requeridos"
 
 #: admin/templates/admin-dashboard.php:395
 msgid "Required for paid licensing"
-msgstr ""
+msgstr "Requerido para licencias pagadas"
 
 #: admin/templates/admin-add-license.php:201
 msgid "Restrictions"
@@ -1069,6 +1133,9 @@ msgid ""
 "applicable license terms, permissions, payment requirements, and XML data "
 "for automated systems and AI agents."
 msgstr ""
+"Recupera información de licencia RSL para URL de contenido específica. Devuelve "
+"términos de licencia aplicables, permisos, requisitos de pago y datos XML "
+"para sistemas automatizados y agentes de IA."
 
 #: includes/class-rsl-abilities.php:228
 msgid ""
@@ -1076,6 +1143,9 @@ msgid ""
 "or search terms. Returns comprehensive license data for administration and "
 "management."
 msgstr ""
+"Recupera todas las licencias RSL con filtrado opcional por estado, tipo de pago, "
+"o términos de búsqueda. Devuelve datos completos de licencias para administración "
+"y gestión."
 
 #: includes/class-rsl-license.php:372
 msgid "Royalty"
@@ -1083,7 +1153,7 @@ msgstr "Regalía"
 
 #: includes/class-rsl-admin.php:645
 msgid "Save settings"
-msgstr ""
+msgstr "Guardar configuración"
 
 #: includes/class-rsl-admin.php:135
 msgid "Saving..."
@@ -1110,6 +1180,8 @@ msgid ""
 "Select a license to apply site-wide. Individual posts/pages can override "
 "this."
 msgstr ""
+"Seleccione una licencia para aplicar a todo el sitio. Las entradas/páginas "
+"individuales pueden anular esto."
 "Selecciona una licencia para aplicar a todo el sitio. Las entradas/páginas "
 "individuales pueden anular esto."
 
@@ -1117,6 +1189,8 @@ msgstr ""
 msgid ""
 "Select a specific license to override the global license for this content."
 msgstr ""
+"Seleccione una licencia específica para anular la licencia global para este "
+"contenido."
 "Selecciona una licencia específica para anular la licencia global para este "
 "contenido."
 
@@ -1134,13 +1208,11 @@ msgstr "Selecciona tipos de usuarios explícitamente prohibidos."
 
 #: admin/templates/admin-add-license.php:158
 msgid "Select permitted usage types. Leave empty to permit all usage types."
-msgstr ""
-"Selecciona tipos de uso permitidos. Dejar vacío para permitir todos los "
-"tipos de uso."
+msgstr "Seleccione tipos de uso permitidos. Dejar vacío para permitir todos los tipos de uso."
 
 #: admin/templates/admin-add-license.php:180
 msgid "Select permitted user types. Leave empty to permit all user types."
-msgstr ""
+msgstr "Seleccione tipos de usuarios permitidos. Dejar vacío para permitir todos los tipos de usuario."
 "Selecciona tipos de usuarios permitidos. Dejar vacío para permitir todos los "
 "tipos de usuario."
 
@@ -1149,6 +1221,8 @@ msgid ""
 "Select the payment model for this license. Set amount to 0 for free licenses "
 "of any type."
 msgstr ""
+"Seleccione el modelo de pago para esta licencia. Configure la cantidad a 0 "
+"para licencias gratuitas de cualquier tipo."
 
 #: admin/templates/admin-add-license.php:366
 msgid "Select warranties provided with this license."
@@ -1156,21 +1230,23 @@ msgstr "Selecciona garantías proporcionadas con esta licencia."
 
 #: includes/class-rsl-admin.php:722
 msgid "Set Server URL to built-in server option"
-msgstr ""
+msgstr "Configurar URL del Servidor a la opción de servidor integrado"
 
 #: includes/class-rsl-admin.php:643
 msgid "Set it as your global license"
-msgstr ""
+msgstr "Configurarlo como su licencia global"
 
 #: admin/templates/admin-add-license.php:302
 msgid ""
 "Set to 0 for free licenses. Amounts > 0 require WooCommerce for payment "
 "processing."
 msgstr ""
+"Configure a 0 para licencias gratuitas. Las cantidades > 0 requieren "
+"WooCommerce para el procesamiento de pagos."
 
 #: includes/class-rsl-admin.php:714
 msgid "Setting Up Paid Licensing"
-msgstr ""
+msgstr "Configurando Licencias Pagadas"
 
 #: rsl-wp.php:157 includes/class-rsl-admin.php:79
 #: includes/class-rsl-admin.php:80 admin/templates/admin-dashboard.php:143
@@ -1183,7 +1259,7 @@ msgstr "Configuración guardada exitosamente."
 
 #: includes/class-rsl-admin.php:716
 msgid "Setup Steps"
-msgstr ""
+msgstr "Pasos de Configuración"
 
 #: admin/templates/admin-add-license.php:318
 msgid "Standard License URL"
@@ -1200,11 +1276,11 @@ msgstr "Suscripción"
 
 #: admin/templates/admin-dashboard.php:380
 msgid "Subscriptions: Available"
-msgstr ""
+msgstr "Suscripciones: Disponibles"
 
 #: admin/templates/admin-dashboard.php:385
 msgid "Subscriptions: Extension needed"
-msgstr ""
+msgstr "Suscripciones: Extensión necesaria"
 
 #: admin/templates/admin-dashboard.php:506
 msgid "System Status"
@@ -1220,12 +1296,20 @@ msgid ""
 "The %1$s payment method is not supported. WooCommerce supports %2$s payment "
 "types. "
 msgstr ""
+"El método de pago %1$s no es compatible. WooCommerce soporta tipos de pago "
+"%2$s. "
+"El método de pago %1$s no es compatible. WooCommerce soporta tipos de pago "
+"%2$s. "
 
 #: includes/class-rsl-admin.php:724
 msgid ""
 "The plugin will automatically create hidden WooCommerce products for your "
 "licenses and handle the complete payment-to-token flow."
 msgstr ""
+"El plugin creará automáticamente productos WooCommerce ocultos para sus "
+"licencias y manejará el flujo completo de pago a token."
+"El plugin creará automáticamente productos WooCommerce ocultos para sus "
+"licencias y manejará el flujo completo de pago a token."
 
 #: includes/class-rsl-media.php:237
 msgid "This file contains embedded RSL licensing information."
@@ -1236,26 +1320,28 @@ msgid ""
 "This page shows all your RSL licenses. You can create multiple licenses for "
 "different content areas or use cases."
 msgstr ""
+"Esta página muestra todas sus licencias RSL. Puede crear múltiples licencias "
+"para diferentes áreas de contenido o casos de uso."
 
 #: admin/templates/admin-dashboard.php:176
 msgid "Toggle panel: About RSL"
-msgstr ""
+msgstr "Alternar panel: Acerca de RSL"
 
 #: admin/templates/admin-dashboard.php:55
 msgid "Toggle panel: At a Glance"
-msgstr ""
+msgstr "Alternar panel: De un Vistazo"
 
 #: admin/templates/admin-dashboard.php:218
 msgid "Toggle panel: Integration Status"
-msgstr ""
+msgstr "Alternar panel: Estado de Integración"
 
 #: admin/templates/admin-dashboard.php:423
 msgid "Toggle panel: Recent Licenses"
-msgstr ""
+msgstr "Alternar panel: Licencias Recientes"
 
 #: admin/templates/admin-dashboard.php:512
 msgid "Toggle panel: System Status"
-msgstr ""
+msgstr "Alternar panel: Estado del Sistema"
 
 #: includes/class-rsl-license.php:345
 msgid "Train AI model"
@@ -1267,11 +1353,11 @@ msgstr "Entrenar modelo de IA generativa"
 
 #: includes/class-rsl-admin.php:682
 msgid "Training"
-msgstr ""
+msgstr "Entrenamiento"
 
 #: includes/class-rsl-admin.php:702
 msgid "URL Patterns"
-msgstr ""
+msgstr "Patrones de URL"
 
 #: admin/templates/admin-add-license.php:71
 msgid ""
@@ -1283,7 +1369,7 @@ msgstr ""
 
 #: includes/class-rsl-admin.php:700
 msgid "URL pattern this license covers (e.g., \"/\", \"/blog/*\", \"*.pdf\")"
-msgstr ""
+msgstr "Patrón de URL que cubre esta licencia (ej., \"/\", \"/blog/*\", \"*.pdf\")"
 
 #: admin/templates/admin-add-license.php:407
 msgid "URL to Schema.org CreativeWork metadata for this content."
@@ -1299,12 +1385,12 @@ msgstr "URL a términos de licencia personalizados e información de contacto."
 
 #: admin/templates/admin-add-license.php:325
 msgid "URL to standard license terms (e.g., Creative Commons, RSL Collective)."
-msgstr ""
+msgstr "URL a términos de licencia estándar (ej., Creative Commons, RSL Collective)."
 "URL a términos de licencia estándar (ej., Creative Commons, RSL Collective)."
 
 #: includes/class-rsl-admin.php:676
 msgid "Understanding Payment Types"
-msgstr ""
+msgstr "Entendiendo los Tipos de Pago"
 
 #: admin/templates/admin-add-license.php:478
 msgid "Update License"
@@ -1312,11 +1398,11 @@ msgstr "Actualizar Licencia"
 
 #: includes/class-rsl-abilities.php:131
 msgid "Update RSL License"
-msgstr ""
+msgstr "Actualizar Licencia RSL"
 
 #: includes/class-rsl-abilities.php:279
 msgid "Update RSL Settings"
-msgstr ""
+msgstr "Actualizar Configuración RSL"
 
 #: includes/class-rsl-abilities.php:132
 msgid ""
@@ -1324,6 +1410,9 @@ msgid ""
 "permissions, payment settings, and other properties while maintaining "
 "license history and validation."
 msgstr ""
+"Actualiza una configuración de licencia RSL existente. Modifica términos de "
+"licencia, permisos, configuraciones de pago y otras propiedades mientras "
+"mantiene el historial y validación de la licencia."
 
 #: admin/templates/admin-licenses.php:44
 msgid "Usage Permits"
@@ -1338,6 +1427,8 @@ msgid ""
 "Use an external RSL License Server (e.g., RSL Collective) for centralized "
 "licensing and payment processing."
 msgstr ""
+"Use un Servidor de Licencias RSL externo (ej., RSL Collective) para "
+"licencias centralizadas y procesamiento de pagos."
 
 #: includes/class-rsl-license.php:347
 msgid "Use as AI input (RAG)"
@@ -1348,10 +1439,12 @@ msgid ""
 "Use this WordPress site as the license server. Handles free licenses "
 "immediately and integrates with WooCommerce for paid licensing."
 msgstr ""
+"Use este sitio de WordPress como servidor de licencias. Maneja licencias "
+"gratuitas inmediatamente e integra con WooCommerce para licencias pagadas."
 
 #: includes/class-rsl-abilities.php:380
 msgid "Validate Content Licensing"
-msgstr ""
+msgstr "Validar Licenciamiento de Contenido"
 
 #: includes/class-rsl-abilities.php:533
 msgid ""
@@ -1359,6 +1452,9 @@ msgid ""
 "authenticity, expiration, and associated permissions for secure content "
 "access control."
 msgstr ""
+"Valida e inspecciona tokens de licencia RSL según RFC 7662. Verifica "
+"autenticidad del token, expiración y permisos asociados para control de "
+"acceso seguro al contenido."
 
 #: includes/class-rsl-abilities.php:381
 msgid ""
@@ -1366,6 +1462,9 @@ msgid ""
 "usage type, user category, and geographic restrictions against license "
 "permissions."
 msgstr ""
+"Valida si el uso del contenido cumple con los términos de licencia RSL. "
+"Verifica el tipo de uso, categoría de usuario y restricciones geográficas "
+"contra los permisos de la licencia."
 
 #: admin/templates/admin-add-license.php:18
 msgid "View All Licenses"
@@ -1381,11 +1480,11 @@ msgstr "Ver todas las licencias →"
 
 #: includes/processors/class-rsl-woocommerce-processor.php:160
 msgid "Visible in catalog"
-msgstr ""
+msgstr "Visible en catálogo"
 
 #: includes/processors/class-rsl-woocommerce-processor.php:161
 msgid "Visible in search"
-msgstr ""
+msgstr "Visible en búsqueda"
 
 #: admin/templates/admin-add-license.php:351
 msgid "Warranties"
@@ -1393,23 +1492,23 @@ msgstr "Garantías"
 
 #: includes/class-rsl-admin.php:683
 msgid "Web crawling permissions"
-msgstr ""
+msgstr "Permisos de rastreo web"
 
 #: admin/templates/admin-dashboard.php:365
 msgid "WooCommerce"
-msgstr ""
+msgstr "WooCommerce"
 
 #: includes/class-rsl-admin.php:713
 msgid "WooCommerce Setup"
-msgstr ""
+msgstr "Configuración de WooCommerce"
 
 #: includes/class-rsl-admin.php:275
 msgid "WooCommerce is required for paid licensing (amount > $0). "
-msgstr ""
+msgstr "WooCommerce es requerido para licencias pagadas (cantidad > $0). "
 
 #: admin/templates/admin-add-license.php:305
 msgid "WooCommerce not installed:"
-msgstr ""
+msgstr "WooCommerce no instalado:"
 
 #: admin/templates/admin-dashboard.php:524
 msgid "WordPress"
@@ -1421,7 +1520,7 @@ msgstr "¡XML copiado al portapapeles!"
 
 #: includes/class-rsl-admin.php:647
 msgid "Your site will now broadcast machine-readable licensing terms!"
-msgstr ""
+msgstr "¡Su sitio ahora difundirá términos de licencia legibles por máquina!"
 
 #: admin/templates/admin-dashboard.php:552
 msgid "cURL Support"

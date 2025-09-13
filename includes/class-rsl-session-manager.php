@@ -218,7 +218,7 @@ class RSL_Session_Manager {
         $expired_time = time() - $this->session_ttl;
         
         // Try cache first to avoid expensive queries
-        $cache_key = 'rsl_expired_sessions_' . date('Y-m-d-H', $expired_time);
+        $cache_key = 'rsl_expired_sessions_' . gmdate('Y-m-d-H', $expired_time);
         $expired_sessions = wp_cache_get($cache_key, 'rsl_sessions');
 
         if ($expired_sessions === false) {
