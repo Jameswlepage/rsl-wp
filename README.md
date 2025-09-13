@@ -14,8 +14,8 @@ Complete Really Simple Licensing (RSL) support for WordPress sites. Define machi
 
 ```bash
 # Direct download via curl/wget
-curl -L -o rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/latest/download/rsl-licensing-0.0.4.zip"
-wget -O rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/latest/download/rsl-licensing-0.0.4.zip"
+curl -L -o rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/latest/download/rsl-licensing-0.0.5.zip"
+wget -O rsl-licensing.zip "https://github.com/jameswlepage/rsl-wp/releases/latest/download/rsl-licensing-0.0.5.zip"
 
 # Or build from source
 git clone https://github.com/jameswlepage/rsl-wp.git
@@ -26,9 +26,9 @@ make zip  # Creates production-ready ZIP file
 **Installation:** 
 1. Download ZIP using the button above or from [Releases](https://github.com/jameswlepage/rsl-wp/releases)
 2. Upload via WordPress Admin → Plugins → Add New → Upload Plugin
-3. Activate and configure at Settings → RSL Licensing
+3. Activate and configure at RSL for WordPress → Dashboard
 
-> **Alpha Notice:** This is an early alpha release (v0.0.4) of the RSL for WordPress plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
+> **Alpha Notice:** This is an early alpha release (v0.0.5-alpha) of the RSL for WordPress plugin. While feature-complete and RSL 1.0 specification compliant, it is intended for testing and development purposes. Please report any issues or feedback via GitHub Issues.
 
 ## What is RSL (Really Simple Licensing)?
 
@@ -101,18 +101,12 @@ This enables:
 - **Rate Limiting Protection** - Built-in abuse prevention for API endpoints
 - **Shortcodes** - Display license information anywhere on your site
 
-## Installation
-
-1. Download the plugin files
-2. Upload to your WordPress `/wp-content/plugins/` directory
-3. Activate the plugin through the WordPress admin
-4. Navigate to Settings > RSL Licensing to configure
 
 ## Quick Start
 
 ### 1. Create Your First License
 
-1. Go to **Settings > Add RSL License**
+1. Go to **RSL for WordPress > Add New License**
 2. Fill in basic information:
    - **Name**: "Site Content License"
    - **Content URL**: "/" (for entire site)
@@ -122,7 +116,7 @@ This enables:
 
 ### 2. Set Global License
 
-1. Navigate to **Settings > RSL Licensing**
+1. Navigate to **RSL for WordPress > Dashboard**
 2. Select your license from the "Global License" dropdown
 3. Enable desired integration methods
 4. Save settings
@@ -215,7 +209,7 @@ RSL uses **only the OAuth 2.0 Client Credentials Grant** - the simplest OAuth fl
 #### Creating OAuth Clients
 
 **Method 1: WordPress Admin Interface**
-1. Navigate to **RSL Licensing > OAuth Clients**
+1. Navigate to **RSL for WordPress > OAuth Clients** (if available)
 2. Click "Add New Client"
 3. Enter client name (e.g., "OpenAI Crawler")
 4. Copy the generated `client_id` and `client_secret` (shown only once)
