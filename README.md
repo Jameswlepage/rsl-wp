@@ -2,7 +2,7 @@
 
 ![RSL for WordPress Banner](https://github.com/Jameswlepage/rsl-wp/blob/main/assets/banner-1544x500.png?raw=true)
 
-[![Version](https://img.shields.io/badge/Version-0.0.5-blue)](https://github.com/jameswlepage/rsl-wp/releases/latest) [![Downloads](https://img.shields.io/github/downloads/jameswlepage/rsl-wp/total)](https://github.com/jameswlepage/rsl-wp/releases) [![License](https://img.shields.io/badge/License-GPL%20v2-blue)](https://www.gnu.org/licenses/gpl-2.0.html)
+[![Version](https://img.shields.io/badge/Version-0.0.5-blue)](https://github.com/jameswlepage/rsl-wp/releases/latest) [![Downloads](https://img.shields.io/github/downloads/jameswlepage/rsl-wp/total)](https://github.com/jameswlepage/rsl-wp/releases) [![License](https://img.shields.io/badge/License-GPL%20v2-blue)](https://www.gnu.org/licenses/gpl-2.0.html) [![Tests](https://img.shields.io/badge/Tests-28%20passing-green)](https://github.com/jameswlepage/rsl-wp/actions) [![Try Live](https://img.shields.io/badge/Try%20Live-WordPress%20Playground-blue?logo=wordpress)](https://playground.wordpress.net/?blueprint-url=https%3A%2F%2Fraw.githubusercontent.com%2FJameswlepage%2Frsl-wp%2Fmain%2Fblueprint.json)
 
 Complete Really Simple Licensing (RSL) support for WordPress sites. Define machine-readable licensing terms for your content, enabling AI companies, crawlers, and other automated systems to properly license your digital assets.
 
