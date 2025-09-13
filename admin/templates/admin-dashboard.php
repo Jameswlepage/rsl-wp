@@ -97,11 +97,40 @@ if (!defined('ABSPATH')) {
             </div>
         </div>
         
-        <!-- Two Column Row -->
+        <!-- Left Column -->
         <div class="postbox-container" style="width: 49%; margin-right: 2%;">
             <div class="meta-box-sortables">
-                
-                <!-- Integration Status -->
+
+                <!-- About RSL (Top Left) -->
+                <div id="rsl-about" class="postbox">
+                    <div class="postbox-header">
+                        <h2 class="hndle ui-sortable-handle"><?php esc_html_e('About RSL', 'rsl-wp'); ?></h2>
+                        <div class="handle-actions hide-if-no-js">
+                            <button type="button" class="handlediv" aria-expanded="true">
+                                <span class="screen-reader-text"><?php esc_html_e('Toggle panel: About RSL', 'rsl-wp'); ?></span>
+                                <span class="toggle-indicator" aria-hidden="true"></span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="inside">
+                        <p>
+                            <?php esc_html_e('Really Simple Licensing (RSL) is a machine-readable format for defining licensing terms for digital content. It enables content owners to specify how their content can be used by AI systems, search engines, and other automated tools.', 'rsl-wp'); ?>
+                        </p>
+
+                        <p>
+                            <a href="https://rslstandard.org" target="_blank" class="button">
+                                <span class="dashicons dashicons-external"></span>
+                                <?php esc_html_e('RSL Standard', 'rsl-wp'); ?>
+                            </a>
+                            <a href="https://rslcollective.org" target="_blank" class="button rsl-button-gap">
+                                <span class="dashicons dashicons-groups"></span>
+                                <?php esc_html_e('RSL Collective', 'rsl-wp'); ?>
+                            </a>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Integration Status (Bottom Left) -->
                 <div id="rsl-integration-status" class="postbox">
                     <div class="postbox-header">
                         <h2 class="hndle ui-sortable-handle">
@@ -180,43 +209,15 @@ if (!defined('ABSPATH')) {
                         </table>
                     </div>
                 </div>
-                
-                <!-- About RSL -->
-                <div id="rsl-about" class="postbox">
-                    <div class="postbox-header">
-                        <h2 class="hndle ui-sortable-handle"><?php esc_html_e('About RSL', 'rsl-wp'); ?></h2>
-                        <div class="handle-actions hide-if-no-js">
-                            <button type="button" class="handlediv" aria-expanded="true">
-                                <span class="screen-reader-text"><?php esc_html_e('Toggle panel: About RSL', 'rsl-wp'); ?></span>
-                                <span class="toggle-indicator" aria-hidden="true"></span>
-                            </button>
-                        </div>
-                    </div>
-                    <div class="inside">
-                        <p>
-                            <?php esc_html_e('Really Simple Licensing (RSL) is a machine-readable format for defining licensing terms for digital content. It enables content owners to specify how their content can be used by AI systems, search engines, and other automated tools.', 'rsl-wp'); ?>
-                        </p>
-                        
-                        <p>
-                            <a href="https://rslstandard.org" target="_blank" class="button">
-                                <span class="dashicons dashicons-external"></span>
-                                <?php esc_html_e('RSL Standard', 'rsl-wp'); ?>
-                            </a>
-                            <a href="https://rslcollective.org" target="_blank" class="button rsl-button-gap">
-                                <span class="dashicons dashicons-groups"></span>
-                                <?php esc_html_e('RSL Collective', 'rsl-wp'); ?>
-                            </a>
-                        </p>
-                    </div>
-                </div>
-                
+
             </div>
         </div>
         
+        <!-- Right Column -->
         <div class="postbox-container" style="width: 49%;">
             <div class="meta-box-sortables">
-                
-                <!-- Recent Licenses -->
+
+                <!-- Recent Licenses (Top Right) -->
                 <div id="rsl-recent-licenses" class="postbox">
                     <div class="postbox-header">
                         <h2 class="hndle ui-sortable-handle"><?php esc_html_e('Recent Licenses', 'rsl-wp'); ?></h2>
@@ -262,8 +263,8 @@ if (!defined('ABSPATH')) {
                         <?php endif; ?>
                     </div>
                 </div>
-                
-                <!-- System Status -->
+
+                <!-- System Status (Bottom Right) -->
                 <div id="rsl-system-status" class="postbox">
                     <div class="postbox-header">
                         <h2 class="hndle ui-sortable-handle"><?php esc_html_e('System Status', 'rsl-wp'); ?></h2>
@@ -299,7 +300,7 @@ if (!defined('ABSPATH')) {
                         </table>
                     </div>
                 </div>
-                
+
             </div>
         </div>
         

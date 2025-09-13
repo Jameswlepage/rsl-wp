@@ -67,11 +67,6 @@ class RSL_Licensing
 
     private function load_textdomain()
     {
-        load_plugin_textdomain(
-            "rsl-wp",
-            false,
-            dirname(RSL_PLUGIN_BASENAME) . "/languages",
-        );
     }
 
     private function includes()

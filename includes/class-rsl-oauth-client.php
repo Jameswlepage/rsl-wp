@@ -147,6 +147,7 @@ class RSL_OAuth_Client {
                        FROM `{$wpdb->prefix}rsl_oauth_clients`" . $where . " ORDER BY created_at DESC";
         
         if (!empty($params)) {
+            // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared
             $clients = $wpdb->get_results($wpdb->prepare($base_query, ...$params), ARRAY_A);
         } else {
             // phpcs:ignore WordPress.DB.PreparedSQL.NotPrepared

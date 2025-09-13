@@ -141,39 +141,6 @@ if (!function_exists('wp_cache_flush')) {
     }
 }
 
-if (!function_exists('set_current_screen')) {
-    function set_current_screen($screen_id = null) {
-        global $current_screen;
-        $current_screen = new stdClass();
-        $current_screen->id = $screen_id;
-        $current_screen->base = $screen_id;
-        return $current_screen;
-    }
-}
-
-if (!function_exists('get_current_screen')) {
-    function get_current_screen() {
-        global $current_screen;
-        return $current_screen;
-    }
-}
-
-if (!function_exists('wp_set_current_user')) {
-    function wp_set_current_user($id, $name = '') {
-        global $current_user;
-        $current_user = new stdClass();
-        $current_user->ID = $id;
-        $current_user->user_login = $name ?: 'test_user';
-        return $current_user;
-    }
-}
-
-if (!function_exists('current_user_can')) {
-    function current_user_can($capability) {
-        // For tests, assume admin user has all capabilities
-        return true;
-    }
-}
 
 if (!class_exists('WP_Error')) {
     class WP_Error {
