@@ -11,8 +11,7 @@ class RSL_RSS {
 	public function __construct() {
 		$this->license_handler = new RSL_License();
 
-		add_action( 'rss_head', array( $this, 'add_rsl_namespace' ) );
-		add_action( 'rss2_head', array( $this, 'add_rsl_namespace' ) );
+		add_action( 'rss2_ns', array( $this, 'add_rsl_namespace' ) );
 		add_action( 'rss_item', array( $this, 'add_rsl_to_rss_item' ) );
 		add_action( 'rss2_item', array( $this, 'add_rsl_to_rss_item' ) );
 
@@ -26,7 +25,7 @@ class RSL_RSS {
 			return;
 		}
 
-		echo 'xmlns:rsl="https://rslstandard.org/rsl"' . "\n";
+		echo 'xmlns:rsl="https://rslstandard.org/rsl"' . "\n\t";
 	}
 
 	public function add_rsl_to_rss_item() {
