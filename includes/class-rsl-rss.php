@@ -23,7 +23,7 @@ class RSL_RSS {
 			return;
 		}
 
-		echo 'xmlns:rsl="https://rslstandard.org/rsl"' . "\n\t";
+		echo 'xmlns:rsl="https://rslstandard.org/rsl"' . "\n";
 	}
 
 	public function add_rsl_to_rss_item() {
