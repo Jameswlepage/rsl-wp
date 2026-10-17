@@ -1059,7 +1059,7 @@ class RSL_Admin {
             <p><a href="https://rslstandard.org" target="_blank">' .
 				__( 'RSL Standard Documentation', 'rsl-wp' ) .
 				'</a></p>
-            <p><a href="https://github.com/jameswlepage/rsl-wp" target="_blank">' .
+            <p><a href="https://github.com/jeffpaul/rsl-wp" target="_blank">' .
 				__( 'Plugin Documentation', 'rsl-wp' ) .
 				'</a></p>',
 		);
@@ -1268,10 +1268,10 @@ class RSL_Admin {
             <p><a href="https://rslstandard.org" target="_blank">' .
 				__( 'RSL Standard Docs', 'rsl-wp' ) .
 				'</a></p>
-            <p><a href="https://github.com/jameswlepage/rsl-wp/blob/main/docs/PAYMENTS.md" target="_blank">' .
+            <p><a href="https://github.com/jeffpaul/rsl-wp/blob/main/docs/PAYMENTS.md" target="_blank">' .
 				__( 'Payment Setup Guide', 'rsl-wp' ) .
 				'</a></p>
-            <p><a href="https://github.com/jameswlepage/rsl-wp/blob/main/docs/DEVELOPER.md" target="_blank">' .
+            <p><a href="https://github.com/jeffpaul/rsl-wp/blob/main/docs/DEVELOPER.md" target="_blank">' .
 				__( 'Developer Guide', 'rsl-wp' ) .
 				'</a></p>',
 		);
